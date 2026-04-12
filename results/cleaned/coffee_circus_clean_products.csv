@@ -1,0 +1,1502 @@
+Name,Roaster,Price,Quantity,Roast_Level,Tasting_Notes,Desc,URL,Image_URL
+Barrel Roll | C3 | Coffee Bag,Coffee Circus,600.0,250g,Medium Roast,"Cedar, Dark Grapes, Rich Honey &amp; Warming Spice Intensity Soft Balanced Strong Intensity Level:(3/5) Terroir &amp","body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling on small screens */
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .intensity-bar {
+            background: linear-gradient(to right, #f3e5ab, #8b4513);
+            width: 100%;
+            height: 20px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .intensity-indicator {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 5%;
+            background-color: black;
+            border-radius: 2px;
+            transition: left 0.3s;
+            left: 86%; /* Adjusted for 1-13 scale (Intensity ~12) */
+        }
+
+        .intensity-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .intensity-bar {
+                height: 15px;
+            }
+
+            .intensity-scale {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .intensity-bar {
+                height: 12px;
+            }
+
+            .intensity-scale {
+                font-size: 9px;
+            }
+        }
+     
+ 
+ 
+ 
+ 
+ Product 
+ Barrel Roll | C3 | Coffee Bag 
+ 
+ 
+ Roast Profile 
+ Medium Roast 
+ 
+ 
+ Tasting Notes 
+ Cedar, Dark Grapes, Rich Honey &amp; Warming Spice 
+ 
+ 
+ Intensity 
+ 
+ 
+   
+ 
+ 
+ Soft   Balanced   Strong 
+ 
+ Intensity Level:(3/5) 
+ 
+ 
+ 
+ Terroir &amp; Process 
+ 
+ Process : Wooden Cask Aged Arabica Coffee 
+ Varietal -  S795 &amp; Sarchimor 
+ Elevation - 1000 - 1200 m.a.s.l 
+ 
+ 
+ 
+ Origin 
+ Bababudan Giri, Ka, India 
+ 
+ 
+ QGrader's Impression 
+ "" Complex coffee process resulting in a very complex Malty, fruity coffee. Pleasant cedar on the nose. Hot brewed coffee is a decadent dark grapes, black berries and chocolate tasting notes. luxurious silky blossom honey mouthfeel. Sweet smoked warming spice aftertaste. As the coffee cools, it has a nuanced dry fruits and cinnamon taste.""",https://www.thecoffeecircus.com/products/barrel-roll,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Barrel_Roll_250g.png?v=1756811935
+Barrel Roll | C3 | Drip Coffee,Coffee Circus,300.0,5 Bags,Medium Roast,"Cedar, Dark Grapes, Rich Honey &amp; Warming Spice Intensity Soft Balanced Strong Intensity Level:(3/5) Terroir &amp","body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling on small screens */
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .intensity-bar {
+            background: linear-gradient(to right, #f3e5ab, #8b4513);
+            width: 100%;
+            height: 20px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .intensity-indicator {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 5%;
+            background-color: black;
+            border-radius: 2px;
+            transition: left 0.3s;
+            left: 86%; /* Adjusted for 1-13 scale (Intensity ~12) */
+        }
+
+        .intensity-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .intensity-bar {
+                height: 15px;
+            }
+
+            .intensity-scale {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .intensity-bar {
+                height: 12px;
+            }
+
+            .intensity-scale {
+                font-size: 9px;
+            }
+        }
+     
+ 
+ 
+ 
+ 
+ Product 
+ Barrel Roll | C3 | Drip Coffee 
+ 
+ 
+ Roast Profile 
+ Medium Roast 
+ 
+ 
+ Tasting Notes 
+ Cedar, Dark Grapes, Rich Honey &amp; Warming Spice 
+ 
+ 
+ Intensity 
+ 
+ 
+   
+ 
+ 
+ Soft   Balanced   Strong 
+ 
+ Intensity Level:(3/5) 
+ 
+ 
+ 
+ Terroir &amp; Process 
+ 
+ Process : Wooden Cask Aged Arabica Coffee 
+ Varietal -  S795 &amp; Sarchimor 
+ Elevation - 1000 - 1200 m.a.s.l 
+ 
+ 
+ 
+ Origin 
+ Bababudan Giri, Ka, India 
+ 
+ 
+ QGrader's Impression 
+ "" Complex coffee process resulting in a very complex Malty, fruity coffee. Pleasant cedar on the nose. Hot brewed coffee is a decadent dark grapes, black berries and chocolate tasting notes. luxurious silky blossom honey mouthfeel. Sweet smoked warming spice aftertaste. As the coffee cools, it has a nuanced dry fruits and cinnamon taste.""",https://www.thecoffeecircus.com/products/drip-coffee-barrel-roll,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Drip_Coffee_Barrel_Roll.png?v=1764241215
+Cannon Ball | C1 | Coffee Bag,Coffee Circus,500.0,250g,Dark Roast,"Floral, Sweet Almonds Toffee, Milk Chocolate, Hints of Orange Intensity Soft Balanced Strong Intensity Level:(4/5) Terroir &amp","body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling on small screens */
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .intensity-bar {
+            background: linear-gradient(to right, #f3e5ab, #8b4513);
+            width: 100%;
+            height: 20px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .intensity-indicator {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 5%;
+            background-color: black;
+            border-radius: 2px;
+            transition: left 0.3s;
+            left: 60%; /* Adjusted for 1-13 scale (Intensity ~12) */
+        }
+
+        .intensity-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .intensity-bar {
+                height: 15px;
+            }
+
+            .intensity-scale {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .intensity-bar {
+                height: 12px;
+            }
+
+            .intensity-scale {
+                font-size: 9px;
+            }
+        }
+     
+ 
+ 
+ 
+ 
+ Product 
+ Cannon Ball 
+ 
+ 
+ Roast Profile 
+ Medium - Dark Roast 
+ 
+ 
+ Tasting Notes 
+ Floral, Sweet Almonds Toffee, Milk Chocolate, Hints of Orange 
+ 
+ 
+ Intensity 
+ 
+ 
+   
+ 
+ 
+ Soft   Balanced   Strong 
+ 
+ Intensity Level:(4/5) 
+ 
+ 
+ 
+ Terroir &amp; Process 
+ 
+ Washed Arabica - Anoxic Processed 
+ Varietal -  Selection 795 
+ Elevation - 1100 m.a.s.l 
+ 
+ 
+ 
+ Origin 
+ Zoya Coffee Estate Chikmagalur, KA, India 
+ 
+ 
+ QGrader's Impression 
+ ""Delicate Floral Fregrance, Bold tasting notes of Almonds, Milk Chocolate. Smooth Toffee Mouthfeel with a lingering Orange citrus acidity. Balanced mouthfeel, and medium to long clean aftertaste. Become more delicate with vibrant citrus acidity as it cools""",https://www.thecoffeecircus.com/products/cannon-ball,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Cannon_Ball_250g.png?v=1756808921
+Cannon Ball | C1 | Drip Coffee,Coffee Circus,300.0,5 Bags,Dark Roast,"Floral, Sweet Almonds Toffee, Milk Chocolate, Hints of Orange Intensity Soft Balanced Strong Intensity Level:(4/5) Terroir &amp","body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling on small screens */
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .intensity-bar {
+            background: linear-gradient(to right, #f3e5ab, #8b4513);
+            width: 100%;
+            height: 20px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .intensity-indicator {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 5%;
+            background-color: black;
+            border-radius: 2px;
+            transition: left 0.3s;
+            left: 60%; /* Adjusted for 1-13 scale (Intensity ~12) */
+        }
+
+        .intensity-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .intensity-bar {
+                height: 15px;
+            }
+
+            .intensity-scale {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .intensity-bar {
+                height: 12px;
+            }
+
+            .intensity-scale {
+                font-size: 9px;
+            }
+        }
+     
+ 
+ 
+ 
+ 
+ Product 
+ Cannon Ball - Drip Coffee 
+ 
+ 
+ Roast Profile 
+ Medium - Dark Roast 
+ 
+ 
+ Tasting Notes 
+ Floral, Sweet Almonds Toffee, Milk Chocolate, Hints of Orange 
+ 
+ 
+ Intensity 
+ 
+ 
+   
+ 
+ 
+ Soft   Balanced   Strong 
+ 
+ Intensity Level:(4/5) 
+ 
+ 
+ 
+ Terroir &amp; Process 
+ 
+ Washed Arabica - Anoxic Processed 
+ Varietal -  Selection 795 
+ Elevation - 1100 m.a.s.l 
+ 
+ 
+ 
+ Origin 
+ Zoya Coffee Estate Chikmagalur, KA, India 
+ 
+ 
+ QGrader's Impression 
+ ""Delicate Floral Fregrance, Bold tasting notes of Almonds, Milk Chocolate. Smooth Toffee Mouthfeel with a lingering Orange citrus acidity. Balanced mouthfeel, and medium to long clean aftertaste. Become more delicate with vibrant citrus acidity as it cools""",https://www.thecoffeecircus.com/products/drip-coffee-box,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Drip_Bag_Cannon_Ball.png?v=1764241215
+Carnival | C3 | Coffee Bag,Coffee Circus,600.0,250g,Medium Roast,"Mixed Fruits of Mulberry, Black Current, Blueberry Intensity Soft Balanced Strong Intensity Level:(3/5) Terroir &amp","body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling on small screens */
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .intensity-bar {
+            background: linear-gradient(to right, #f3e5ab, #8b4513);
+            width: 100%;
+            height: 20px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .intensity-indicator {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 5%;
+            background-color: black;
+            border-radius: 2px;
+            transition: left 0.3s;
+            left: 50%; /* Adjusted for 1-13 scale (Intensity ~12) */
+        }
+
+        .intensity-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .intensity-bar {
+                height: 15px;
+            }
+
+            .intensity-scale {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .intensity-bar {
+                height: 12px;
+            }
+
+            .intensity-scale {
+                font-size: 9px;
+            }
+        }
+     
+ 
+ 
+ 
+ 
+ Product 
+ Carnival | C3 | Coffee Bag 
+ 
+ 
+ Roast Profile 
+ Medium Roast 
+ 
+ 
+ Tasting Notes 
+ Mixed Fruits of Mulberry, Black Current, Blueberry 
+ 
+ 
+ Intensity 
+ 
+ 
+   
+ 
+ 
+ Soft   Balanced   Strong 
+ 
+ Intensity Level:(3/5) 
+ 
+ 
+ 
+ Terroir &amp; Process 
+ 
+ Naturals Arabica - Bruised Anaerobic Process 
+ Varietal -  Sarchimor 
+ Elevation - 1100 m.a.s.l 
+ 
+ 
+ 
+ Origin 
+ Boothangudi Coffee Estate 
+ 
+ 
+ QGrader's Impression 
+ "" Very Complex fruity coffee. Flavor basket of purple berries of black current, mulberry and blueberry. Syrupy, smooth mouthfeel, crisp berry acidity with medium to long aftertaste. Imparts a juicy mouthfeel when brewed hot, as the coffee cools, becomes more mellow sweet syrupy coffee.""",https://www.thecoffeecircus.com/products/carnival,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Carnival_250g.png?v=1756811978
+Carnival | C3 | Drip Coffee,Coffee Circus,300.0,5 Bags,Medium Roast,"Mixed Fruits of Mulberry, Black Current, Blueberry Intensity Soft Balanced Strong Intensity Level:(3/5) Terroir &amp","body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling on small screens */
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .intensity-bar {
+            background: linear-gradient(to right, #f3e5ab, #8b4513);
+            width: 100%;
+            height: 20px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .intensity-indicator {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 5%;
+            background-color: black;
+            border-radius: 2px;
+            transition: left 0.3s;
+            left: 50%; /* Adjusted for 1-13 scale (Intensity ~12) */
+        }
+
+        .intensity-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .intensity-bar {
+                height: 15px;
+            }
+
+            .intensity-scale {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .intensity-bar {
+                height: 12px;
+            }
+
+            .intensity-scale {
+                font-size: 9px;
+            }
+        }
+     
+ 
+ 
+ 
+ 
+ Product 
+ Carnival | C3 | Drip Coffee 
+ 
+ 
+ Roast Profile 
+ Medium Roast 
+ 
+ 
+ Tasting Notes 
+ Mixed Fruits of Mulberry, Black Current, Blueberry 
+ 
+ 
+ Intensity 
+ 
+ 
+   
+ 
+ 
+ Soft   Balanced   Strong 
+ 
+ Intensity Level:(3/5) 
+ 
+ 
+ 
+ Terroir &amp; Process 
+ 
+ Naturals Arabica - Bruised Anaerobic Process 
+ Varietal -  Sarchimor 
+ Elevation - 1100 m.a.s.l 
+ 
+ 
+ 
+ Origin 
+ Boothangudi Coffee Estate 
+ 
+ 
+ QGrader's Impression 
+ "" Very Complex fruity coffee. Flavor basket of purple berries of black current, mulberry and blueberry. Syrupy, smooth mouthfeel, crisp berry acidity with medium to long aftertaste. Imparts a juicy mouthfeel when brewed hot, as the coffee cools, becomes more mellow sweet syrupy coffee.""",https://www.thecoffeecircus.com/products/drip-coffee-carnival,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Drip_Coffee_Carnival.png?v=1764241215
+Drip Coffee - Assorted,Coffee Circus,300.0,5 Bags,,,"1 x Cannon Ball 
+ 1 x Easy Breezy 
+ 1 x Hoola Hoop 
+ 1 x Carnival 
+ 1 x Barrel Roll",https://www.thecoffeecircus.com/products/drip-coffee-assorted,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Drip_Coffee_Bag.jpg?v=1764240914
+Easy Breezy | C2 | Coffee Bag,Coffee Circus,550.0,250g,Medium Roast,"Peach, Blood Orange, Sweet Lime Intensity Soft Balanced Strong Intensity Level:(3/5) Terroir &amp","body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling on small screens */
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .intensity-bar {
+            background: linear-gradient(to right, #f3e5ab, #8b4513);
+            width: 100%;
+            height: 20px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .intensity-indicator {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 5%;
+            background-color: black;
+            border-radius: 2px;
+            transition: left 0.3s;
+            left: 40%; /* Adjusted for 1-13 scale (Intensity ~12) */
+        }
+
+        .intensity-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .intensity-bar {
+                height: 15px;
+            }
+
+            .intensity-scale {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .intensity-bar {
+                height: 12px;
+            }
+
+            .intensity-scale {
+                font-size: 9px;
+            }
+        }
+     
+ 
+ 
+ 
+ 
+ Product 
+ Easy Breezy 
+ 
+ 
+ Roast Profile 
+ Medium Roast 
+ 
+ 
+ Tasting Notes 
+ Peach, Blood Orange, Sweet Lime 
+ 
+ 
+ Intensity 
+ 
+ 
+   
+ 
+ 
+ Soft   Balanced   Strong 
+ 
+ Intensity Level:(3/5) 
+ 
+ 
+ 
+ Terroir &amp; Process 
+ 
+ Honey Sun Dried Arabica 
+ Varietal -  Selection 9 
+ Elevation - 1050 m.a.s.l 
+ 
+ 
+ 
+ Origin 
+ Hulihundloo Coffee Estate, Chikmagalur, KA, India 
+ 
+ 
+ QGrader's Impression 
+ ""Basket of Complex Citrus, Bright Coffee with hint of ripe peaches, Well rounded juicy flavour of sweet Blood Oranges, Medium to long sweet lime aftertase. The subtle nuanced hint of sweet lime bitters make the coffee a memorable cup. Bright, Complex, (Clean - Not Tangy)""",https://www.thecoffeecircus.com/products/easy-breezy,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Easy_Breezy_250g.png?v=1756812086
+Easy Breezy | C2 | Drip Coffee,Coffee Circus,300.0,5 Bags,Medium Roast,"Peach, Blood Orange, Sweet Lime Intensity Soft Balanced Strong Intensity Level:(3/5) Terroir &amp","body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling on small screens */
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .intensity-bar {
+            background: linear-gradient(to right, #f3e5ab, #8b4513);
+            width: 100%;
+            height: 20px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .intensity-indicator {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 5%;
+            background-color: black;
+            border-radius: 2px;
+            transition: left 0.3s;
+            left: 40%; /* Adjusted for 1-13 scale (Intensity ~12) */
+        }
+
+        .intensity-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .intensity-bar {
+                height: 15px;
+            }
+
+            .intensity-scale {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .intensity-bar {
+                height: 12px;
+            }
+
+            .intensity-scale {
+                font-size: 9px;
+            }
+        }
+     
+ 
+ 
+ 
+ 
+ Product 
+ Easy Breezy - Drip Coffee 
+ 
+ 
+ Roast Profile 
+ Medium Roast 
+ 
+ 
+ Tasting Notes 
+ Peach, Blood Orange, Sweet Lime 
+ 
+ 
+ Intensity 
+ 
+ 
+   
+ 
+ 
+ Soft   Balanced   Strong 
+ 
+ Intensity Level:(3/5) 
+ 
+ 
+ 
+ Terroir &amp; Process 
+ 
+ Honey Sun Dried Arabica 
+ Varietal -  Selection 9 
+ Elevation - 1050 m.a.s.l 
+ 
+ 
+ 
+ Origin 
+ Hulihundloo Coffee Estate, Chikmagalur, KA, India 
+ 
+ 
+ QGrader's Impression 
+ ""Basket of Complex Citrus, Bright Coffee with hint of ripe peaches, Well rounded juicy flavour of sweet Blood Oranges, Medium to long sweet lime aftertase. The subtle nuanced hint of sweet lime bitters make the coffee a memorable cup. Bright, Complex, (Clean - Not Tangy)""",https://www.thecoffeecircus.com/products/drip-coffee-easy-breezy,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Drip_Coffee_Easy_Breezy.png?v=1764241215
+Hario V60-01 Plastic Coffee Dripper (Red),Coffee Circus,600.0,,,,"Hario V60-01 Plastic Coffee Dripper 
+ Widely recognized around the world, the V60 pour over. Why the cone shape? The cone shaped paper filter adds depth to the coffee layer, so that the water flows to the center, extending the amount of time it is in contact with the ground coffee.  
+  COLOR: Red  • SIZE(mm): 115W x 100D x 82H  • CAPACITY: 1-2 cups  • MATERIAL: Polypropylene",https://www.thecoffeecircus.com/products/french-press-coffee-bags,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/hario_V60.png?v=1759140967
+Hario V60-01 Plastic Coffee Dripper (White),Coffee Circus,600.0,,,,"Hario V60-01 Plastic Coffee Dripper 
+ Widely recognized around the world, the V60 pour over. Why the cone shape? The cone shaped paper filter adds depth to the coffee layer, so that the water flows to the center, extending the amount of time it is in contact with the ground coffee.  
+  COLOR: White  • SIZE(mm): 115W x 100D x 82H  • CAPACITY: 1-2 cups  • MATERIAL: Polypropylene",https://www.thecoffeecircus.com/products/hario-v60-01-plastic-coffee-dripper-white,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/hario_v60_white.png?v=1759141754
+Hoola Hoop | C3 | Coffee Bag,Coffee Circus,600.0,250g,,"Pineapple, Mangosteen, Tropical Fruits Intensity Soft Balanced Strong Intensity Level:(3/5) Terroir &amp","body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling on small screens */
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .intensity-bar {
+            background: linear-gradient(to right, #f3e5ab, #8b4513);
+            width: 100%;
+            height: 20px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .intensity-indicator {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 5%;
+            background-color: black;
+            border-radius: 2px;
+            transition: left 0.3s;
+            left: 50%; /* Adjusted for 1-13 scale (Intensity ~12) */
+        }
+
+        .intensity-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .intensity-bar {
+                height: 15px;
+            }
+
+            .intensity-scale {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .intensity-bar {
+                height: 12px;
+            }
+
+            .intensity-scale {
+                font-size: 9px;
+            }
+        }
+     
+ 
+ 
+ 
+ 
+ Product 
+ Hoola Hoop | C3 | Coffee Bag 
+ 
+ 
+ Roast Profile 
+ Medium Roast 
+ 
+ 
+ Tasting Notes 
+ Pineapple, Mangosteen, Tropical Fruits 
+ 
+ 
+ Intensity 
+ 
+ 
+   
+ 
+ 
+ Soft   Balanced   Strong 
+ 
+ Intensity Level:(3/5) 
+ 
+ 
+ 
+ Terroir &amp; Process 
+ 
+ Anaerobic Process Arabica 
+ Varietal -  Sarchimor 
+ Elevation - 950 m.a.s.l 
+ 
+ 
+ 
+ Origin 
+ Sangameshwar Coffee Estate 
+ 
+ 
+ QGrader's Impression 
+ "" This coffee is syrupy sweet, bursting with tropical fruit notes. Complex fruit acidity, well rounded juicy mouthfeel. Flavours of ripe pineapple, stone fruits, mangosteen aftertaste. when hot it reflect a fruity brightness, as it cools, the coffee tastes like stewed fruits with a clean medium to long aftertaste.""",https://www.thecoffeecircus.com/products/hoola-hoop,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Hoola_Hoop_250g.png?v=1756812039
+Hoola Hoop | C3 | Drip Coffee,Coffee Circus,300.0,5 Bags,,"Pineapple, Mangosteen, Tropical Fruits Intensity Soft Balanced Strong Intensity Level:(3/5) Terroir &amp","body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling on small screens */
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .intensity-bar {
+            background: linear-gradient(to right, #f3e5ab, #8b4513);
+            width: 100%;
+            height: 20px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .intensity-indicator {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 5%;
+            background-color: black;
+            border-radius: 2px;
+            transition: left 0.3s;
+            left: 50%; /* Adjusted for 1-13 scale (Intensity ~12) */
+        }
+
+        .intensity-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+
+            .table-container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .intensity-bar {
+                height: 15px;
+            }
+
+            .intensity-scale {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .intensity-bar {
+                height: 12px;
+            }
+
+            .intensity-scale {
+                font-size: 9px;
+            }
+        }
+     
+ 
+ 
+ 
+ 
+ Product 
+ Hoola Hoop | C3 | Drip Coffee 
+ 
+ 
+ Roast Profile 
+ Medium Roast 
+ 
+ 
+ Tasting Notes 
+ Pineapple, Mangosteen, Tropical Fruits 
+ 
+ 
+ Intensity 
+ 
+ 
+   
+ 
+ 
+ Soft   Balanced   Strong 
+ 
+ Intensity Level:(3/5) 
+ 
+ 
+ 
+ Terroir &amp; Process 
+ 
+ Anaerobic Process Arabica 
+ Varietal -  Sarchimor 
+ Elevation - 950 m.a.s.l 
+ 
+ 
+ 
+ Origin 
+ Sangameshwar Coffee Estate 
+ 
+ 
+ QGrader's Impression 
+ "" This coffee is syrupy sweet, bursting with tropical fruit notes. Complex fruit acidity, well rounded juicy mouthfeel. Flavours of ripe pineapple, stone fruits, mangosteen aftertaste. when hot it reflect a fruity brightness, as it cools, the coffee tastes like stewed fruits with a clean medium to long aftertaste.""",https://www.thecoffeecircus.com/products/drip-coffee-hoola-hoop,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Drip_Coffee_Hoola_Hoop.png?v=1764241215
+Taster Pack [Beans & Pre-Ground] (30g x 5 Variants),Coffee Circus,300.0,30g,,,"Assorted trial pack of coffees below 
+ 
+ Cannon Ball 30g 
+ Easy Breezy 30g 
+ Hoola Hoop 30g 
+ Carnival 30g 
+ Barrel Roll 30g 
+ 
+ Choose from Whole Beans to Grind options suit your brewing method. 
+ (Note : In case Mixed grind size is required. Please add to cart Trial pack variants from individual product menus.)",https://www.thecoffeecircus.com/products/assorted-trial-pack-coffees-30g-x-5-variants,https://cdn.shopify.com/s/files/1/0574/8270/7031/files/Barrel_Roll_250g.png?v=1756811935

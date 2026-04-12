@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-padding-top: 140px;
+}
+
+body {
+  @apply text-luxury-umber bg-luxury-light;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container-page {
+  @apply max-w-7xl mx-auto px-6;
+}
+
+.shelf-glow {
+  box-shadow: 0 -4px 20px -5px rgba(117, 82, 54, 0.2), 0 4px 20px -5px rgba(117, 82, 54, 0.2);
+}
+
+.stone-gradient {
+  background: linear-gradient(180deg, #F5F0E8 0%, #EBE3D5 100%);
+}
+
+.premium-card {
+  @apply bg-[#FCFAF8] border border-luxury-clay/40 transition-all duration-500 shadow-sm rounded-2xl;
+}
+
+.premium-card:hover {
+  @apply border-luxury-gold/50 bg-white;
+  box-shadow: 0 20px 40px -15px rgba(38, 28, 21, 0.15);
+  transform: translateY(-4px);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+

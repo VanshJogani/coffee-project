@@ -1,0 +1,25 @@
+{
+  "name": "coffee-roaster-browser",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Full-stack app to browse, filter, search and review coffee products.",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "seed": "node backend/seed.js cleaned_coffee_products.json",
+    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "npm --workspace backend run dev",
+    "dev:frontend": "npm --workspace frontend run dev",
+    "build": "npm --workspace backend run build && npm --workspace frontend run build",
+    "start": "npm --workspace backend run start",
+    "test": "npm --workspace backend test && npm --workspace frontend test"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  },
+  "dependencies": {
+    "csv-parse": "^6.1.0"
+  }
+}

@@ -1,0 +1,134 @@
+product_id,product_name,variant_title,price,vendor,type
+8202379264137,Don Diego - El Paraiso Castillo Lychee - 250 gms / Whole Beans,250 gms / Whole Beans,3200.0,Savorworks Roasters,
+8202379264137,Don Diego - El Paraiso Castillo Lychee - 250 gms / Espresso,250 gms / Espresso,3200.0,Savorworks Roasters,
+8202379264137,Don Diego - El Paraiso Castillo Lychee - 250 gms / Moka Pot,250 gms / Moka Pot,3200.0,Savorworks Roasters,
+8202379264137,Don Diego - El Paraiso Castillo Lychee - 250 gms / Aeropress,250 gms / Aeropress,3200.0,Savorworks Roasters,
+8202379264137,Don Diego - El Paraiso Castillo Lychee - 250 gms / Inverted Aeropress,250 gms / Inverted Aeropress,3200.0,Savorworks Roasters,
+8202379264137,Don Diego - El Paraiso Castillo Lychee - 250 gms / Pour-Over,250 gms / Pour-Over,3200.0,Savorworks Roasters,
+8202379264137,Don Diego - El Paraiso Castillo Lychee - 250 gms / Cold Brew,250 gms / Cold Brew,3200.0,Savorworks Roasters,
+8202379264137,Don Diego - El Paraiso Castillo Lychee - 250 gms / French Press,250 gms / French Press,3200.0,Savorworks Roasters,
+8202379264137,Don Diego - El Paraiso Castillo Lychee - 250 gms / South Indian-Filter,250 gms / South Indian-Filter,3200.0,Savorworks Roasters,
+6989893238921,Heisenberg - Whole Beans / 250 gms,Whole Beans / 250 gms,1050.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Whole Beans / 1 kg in Pouch,Whole Beans / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Aeropress / 250 gms,Aeropress / 250 gms,1050.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Aeropress / 1 kg in Pouch,Aeropress / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Espresso / 250 gms,Espresso / 250 gms,1050.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Espresso / 1 kg in Pouch,Espresso / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Pour Over / 250 gms,Pour Over / 250 gms,1050.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Pour Over / 1 kg in Pouch,Pour Over / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - French Press / 250 gms,French Press / 250 gms,1050.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - French Press / 1 kg in Pouch,French Press / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Moka Pot / 250 gms,Moka Pot / 250 gms,1050.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Moka Pot / 1 kg in Pouch,Moka Pot / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Cold Brew / 250 gms,Cold Brew / 250 gms,1050.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Cold Brew / 1 kg in Pouch,Cold Brew / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Channi / 250 gms,Channi / 250 gms,1050.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Channi / 1 kg in Pouch,Channi / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - South Indian Filter / 250 gms,South Indian Filter / 250 gms,1050.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - South Indian Filter / 1 kg in Pouch,South Indian Filter / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Turkish / 250 gms,Turkish / 250 gms,1050.0,Savorworks Roasters,Coffee
+6989893238921,Heisenberg - Turkish / 1 kg in Pouch,Turkish / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Whole Beans / 250 g,Whole Beans / 250 g,1050.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Whole Beans / 1 kg in Pouch,Whole Beans / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Aeropress / 250 g,Aeropress / 250 g,1050.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Aeropress / 1 kg in Pouch,Aeropress / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Espresso / 250 g,Espresso / 250 g,1050.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Espresso / 1 kg in Pouch,Espresso / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Pour Over / 250 g,Pour Over / 250 g,1050.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Pour Over / 1 kg in Pouch,Pour Over / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - French Press / 250 g,French Press / 250 g,1050.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - French Press / 1 kg in Pouch,French Press / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Moka Pot / 250 g,Moka Pot / 250 g,1050.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Moka Pot / 1 kg in Pouch,Moka Pot / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Cold Brew / 250 g,Cold Brew / 250 g,1050.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Cold Brew / 1 kg in Pouch,Cold Brew / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Channi / 250 g,Channi / 250 g,1050.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Channi / 1 kg in Pouch,Channi / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - South Indian Filter / 250 g,South Indian Filter / 250 g,1050.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - South Indian Filter / 1 kg in Pouch,South Indian Filter / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Turkish / 250 g,Turkish / 250 g,1050.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Turkish / 1 kg in Pouch,Turkish / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Inverted Aeropress / 250 g,Inverted Aeropress / 250 g,1050.0,Savorworks Roasters,Coffee
+6989894090889,Fruits Bomb - Inverted Aeropress / 1 kg in Pouch,Inverted Aeropress / 1 kg in Pouch,3600.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Whole Beans / 250 g,Whole Beans / 250 g,630.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Whole Beans / 1 kg,Whole Beans / 1 kg,2100.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Aeropress / 250 g,Aeropress / 250 g,630.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Aeropress / 1 kg,Aeropress / 1 kg,2100.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Espresso / 250 g,Espresso / 250 g,630.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Espresso / 1 kg,Espresso / 1 kg,2100.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Pour Over / 250 g,Pour Over / 250 g,630.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Pour Over / 1 kg,Pour Over / 1 kg,2100.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - French Press / 250 g,French Press / 250 g,630.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - French Press / 1 kg,French Press / 1 kg,2100.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Moka Pot / 250 g,Moka Pot / 250 g,630.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Moka Pot / 1 kg,Moka Pot / 1 kg,2100.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Cold Brew / 250 g,Cold Brew / 250 g,630.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Cold Brew / 1 kg,Cold Brew / 1 kg,2100.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Channi / 250 g,Channi / 250 g,630.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Channi / 1 kg,Channi / 1 kg,2100.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - South Indian Filter / 250 g,South Indian Filter / 250 g,630.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - South Indian Filter / 1 kg,South Indian Filter / 1 kg,2100.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Turkish / 250 g,Turkish / 250 g,630.0,Savorworks Roasters,Coffee
+7873530429577,Vienna - Dark Roast - Turkish / 1 kg,Turkish / 1 kg,2100.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Whole Beans / 250 g,Whole Beans / 250 g,750.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Whole Beans / 1 kg,Whole Beans / 1 kg,2500.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Aeropress / 250 g,Aeropress / 250 g,750.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Aeropress / 1 kg,Aeropress / 1 kg,2500.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Espresso / 250 g,Espresso / 250 g,750.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Espresso / 1 kg,Espresso / 1 kg,2500.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Pour Over / 250 g,Pour Over / 250 g,750.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Pour Over / 1 kg,Pour Over / 1 kg,2500.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - French Press / 250 g,French Press / 250 g,750.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - French Press / 1 kg,French Press / 1 kg,2500.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Moka Pot / 250 g,Moka Pot / 250 g,750.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Moka Pot / 1 kg,Moka Pot / 1 kg,2500.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Cold Brew / 250 g,Cold Brew / 250 g,750.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Cold Brew / 1 kg,Cold Brew / 1 kg,2500.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Channi / 250 g,Channi / 250 g,750.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Channi / 1 kg,Channi / 1 kg,2500.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - South Indian Filter / 250 g,South Indian Filter / 250 g,750.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - South Indian Filter / 1 kg,South Indian Filter / 1 kg,2500.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Turkish / 250 g,Turkish / 250 g,750.0,Savorworks Roasters,Coffee
+7027769311369,Blue Sky - Mixed Naturals - 48 Hours - Turkish / 1 kg,Turkish / 1 kg,2500.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Whole Beans / 250 g,Whole Beans / 250 g,630.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Whole Beans / 1 kg,Whole Beans / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Aeropress / 250 g,Aeropress / 250 g,630.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Aeropress / 1 kg,Aeropress / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Espresso / 250 g,Espresso / 250 g,630.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Espresso / 1 kg,Espresso / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Pour Over / 250 g,Pour Over / 250 g,630.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Pour Over / 1 kg,Pour Over / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - French Press / 250 g,French Press / 250 g,630.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - French Press / 1 kg,French Press / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Moka Pot / 250 g,Moka Pot / 250 g,630.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Moka Pot / 1 kg,Moka Pot / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Cold Brew / 250 g,Cold Brew / 250 g,630.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Cold Brew / 1 kg,Cold Brew / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Channi / 250 g,Channi / 250 g,630.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Channi / 1 kg,Channi / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - South Indian Filter / 250 g,South Indian Filter / 250 g,630.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - South Indian Filter / 1 kg,South Indian Filter / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Turkish / 250 g,Turkish / 250 g,630.0,Savorworks Roasters,Coffee
+6989891698825,Riverdale - Medium to Dark Roast - Turkish / 1 kg,Turkish / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Whole Beans / 250 g,Whole Beans / 250 g,630.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Whole Beans / 1 kg,Whole Beans / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Aeropress / 250 g,Aeropress / 250 g,630.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Aeropress / 1 kg,Aeropress / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Espresso / 250 g,Espresso / 250 g,630.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Espresso / 1 kg,Espresso / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Pour Over / 250 g,Pour Over / 250 g,630.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Pour Over / 1 kg,Pour Over / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - French Press / 250 g,French Press / 250 g,630.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - French Press / 1 kg,French Press / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Moka Pot / 250 g,Moka Pot / 250 g,630.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Moka Pot / 1 kg,Moka Pot / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Cold Brew / 250 g,Cold Brew / 250 g,630.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Cold Brew / 1 kg,Cold Brew / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Channi / 250 g,Channi / 250 g,630.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Channi / 1 kg,Channi / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - South Indian Filter / 250 g,South Indian Filter / 250 g,630.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - South Indian Filter / 1 kg,South Indian Filter / 1 kg,2100.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Turkish / 250 g,Turkish / 250 g,630.0,Savorworks Roasters,Coffee
+6989894123657,Boss's Wife - House Blend - Turkish / 1 kg,Turkish / 1 kg,2100.0,Savorworks Roasters,Coffee
+7875283550345,Coffee Drip Kit - Nutty & Chocolaty,,375.0,Savorworks Roasters,Coffee
+7875284304009,Coffee Drip Kit - Fruity and Well Balanced,,375.0,Savorworks Roasters,Coffee

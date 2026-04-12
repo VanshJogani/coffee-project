@@ -1,0 +1,100 @@
+﻿NAME: ''
+  PRICE: Regular price Rs. 210.00 Regular price Rs. 240.00 Sale price Rs. 210.00 Sale Sold out
+  DESC: 'Grey | Pulneys - 100% Organic Coffee *This 75gms coffee will only be available f'
+
+NAME: ''
+  PRICE: Regular price Rs. 210.00 Regular price Rs. 240.00 Sale price Rs. 210.00 Sale Sold out
+  DESC: 'TAN | BAARBARA ESTATE *This 75gms coffee will only be available for purchase if '
+
+NAME: 'Love Tulum Coffee?'
+  PRICE: Regular price Rs. 1,860.00 Regular price Rs. 2,115.00 Sale price Rs. 1,860.00 Sale Sold out
+  DESC: "If you're not sure about\xa0the grind size click here to learn more Love Tulum Coff"
+
+NAME: "Don't Stress, Just Aero Press Badge"
+  PRICE: Regular price Rs. 89.00 Regular price Rs. 129.00 Sale price Rs. 89.00 Sale Sold out
+  DESC: 'Tulum is a coffee company specialising in coffees sourced from Indian farms. Our'
+
+NAME: 'AeroPress Filter Paper Storage Box û Lightweight, Durable, and Travel-Friendly'
+  PRICE: Regular price Rs. 333.00 Regular price Rs. 399.00 Sale price Rs. 333.00 Sale Sold out
+  DESC: 'AP FILTER PAPER STASH BOX Keep your AeroPress filter papers safe, organised, and'
+
+NAME: ''
+  PRICE: Regular price Rs. 625.00 Regular price Rs. 625.00 Sale price Rs. 625.00 Sale Sold out
+  DESC: 'Tan | Baarbara Estate This Baarbara estate coffee is hazelnutty. This single-ori'
+
+NAME: 'Coffee Bean Cellar - Amber Acrylic Storage Jar | 1 Pc'
+  PRICE: Regular price Rs. 184.00 Regular price Rs. 259.00 Sale price Rs. 184.00 Sale Sold out
+  DESC: 'The Amber Acrylic Coffee Bean Cellar is designed for coffee lovers who need a li'
+
+NAME: 'Tulum Brew Stick û A Tool to Better your Pour-Over Game | Glass | 1 Pc'
+  PRICE: Regular price Rs. 155.00 Regular price Rs. 209.00 Sale price Rs. 155.00 Sale Sold out
+  DESC: 'Tulum Brew Stick û Elevate Your Pour-Over Ritual A sleek, functional tool design'
+
+NAME: 'Coffee Bean Cellar - Amber Glass Storage Jar | 1 Pc'
+  PRICE: Regular price Rs. 221.00 Regular price Rs. 279.00 Sale price Rs. 221.00 Sale Sold out
+  DESC: 'Keep your coffee beans fresh and flavorful with the Amber Glass Coffee Bean Cell'
+
+NAME: 'Coffee Stickers 2 pcs'
+  PRICE: Regular price Rs. 40.00 Regular price Rs. 45.00 Sale price Rs. 40.00 Sale Sold out
+  DESC: 'We have designed and made custom shape coffee stickers. Say no to square and cir'
+
+NAME: ''
+  PRICE: Regular price Rs. 645.00 Regular price Rs. 645.00 Sale price Rs. 645.00 Sale Sold out
+  DESC: 'Lumen Blend û Light, Bright & Fruity Coffee The Lumen Blend is made with 100% Ar'
+
+NAME: ''
+  PRICE: Regular price Rs. 625.00 Regular price Rs. 625.00 Sale price Rs. 625.00 Sale Sold out
+  DESC: 'Grey | Pulneys - 100% Organic Coffee Indulge in the rich, chocolatey flavour of '
+
+NAME: 'RDT Spray Bottle | Amber | 30ml'
+  PRICE: Regular price Rs. 189.00 Regular price Rs. 239.00 Sale price Rs. 189.00 Sale Sold out
+  DESC: 'Say goodbye to messy coffee grounds with a quick spray before grinding. Our RDT '
+
+NAME: 'RDT Spray Bottle | Matte Black | 30ml'
+  PRICE: Regular price Rs. 199.00 Regular price Rs. 259.00 Sale price Rs. 199.00 Sale Sold out
+  DESC: 'Say goodbye to messy coffee grounds with a quick spray before grinding. Our RDT '
+
+NAME: ''
+  PRICE: Regular price Rs. 0.00 Regular price Sale price Rs. 0.00 Sale Sold out
+  DESC: 'Tulum is a coffee company specialising in coffees sourced from Indian farms. Our'
+
+NAME: ''
+  PRICE: Regular price Rs. 1,745.00 Regular price Rs. 1,895.00 Sale price Rs. 1,745.00 Sale Sold out
+  DESC: 'The Blend Bundle Crafted. Balanced. Bold. For the coffee drinker who appreciates'
+
+NAME: ''
+  PRICE: Regular price Rs. 1,725.00 Regular price Rs. 1,875.00 Sale price Rs. 1,725.00 Sale Sold out
+  DESC: 'THE OG BUNDLE The Classics ò The Foundations ò The Originals. Experience the cof'
+
+NAME: ''
+  PRICE: Regular price Rs. 625.00 Regular price Rs. 625.00 Sale price Rs. 625.00 Sale Sold out
+  DESC: "The Saigon Blend It's a Good Morning, Vietnam Inspired by the rich culture, trad"
+
+NAME: ''
+  PRICE: Regular price Rs. 625.00 Regular price Rs. 625.00 Sale price Rs. 625.00 Sale Sold out
+  DESC: 'The Swell Blend Discover the Perfect Harmony in Every Sip Introducing The Swell '
+
+NAME: ''
+  PRICE: Regular price Rs. 930.00 Regular price Rs. 975.00 Sale price Rs. 930.00 Sale Sold out
+  DESC: 'Our Ultimate Sampler Box features a selection of five 75 g packs made up of the '
+
+NAME: ''
+  PRICE: Regular price Rs. 210.00 Regular price Rs. 240.00 Sale price Rs. 210.00 Sale Sold out
+  DESC: 'Red | Thogarihunkal\xa0Washed *This 75gms coffee will only be available for purchas'
+
+NAME: ''
+  PRICE: Regular price Rs. 625.00 Regular price Rs. 625.00 Sale price Rs. 625.00 Sale Sold out
+  DESC: 'Red | Thogarihunkal\xa0Washed This Thogarihunkal-washed coffee is Truly chocolatey.'
+
+NAME: ''
+  PRICE: Regular price Rs. 500.00 Regular price Sale price Rs. 500.00 Sale Sold out
+  DESC: 'Tulum is a coffee company specialising in coffees sourced from Indian farms. Our'
+
+NAME: 'Tulum Tote Bag'
+  PRICE: Regular price Rs. 299.00 Regular price Rs. 350.00 Sale price Rs. 299.00 Sale Sold out
+  DESC: "Introducing Tulum's canvas tote bags, perfect for everyday carry! This durable b"
+
+NAME: ''
+  PRICE: Regular price Rs. 645.00 Regular price Rs. 645.00 Sale price Rs. 645.00 Sale Sold out
+  DESC: 'Watermelon Fermented Inspired by innovative fermentation techniques , our Waterm'
+
