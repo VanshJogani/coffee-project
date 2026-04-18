@@ -15,6 +15,7 @@ router.get("/", async (req, res, next) => {
       roaster,
       roastType,
       origin,
+      process,
       category,
       search,
       sort = "newest",
@@ -46,6 +47,14 @@ router.get("/", async (req, res, next) => {
 
     if (origin) {
       whereClauses.push(`p.origin = '${esc(origin)}'`);
+    }
+
+    if (process) {
+      const list = process.split(",").map((r) => r.trim()).filter(Boolean);
+      if (list.length) {
+        const vals = list.map((v) => `'${esc(v)}'`).join(",");
+        whereClauses.push(`p.process IN (${vals})`);
+      }
     }
 
     if (category) {

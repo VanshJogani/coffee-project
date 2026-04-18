@@ -9,6 +9,7 @@ function normalizeProduct(raw, index) {
     roaster: raw.roaster || raw.Roaster || "Unknown Roaster",
     roastType: raw.roastType || raw.Roast_Level || "",
     origin: raw.origin || raw.Origin || raw.Farm || "",
+    process: raw.process || raw.Process || "",
     tastingNotes: raw.tastingNotes || raw.Tasting_Notes || "",
     score: raw.score != null ? Number(raw.score) : null,
     price: raw.price != null ? String(raw.price).replace(/[^0-9.]/g, '') ? Number(String(raw.price).replace(/[^0-9.]/g, '')) : null : (raw.Price != null ? String(raw.Price).replace(/[^0-9.]/g, '') ? Number(String(raw.Price).replace(/[^0-9.]/g, '')) : null : null),
@@ -22,14 +23,45 @@ function normalizeProduct(raw, index) {
   const lowerName = product.name.toLowerCase();
   const lowerDesc = (product.description || "").toLowerCase();
   const combined = lowerName + " " + lowerDesc;
+
+  // If the pipeline already assigned a category, use it as a strong hint
+  const upstreamCategory = raw.category || raw.Category || "";
+
   let category = "Coffee";
 
   // --- Subscription detection ---
   if (lowerName.includes("subscription") || lowerName.includes("subscribe")) {
     category = "Subscriptions";
   }
-  // --- Accessory / Equipment detection ---
+  // --- Events detection ---
+  else if (["tasting session", "cupping session", "latte art", "throwdown",
+    "workshop", "masterclass", "master class", "coffee walk", "brew class",
+    "competition", "championship", "meetup", "meet up"].some(k => lowerName.includes(k))) {
+    category = "Events";
+  }
+  // --- Strong tea detection (checked before accessories) ---
   else {
+    // Unambiguous tea product names — these override coffee keywords like "blend", "estate"
+    const strongTeaKeywords = [
+      "green tea", "black tea", "white tea", "oolong tea", "oolong",
+      "rooibos", "herbal tea", "tisane", "earl grey", "matcha",
+      "cascara", "blossom tea", "masala tea", "masala chai",
+      "darjeeling tea", "assam tea", "nilgiri tea", "chamomile",
+      "jasmine tea", "lemon tea", "mango tea", "vanilla tea",
+      "apple tea", "flower tea", "blooming tea", "kombucha"
+    ];
+    // Broader tea signals (with word boundary protection)
+    const teaKeywords = [
+      "tea ", " tea", "chai ", " chai"
+    ];
+
+    const hasStrongTeaKeyword = strongTeaKeywords.some(k => lowerName.includes(k));
+    const hasTeaKeyword = hasStrongTeaKeyword || teaKeywords.some(k => lowerName.includes(k));
+
+    // Only a very specific set of coffee signals should override tea in the NAME
+    const strongCoffeeInName = ["coffee bean", "coffee roast", "roasted coffee", "whole bean coffee"]
+      .some(k => lowerName.includes(k));
+
     const accessoryKeywords = [
       // Brewing Equipment
       "aeropress", "v60", "hario", "chemex", "french press", "moka pot",
@@ -96,11 +128,6 @@ function normalizeProduct(raw, index) {
       "keychain", "magnet"
     ];
 
-    const teaKeywords = [
-      "tea ", " tea", "chai ", " chai", "matcha", "green tea", "black tea",
-      "herbal tea", "tisane", "iced tea"
-    ];
-
     const coffeeKeywords = [
       "roast", "beans", "bean ", "blend", "estate", "coffee", "peaberry",
       "arabica", "robusta", "naturals", "microlot", "decaf", "espresso",
@@ -115,7 +142,6 @@ function normalizeProduct(raw, index) {
     );
     const hasCoffeeKeyword = coffeeKeywords.some(k => lowerName.includes(k));
     const hasAccessoryKeyword = accessoryKeywords.some(k => lowerName.includes(k));
-    const hasTeaKeyword = teaKeywords.some(k => lowerName.includes(k));
     const isDefinitelyNotCoffee = definitelyNotCoffee.some(k => lowerName.includes(k));
     const hasStrongCoffeeAttr = Boolean(product.roastType || raw.Roast_Level);
 
@@ -123,17 +149,48 @@ function normalizeProduct(raw, index) {
     if (isDefinitelyNotCoffee && !hasCoffeeKeyword) {
       category = "Accessories";
     }
-    // 2. Tea detection - Prioritize if it has tea keywords and is not strongly coffee
-    else if (hasTeaKeyword && !hasCoffeeKeyword) {
-      // Even if it has "origin", tea has origins too. 
-      // We only skip if it has explicit coffee-only attributes like Roast Level
-      if (!hasStrongCoffeeAttr) {
+    // 2. Strong tea name BUT also a strong accessory keyword — Accessories wins
+    //    (e.g., "Tea & Coffee Brewing Alarm Clock Coffee Machine")
+    else if (hasStrongTeaKeyword && !strongCoffeeInName && hasAccessoryKeyword) {
+      const strongAccessory = ["grinder", "kettle", "gooseneck", "scale ", "v60",
+        "chemex", "aeropress", "french press", "moka pot", "percolator",
+        "tumbler", "mug", "server", "pitcher", "frother", "tamper", "machine",
+        "cup", "cups", "saucer", "glass", "bialetti", "brewer", "press filter",
+        "brass filter", "prass filter", "pour over", "reusable"];
+      if (strongAccessory.some(k => lowerName.includes(k))) {
+        category = "Accessories";
+      } else {
         category = "Tea";
       }
     }
-    // 3. Has accessory keyword AND coffee keyword — check deeper
+    // 3. Strong tea name — classify as Tea even if "blend"/"estate"/roastLevel present
+    //    (these are typically false positives from the cleaner or generic coffee words)
+    //    Only exception: name explicitly says "coffee bean/roast"
+    else if (hasStrongTeaKeyword && !strongCoffeeInName) {
+      category = "Tea";
+    }
+    // 3. Weaker tea signal (just " tea" / " chai") without coffee keywords
+    else if (hasTeaKeyword && !hasCoffeeKeyword && !strongCoffeeInName) {
+      category = "Tea";
+    }
+    // 4. Tea signal + coffee keyword but NOT strong coffee in name — check upstream
+    //    But if it also has a strong accessory keyword, it's equipment not tea
+    else if (hasTeaKeyword && !strongCoffeeInName) {
+      const strongAccessory = ["grinder", "kettle", "gooseneck", "scale ", "v60",
+        "chemex", "aeropress", "french press", "moka pot", "percolator",
+        "tumbler", "mug", "server", "pitcher", "frother", "tamper", "machine",
+        "cup", "cups", "saucer", "glass", "bialetti", "brewer", "press filter",
+        "brass filter", "prass filter", "pour over", "reusable"];
+      if (hasAccessoryKeyword && strongAccessory.some(k => lowerName.includes(k))) {
+        category = "Accessories";
+      } else {
+        // Trust the pipeline category if available, otherwise default to Tea
+        // since most "blend"/"estate" matches on tea products are false positives
+        category = (upstreamCategory === "Tea" || !hasStrongCoffeeAttr) ? "Tea" : "Coffee";
+      }
+    }
+    // 5. Has accessory keyword AND coffee keyword — check deeper
     else if (hasAccessoryKeyword && hasCoffeeKeyword) {
-      // If it's clearly equipment, always mark accessory
       const strongAccessory = ["grinder", "kettle", "gooseneck", "scale ", "v60",
         "chemex", "aeropress", "french press", "moka pot", "percolator",
         "tumbler", "mug", "server", "pitcher", "frother", "tamper", "machine",
@@ -143,22 +200,24 @@ function normalizeProduct(raw, index) {
         category = "Accessories";
       }
     }
-    // 4. Explicit accessory in name, no coffee keyword
+    // 6. Explicit accessory in name, no coffee keyword
     else if (hasAccessoryKeyword && !hasCoffeeKeyword) {
       category = "Accessories";
     }
-    // 5. No coffee keywords AND no coffee attributes — probably not coffee
+    // 7. No coffee keywords AND no coffee attributes — probably not coffee
     else if (!hasCoffeeKeyword && !hasStrongCoffeeAttr) {
-      // Check description more strictly: need 2+ coffee keywords to keep it as Coffee
       const descCoffeeHits = coffeeKeywords.filter(k => lowerDesc.includes(k)).length;
       if (descCoffeeHits < 2) {
-        // If it still has tea keywords, it's Tea, otherwise Accessories
         if (hasTeaKeyword) {
           category = "Tea";
         } else {
           category = "Accessories";
         }
       }
+    }
+    // 8. If upstream pipeline already classified and nothing above triggered a change
+    else if (upstreamCategory && upstreamCategory !== "Coffee" && !hasCoffeeKeyword) {
+      category = upstreamCategory;
     }
   }
 
@@ -260,7 +319,7 @@ async function main() {
   db.serialize(() => {
     db.run("DROP TABLE IF EXISTS reviews");
     db.run("DROP TABLE IF EXISTS products");
-    db.run("CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, productId TEXT UNIQUE, name TEXT NOT NULL, roaster TEXT, roastType TEXT, origin TEXT, tastingNotes TEXT, score REAL, price REAL, imageUrl TEXT, cuppingDate TEXT, description TEXT, url TEXT, quantity TEXT, category TEXT);");
+    db.run("CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, productId TEXT UNIQUE, name TEXT NOT NULL, roaster TEXT, roastType TEXT, origin TEXT, process TEXT, tastingNotes TEXT, score REAL, price REAL, imageUrl TEXT, cuppingDate TEXT, description TEXT, url TEXT, quantity TEXT, category TEXT);");
     db.run("CREATE TABLE IF NOT EXISTS reviews (id INTEGER PRIMARY KEY AUTOINCREMENT, productId INTEGER NOT NULL, reviewerName TEXT NOT NULL, rating INTEGER NOT NULL, comment TEXT, createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL, FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE);");
 
     db.run("BEGIN TRANSACTION");
@@ -270,14 +329,15 @@ async function main() {
 
       db.run(
         `INSERT INTO products
-         (productId, name, roaster, roastType, origin, tastingNotes, score, price, imageUrl, cuppingDate, description, url, quantity, category)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (productId, name, roaster, roastType, origin, process, tastingNotes, score, price, imageUrl, cuppingDate, description, url, quantity, category)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           p.productId,
           p.name,
           p.roaster,
           p.roastType,
           p.origin,
+          p.process,
           p.tastingNotes,
           p.score,
           p.price,

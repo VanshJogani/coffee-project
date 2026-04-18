@@ -7,7 +7,9 @@ function ProductDetailModal({
   isOpen,
   onClose,
   onCreateReview,
-  onDeleteReview
+  onDeleteReview,
+  fromRandomizer,
+  onTryAnother
 }) {
   if (!isOpen || !product) return null;
 
@@ -33,16 +35,30 @@ function ProductDetailModal({
               </div>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 hover:bg-luxury-stone/30 rounded-full transition-colors text-luxury-clay hover:text-luxury-umber"
-            aria-label="Close"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-2">
+            {fromRandomizer && onTryAnother && (
+              <button
+                type="button"
+                onClick={onTryAnother}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-luxury-gold/10 text-luxury-umber text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-luxury-gold/20 transition-colors border border-luxury-gold/30"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Try Another
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1.5 hover:bg-luxury-stone/30 rounded-full transition-colors text-luxury-clay hover:text-luxury-umber"
+              aria-label="Close"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 bg-luxury-light/20">

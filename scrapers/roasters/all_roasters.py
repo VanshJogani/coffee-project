@@ -24,6 +24,7 @@ class CorridorSevenScraper(ShopifyScraper):
     ROASTER_NAME = "Corridor Seven"
     BASE_URL     = "https://corridorseven.coffee"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class EstateMonkeyScraper(ShopifyScraper):
     ROASTER_NAME = "Estate Monkey"
@@ -44,6 +45,7 @@ class KorebiScraper(ShopifyScraper):
     ROASTER_NAME = "Korebi"
     BASE_URL     = "https://korebi.coffee"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class KoffeeGeneticsScraper(ShopifyScraper):
     ROASTER_NAME = "Koffee Genetics"
@@ -64,6 +66,7 @@ class SiolimScraper(ShopifyScraper):
     ROASTER_NAME = "Siolim"
     BASE_URL     = "https://www.siolim.coffee"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class BombayIslandScraper(ShopifyScraper):
     ROASTER_NAME = "Bombay Island"
@@ -74,6 +77,7 @@ class DopeScraper(ShopifyScraper):
     ROASTER_NAME = "Dope"
     BASE_URL     = "https://dopecoffee.in"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class GreySoulScraper(ShopifyScraper):
     ROASTER_NAME = "Grey Soul"
@@ -84,11 +88,13 @@ class HunkalHeightsScraper(ShopifyScraper):
     ROASTER_NAME = "Hunkal Heights"
     BASE_URL     = "https://www.hunkalestatecoffee.com"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class HalfLightScraper(ShopifyScraper):
     ROASTER_NAME = "Half Light"
     BASE_URL     = "https://halflightcoffee.com"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class PandurangeScraper(ShopifyScraper):
     ROASTER_NAME = "Pandurange Chikmagalur"
@@ -99,16 +105,19 @@ class DevansScraper(ShopifyScraper):
     ROASTER_NAME = "Devans"
     BASE_URL     = "https://www.devans.in"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class BlackBazaScraper(ShopifyScraper):
     ROASTER_NAME = "Black Baza"
     BASE_URL     = "https://www.blackbazacoffee.com"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class CaarabiScraper(ShopifyScraper):
     ROASTER_NAME = "Caarabi"
     BASE_URL     = "https://caarabicoffee.com"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class VuiScraper(ShopifyScraper):
     ROASTER_NAME = "Vui"
@@ -139,16 +148,19 @@ class ClassicCoffeeScraper(ShopifyScraper):
     ROASTER_NAME = "Classic"
     BASE_URL     = "https://www.classiccoffees.in"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class MaverickAndFarmerScraper(ShopifyScraper):
     ROASTER_NAME = "Maverick and Farmer"
     BASE_URL     = "https://www.maverickandfarmer.com"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class CoffeeMechanicsScraper(ShopifyScraper):
     ROASTER_NAME = "Coffee Mechanics"
     BASE_URL     = "https://www.coffeemechanics.co.in"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class SevenThousandStepsScraper(ShopifyScraper):
     ROASTER_NAME = "7000 Steps"
@@ -159,11 +171,13 @@ class BlackPoetry(ShopifyScraper):
     ROASTER_NAME = "Black Poetry"
     BASE_URL     = "https://blackpoetry.in"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class BoojeeScraper(ShopifyScraper):
     ROASTER_NAME = "Boojee"
     BASE_URL     = "https://boojeecafe.com"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class BrootCoffeeScraper(ShopifyScraper):
     ROASTER_NAME = "Broot Coffee Roasters"
@@ -179,6 +193,7 @@ class CaffinnaryScraper(ShopifyScraper):
     ROASTER_NAME = "Caffinary"
     BASE_URL     = "https://caffinary.com"
     COLLECTION   = "all"
+    FILTER_COFFEE = True
 
 class CoffeeverseScraper(ShopifyScraper):
     ROASTER_NAME = "Coffeeverse"

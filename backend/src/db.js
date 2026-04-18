@@ -33,6 +33,7 @@ function initSchema(db) {
       roaster TEXT,
       roastType TEXT,
       origin TEXT,
+      process TEXT,
       tastingNotes TEXT,
       score REAL,
       price REAL,
@@ -55,6 +56,86 @@ function initSchema(db) {
       createdAt TEXT NOT NULL,
       updatedAt TEXT NOT NULL,
       FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS user_profile (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      displayName TEXT DEFAULT 'Brewer',
+      defaultGrinder TEXT,
+      defaultBrewer TEXT,
+      createdAt TEXT NOT NULL
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS recipes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      brewerType TEXT NOT NULL,
+      grindSize TEXT,
+      coffeeGrams REAL,
+      waterGrams REAL,
+      waterTempC INTEGER,
+      bloomTimeSec INTEGER,
+      targetBrewTimeSec INTEGER,
+      steps TEXT,
+      isBuiltIn INTEGER DEFAULT 0,
+      sourceRecipe TEXT,
+      notes TEXT,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS bean_inventory (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      productId INTEGER,
+      customName TEXT,
+      customRoaster TEXT,
+      gramsRemaining REAL DEFAULT 0,
+      purchaseDate TEXT,
+      openedDate TEXT,
+      notes TEXT,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL,
+      FOREIGN KEY (productId) REFERENCES products(id) ON DELETE SET NULL
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS brew_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      recipeId INTEGER,
+      beanInventoryId INTEGER,
+      brewerName TEXT,
+      grinderName TEXT,
+      grindSize TEXT,
+      coffeeGrams REAL,
+      waterGrams REAL,
+      waterTempC INTEGER,
+      brewTimeSec INTEGER,
+      rating INTEGER,
+      notes TEXT,
+      isPublic INTEGER DEFAULT 1,
+      createdAt TEXT NOT NULL,
+      FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE SET NULL,
+      FOREIGN KEY (beanInventoryId) REFERENCES bean_inventory(id) ON DELETE SET NULL
+    );
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS brew_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      productId INTEGER NOT NULL,
+      authorName TEXT NOT NULL,
+      body TEXT NOT NULL,
+      brewLogId INTEGER,
+      createdAt TEXT NOT NULL,
+      FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE,
+      FOREIGN KEY (brewLogId) REFERENCES brew_logs(id) ON DELETE SET NULL
     );
   `);
 }

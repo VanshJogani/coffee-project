@@ -1,6 +1,7 @@
 import re
 import time
 import csv
+import json
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import List, Dict, Set, Tuple
@@ -158,32 +159,95 @@ def parse_product_page(html: str, product_url: str, roaster_name: str, fallback_
             name = el.get_text(strip=True)
             break
 
-    # Price
+    # Price — try multiple selector strategies
     price = ""
     currency = ""
-    price_el = soup.select_one(
-        ".price .woocommerce-Price-amount, "
-        ".price .amount, "
-        ".product__price, "
-        ".product-single__price, "
-        ".price"
-    )
-    if price_el:
-        price_text = extract_text(price_el)
-        price = price_text
-        m = re.search(r"(₹|Rs\.?)", price_text)
-        if m:
-            currency = m.group(1)
+    price_selectors = [
+        ".price .woocommerce-Price-amount",
+        ".price .amount",
+        ".product__price",
+        ".product-single__price",
+        "[data-product-price]",
+        ".product-price",
+        "span.money",
+        ".price-item--regular",
+        ".price__regular .price-item",
+        ".price--regular .money",
+        ".product__price .price-item--regular",
+        ".price",
+    ]
+    for sel in price_selectors:
+        price_el = soup.select_one(sel)
+        if price_el:
+            price_text = extract_text(price_el)
+            if price_text and re.search(r"\d", price_text):
+                price = price_text
+                m = re.search(r"(₹|Rs\.?|INR)", price_text)
+                if m:
+                    currency = m.group(1)
+                break
 
-    # Description
+    # Fallback: meta tag for price
+    if not price or not re.search(r"\d", price):
+        meta_price = soup.find("meta", attrs={"property": "product:price:amount"})
+        if not meta_price:
+            meta_price = soup.find("meta", attrs={"property": "og:price:amount"})
+        if meta_price and meta_price.get("content"):
+            price = meta_price["content"]
+            currency = "₹"
+
+    # Fallback: JSON-LD structured data for price
+    if not price or not re.search(r"\d", price):
+        for script in soup.select('script[type="application/ld+json"]'):
+            try:
+                ld = json.loads(script.string)
+                offers = ld.get("offers") if isinstance(ld, dict) else None
+                if isinstance(offers, dict) and offers.get("price"):
+                    price = str(offers["price"])
+                    currency = offers.get("priceCurrency", "₹")
+                    break
+                elif isinstance(offers, list) and offers:
+                    price = str(offers[0].get("price", ""))
+                    currency = offers[0].get("priceCurrency", "₹")
+                    break
+            except (json.JSONDecodeError, AttributeError):
+                continue
+
+    # Fallback: Shopify product JSON endpoint
+    if not price or not re.search(r"\d", price):
+        try:
+            parsed_url = urlparse(product_url)
+            json_url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}.json"
+            resp = requests.get(json_url, headers=HEADERS, timeout=10)
+            if resp.ok:
+                pdata = resp.json().get("product", {})
+                variants_json = pdata.get("variants", [])
+                if variants_json:
+                    price = str(variants_json[0].get("price", ""))
+                    currency = "₹"
+        except Exception:
+            pass
+
+    # Description — try multiple selectors
     description = ""
-    for sel in [
+    desc_selectors = [
         ".woocommerce-product-details__short-description",
         "div.product__description",
         "div.product-single__description",
         "#tab-description",
         ".product-short-description",
-    ]:
+        ".product-description",
+        ".product__content .rte",
+        ".product-single__content .rte",
+        ".rte",
+        "[data-product-description]",
+        "#shopify-product-description",
+        ".tab-content #description",
+        ".product-tabs__content",
+        ".product_description",
+        ".woocommerce-Tabs-panel--description",
+    ]
+    for sel in desc_selectors:
         el = soup.select_one(sel)
         if el and el.get_text(strip=True):
             description = extract_text(el)
@@ -203,6 +267,7 @@ def parse_product_page(html: str, product_url: str, roaster_name: str, fallback_
         ".woocommerce-product-gallery__image img, "
         ".product-single__photo img, "
         ".product__image img, "
+        ".product-featured-img img, "
         ".product img"
     )
     if img_el and (img_el.get("src") or img_el.get("data-src")):
@@ -221,7 +286,7 @@ def parse_product_page(html: str, product_url: str, roaster_name: str, fallback_
         img_url = fallback_image
 
     # Variants / weights such as 250g, 1kg etc.
-    weight_pattern = re.compile(r"\b(\d+(?:\.\d+)?)\s*(kg|g|gm|grams)\b", re.IGNORECASE)
+    weight_pattern = re.compile(r"\b(\d+(?:\.\d+)?)\s*(kg|g|gm|grams|ml)\b", re.IGNORECASE)
     weights = set()
 
     # Common places where variant text shows up
@@ -229,9 +294,14 @@ def parse_product_page(html: str, product_url: str, roaster_name: str, fallback_
     candidate_elements.extend(soup.select("select option"))
     candidate_elements.extend(soup.select("label"))
     candidate_elements.extend(soup.select(".product-form__input, .variant, .swatch__option"))
+    candidate_elements.extend(soup.select("[data-variant-title], .variant-title"))
+    candidate_elements.extend(soup.select("input[type='radio']"))
 
     for el in candidate_elements:
         text = extract_text(el)
+        # Also check value attribute for radio/option elements
+        if not text:
+            text = el.get("value", "") or el.get("data-value", "")
         for m in weight_pattern.finditer(text):
             qty, unit = m.groups()
             unit_norm = unit.lower()
@@ -239,6 +309,31 @@ def parse_product_page(html: str, product_url: str, roaster_name: str, fallback_
                 unit_norm = "g"
             weight_str = f"{qty}{unit_norm}"
             weights.add(weight_str)
+
+    # Fallback: parse weight from product name
+    if not weights:
+        for m in weight_pattern.finditer(name):
+            qty, unit = m.groups()
+            unit_norm = unit.lower()
+            if unit_norm in {"gm", "grams"}:
+                unit_norm = "g"
+            weights.add(f"{qty}{unit_norm}")
+
+    # Fallback: JSON-LD structured data for variants
+    if not weights:
+        for script in soup.select('script[type="application/ld+json"]'):
+            try:
+                ld = json.loads(script.string)
+                if isinstance(ld, dict) and "name" in ld:
+                    ld_name = ld.get("name", "")
+                    for m in weight_pattern.finditer(ld_name):
+                        qty, unit = m.groups()
+                        unit_norm = unit.lower()
+                        if unit_norm in {"gm", "grams"}:
+                            unit_norm = "g"
+                        weights.add(f"{qty}{unit_norm}")
+            except (json.JSONDecodeError, AttributeError):
+                continue
 
     variants_str = "; ".join(sorted(weights)) if weights else ""
 

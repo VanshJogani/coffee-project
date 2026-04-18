@@ -1,13 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import App from "./App";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import ExplorePage from "./pages/ExplorePage";
+import BrewPage from "./pages/BrewPage";
 import "./index.css";
 
 const Root = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/*" element={<App />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/explore" element={<ExplorePage />} />
+      <Route path="/brew/*" element={<BrewPage />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   </BrowserRouter>
 );
@@ -17,4 +22,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Root />
   </React.StrictMode>
 );
-

@@ -10,6 +10,7 @@ function ProductCard({ product, onClick }) {
     origin,
     tastingNotes,
     price,
+    quantity,
     avgRating,
     reviewCount
   } = product;
@@ -65,9 +66,16 @@ function ProductCard({ product, onClick }) {
         <div className="mt-auto pt-4 flex items-center justify-between border-t border-luxury-clay/10">
           <RatingStars value={avgRating} count={reviewCount} />
           {price != null && (
-            <div className="text-sm font-bold text-luxury-umber">
-              <span className="text-[10px] font-medium mr-0.5">₹</span>
-              {Number(price).toLocaleString('en-IN')}
+            <div className="text-right">
+              <div className="text-sm font-bold text-luxury-umber">
+                <span className="text-[10px] font-medium mr-0.5">₹</span>
+                {Number(price).toLocaleString('en-IN')}
+              </div>
+              {quantity && quantity !== "Standard" && (
+                <div className="text-[10px] text-luxury-umber/50 font-medium mt-0.5">
+                  {quantity}
+                </div>
+              )}
             </div>
           )}
         </div>

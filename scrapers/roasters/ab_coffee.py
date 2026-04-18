@@ -13,3 +13,4 @@ class ABCoffeeScraper(ShopifyScraper):
     BASE_URL       = "https://www.abcoffee.in"
     COLLECTION     = "all"
     PRICE_STRATEGY = "min"
+    FILTER_COFFEE  = True

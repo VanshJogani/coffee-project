@@ -11,6 +11,7 @@ The default implementation works well for standard WooCommerce shops.
 """
 from __future__ import annotations
 
+import json
 import re
 import time
 from abc import ABC, abstractmethod
@@ -77,6 +78,10 @@ class HtmlScraper(ABC):
         ".price-wrapper .price",
         ".price-item--regular",
         ".price-item--sale",
+        "[data-product-price]",
+        ".product-price",
+        "span.money",
+        ".price--regular .money",
         ".price",
     ]
     DESC_SELECTORS: list[str] = [
@@ -87,6 +92,12 @@ class HtmlScraper(ABC):
         "#tab-description",
         ".product-short-description",
         ".product.attribute.description .value",
+        ".product-description",
+        ".product__content .rte",
+        ".product-single__content .rte",
+        ".rte",
+        "[data-product-description]",
+        ".woocommerce-Tabs-panel--description",
     ]
     IMG_SELECTORS: list[str] = [
         ".woocommerce-product-gallery__image img",
@@ -234,11 +245,29 @@ class HtmlScraper(ABC):
 
     def _extract_price(self, soup: BeautifulSoup) -> tuple[str, str]:
         el = soup.select_one(", ".join(self.PRICE_SELECTORS))
-        if not el:
-            return "", ""
-        text = el.get_text(" ", strip=True)
-        m = re.search(r"(₹|Rs\.?)", text)
-        return text, m.group(1) if m else ""
+        if el:
+            text = el.get_text(" ", strip=True)
+            if re.search(r"\d", text):
+                m = re.search(r"(₹|Rs\.?)", text)
+                return text, m.group(1) if m else ""
+        # Fallback: meta tag
+        meta = soup.find("meta", attrs={"property": "product:price:amount"})
+        if not meta:
+            meta = soup.find("meta", attrs={"property": "og:price:amount"})
+        if meta and meta.get("content"):
+            return meta["content"], "₹"
+        # Fallback: JSON-LD structured data
+        for script in soup.select('script[type="application/ld+json"]'):
+            try:
+                ld = json.loads(script.string)
+                offers = ld.get("offers") if isinstance(ld, dict) else None
+                if isinstance(offers, dict) and offers.get("price"):
+                    return str(offers["price"]), offers.get("priceCurrency", "₹")
+                if isinstance(offers, list) and offers:
+                    return str(offers[0].get("price", "")), offers[0].get("priceCurrency", "₹")
+            except (json.JSONDecodeError, AttributeError):
+                continue
+        return "", ""
 
     def _extract_description(self, soup: BeautifulSoup) -> str:
         desc = self._first_text(soup, self.DESC_SELECTORS)
@@ -271,18 +300,31 @@ class HtmlScraper(ABC):
         price, since that would need a separate variant API call. The cleaner
         uses the base page price as a fallback for all resulting rows.
         """
-        weight_pat = re.compile(r"\b(\d+(?:\.\d+)?)\s*(kg|g|gm|grams)\b", re.IGNORECASE)
+        weight_pat = re.compile(r"\b(\d+(?:\.\d+)?)\s*(kg|g|gm|grams|gram|ml)\b", re.IGNORECASE)
         weights: set[str] = set()
         candidates = (
             soup.select("select option")
             + soup.select("label")
             + soup.select(".product-form__input, .variant, .swatch__option")
+            + soup.select("[data-variant-title], .variant-title")
+            + soup.select("input[type='radio']")
         )
         for el in candidates:
-            for m in weight_pat.finditer(el.get_text(" ", strip=True)):
+            text = el.get_text(" ", strip=True)
+            if not text:
+                text = el.get("value", "") or el.get("data-value", "")
+            for m in weight_pat.finditer(text):
                 qty, unit = m.groups()
-                unit = "g" if unit.lower() in {"gm", "grams"} else unit.lower()
+                unit = "g" if unit.lower() in {"gm", "grams", "gram"} else unit.lower()
                 weights.add(f"{qty}{unit}")
+        # Fallback: extract weight from product name
+        if not weights:
+            name_el = soup.select_one(", ".join(self.NAME_SELECTORS))
+            if name_el:
+                for m in weight_pat.finditer(name_el.get_text(" ", strip=True)):
+                    qty, unit = m.groups()
+                    unit = "g" if unit.lower() in {"gm", "grams", "gram"} else unit.lower()
+                    weights.add(f"{qty}{unit}")
         return "; ".join(sorted(weights))
 
     # ------------------------------------------------------------------ #

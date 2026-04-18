@@ -6,6 +6,10 @@ const dotenv = require("dotenv");
 const { getDb, initSchema } = require("./db");
 const productsRouter = require("./routes/products");
 const reviewsRouter = require("./routes/reviews");
+const recipesRouter = require("./routes/recipes");
+const inventoryRouter = require("./routes/inventory");
+const brewLogsRouter = require("./routes/brewLogs");
+const brewNotesRouter = require("./routes/brewNotes");
 
 dotenv.config();
 
@@ -32,6 +36,10 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/products", productsRouter);
 app.use("/api/reviews", reviewsRouter);
+app.use("/api/recipes", recipesRouter);
+app.use("/api/inventory", inventoryRouter);
+app.use("/api/brew-logs", brewLogsRouter);
+app.use("/api/brew-notes", brewNotesRouter);
 
 // Basic error handler
 // eslint-disable-next-line no-unused-vars

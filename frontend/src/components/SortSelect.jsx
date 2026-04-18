@@ -12,6 +12,7 @@ function SortSelect({ value, onChange }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >
+        <option value="discover" className="text-luxury-umber">Discover</option>
         <option value="newest" className="text-luxury-umber">Newest First</option>
         <option value="rating" className="text-luxury-umber">Highest Rating</option>
         <option value="roastType" className="text-luxury-umber">Roast Level</option>

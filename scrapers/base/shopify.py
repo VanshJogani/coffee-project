@@ -58,13 +58,21 @@ class ShopifyScraper(ABC):
     # Tags / types that always mean non-coffee
     _NON_COFFEE_TAGS: frozenset[str] = frozenset({
         "merch", "stickers", "subscription", "gift card", "gift_card",
-        "equipment", "accessory", "accessories",
+        "equipment", "accessory", "accessories", "apparel", "clothing",
     })
     _MERCH_TITLE_KW: tuple[str, ...] = (
         "tote bag", "sticker", "badge", "spray bottle", "brew stick",
         "storage jar", "stash box", "filter paper", "subscription",
         "gift card", "sampler box", "sampler", "kettle", "dripper",
-        "grinder", "mug", "tumbler", "t-shirt",
+        "grinder", "mug", "tumbler", "t-shirt", "tshirt", "hoodie",
+        "sweatshirt", "apron", "cap ", "hat ", "socks",
+        "aeropress", "french press", "chemex", "v60", "moka pot",
+        "scale", "tamper", "portafilter", "knock box", "pitcher",
+        "candle", "soap", "air freshener", "poster", "book",
+        "almond butter", "peanut butter", "granola", "energy bar",
+        "protein bar", "bread", "brioche", "burger bun", "banana bread",
+        "brownie", "cookie", "cake", "croissant", "muffin", "sandwich",
+        "gift box", "gift hamper", "vacuum tumbler",
     )
 
     # ------------------------------------------------------------------ #
