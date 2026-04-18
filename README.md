@@ -1,212 +1,289 @@
-## Coffee Explorer – Full‑stack App
+# Coffee Project
 
-A production‑ready example app to browse, filter, search, sort and review specialty coffee products, backed by SQLite and served via an Express API, with a React + Vite + Tailwind frontend.
+A full-stack specialty coffee companion app. Browse and filter coffees from Indian roasters, track your brews with a guided pour timer, manage bean inventory, write and share recipes, and engage with a community feed — all backed by SQLite and served via Express, with a React + Vite + Tailwind frontend.
 
-The app expects a `cleaned_coffee_products.json` file in the project root containing an array of cleaned product objects.
+---
 
-### Project structure
+## What It Does
 
-- **backend/** – Express API + SQLite
-- **frontend/** – React + Vite + Tailwind UI
-- **pipeline/**, **ScraperScripts/**, **Cleaners/** – your existing scraping/cleaning code (unchanged)
-- **results/** – not used directly by this app, kept for your pipeline
+### Explore
+- Browse ~1,700 canonical coffee products from Indian specialty roasters
+- Server-side filtering: roaster, roast type, origin, process, flavour notes, price range
+- Fuse.js fuzzy search with 350ms debounce
+- Dynamic filter options loaded from the DB (no hardcoded lists)
+- Paginated results, sort by newest / rating / price / "discover" (random)
+- Product detail modal with tasting notes, reviews, and average rating
 
-### Backend overview
+### Brew Now
+- Select a bean from your inventory and a recipe to brew with
+- Auto-fills brew parameters (grind, ratio, temp) from the recipe
+- **Pour timer** — for pourover methods (V60, Chemex, Kalita, Clever, etc.):
+  - Derives pour schedule from recipe steps automatically
+  - Manual quick-setup: set number of pours + interval, timer splits water evenly
+  - Live "POUR NOW" pulsing banner with pour weight
+  - Countdown to next pour, segmented progress bar
+  - Effective target time computed from last pour + drawdown
+- Simple step-by-step guidance for non-pourover methods (AeroPress, French Press, Moka Pot)
+- Post-brew log: rating, notes, public/private toggle
+- Save current setup as a new recipe directly from the brew screen
 
-- **Tech**: Node.js, Express, `better-sqlite3`, Jest + Supertest
-- **DB**: SQLite file (default `backend/coffee.db`)
-- **Core tables**:
-  - `products(id, productId, name, roaster, roastType, origin, tastingNotes, score, price, imageUrl, cuppingDate)`
-  - `reviews(id, productId → products.id, reviewerName, rating, comment, createdAt, updatedAt)`
-- **Endpoints**:
-  - `GET /api/products?roaster=&roastType=&origin=&search=&sort=&page=&limit=`
-    - Filters: multi-roaster, multi-roastType, single origin
-    - Search: basic `LIKE` over name/roaster/tastingNotes (backend) + Fuse.js fuzzy search (frontend)
-    - Sort: `newest`, `rating`, `roastType`, `priceAsc`, `priceDesc`
-    - Returns `{ data: [...], pagination: { page, limit, total, totalPages } }`
-  - `GET /api/products/:id` – single product with `avgRating`, `reviewCount`, and `reviews[]`
-  - `POST /api/reviews` – body `{ productId, name, rating (1–5), comment }`
-  - `PUT /api/reviews/:id` – update rating/comment/name
-  - `DELETE /api/reviews/:id`
-  - `GET /api/health` – health check
+### Recipes
+- 6 built-in recipes (James Hoffman V60, Tetsu Kasuya 4:6, AeroPress Inverted, French Press Classic, Moka Pot Stovetop, Chemex Classic)
+- Create, edit, fork, and delete custom recipes
+- Step editor with time, pour grams, and instruction per step
+- Navigate directly from a recipe card to Brew Now with recipe pre-loaded
 
-Basic input validation/sanitization is done in `backend/src/validation.js`. CORS is configured via `.env` (`CORS_ORIGIN`).
+### Community
+- Reddit-style post feed — write a post with a title, body, and optional attached recipe
+- Like posts (upvote counter)
+- Import any attached recipe into your own collection with one click
+- Try a community recipe directly (goes to Brew Now pre-loaded)
+- "Post" button on your recipes opens the compose modal with the recipe pre-attached
 
-### Frontend overview
+### Bean Inventory
+- Add beans by linking to a product in the catalogue or adding a custom entry
+- Track grams remaining, purchase date, open date, notes
+- Inventory entries appear in the Brew Now bean dropdown (with grams remaining shown)
+- Brew logs reference inventory items
 
-- **Tech**: React 18, Vite, React Router, TailwindCSS, Fuse.js, Vitest + Testing Library
-- **Key components** (in `frontend/src/components`):
-  - `ProductCard` – product card in grid
-  - `FiltersPanel` – roaster / roast type / origin multi-select filters
-  - `SearchBar` – global search box
-  - `SortSelect` – sort dropdown
-  - `ProductDetailModal` – detail view with image, origin map link, tasting notes, description and reviews
-  - `Reviews` – list + add/delete review UI
-  - `RatingStars` – star rating display
-  - `Pagination` – simple previous/next pager
+### Brew Log
+- Automatic log entry after every brew
+- Tracks: bean, recipe, brewer, grinder, grind size, ratio, temp, brew time, rating, notes
+- Public/private flag per log entry
 
-The main UI lives in `frontend/src/App.jsx` and uses `/api/products` and `/api/products/:id` to hydrate data. Client‑side fuzzy search is implemented with Fuse.js for quick filtering by name, roaster, tasting notes and origin.
+---
 
-### Setup & running locally
+## Architecture
 
-1. **Prerequisites**
+### Backend
 
+| Layer | Tech |
+|---|---|
+| Runtime | Node.js + Express |
+| Database | SQLite via `better-sqlite3` (synchronous, WAL mode) |
+| ORM | None — raw parameterized SQL |
+| Tests | Jest + Supertest |
+
+**Routes:**
+- `GET/POST /api/products` — paginated product list with 9 server-side filters
+- `GET /api/products/filter-options` — dynamic filter values from DB
+- `GET /api/products/:id` — single product with reviews and avg rating
+- `GET/POST/PUT/DELETE /api/reviews`
+- `GET/POST/PUT/DELETE /api/recipes` — supports `?community=1` for public recipes
+- `GET/POST/PUT/DELETE /api/inventory`
+- `GET/POST/PUT/DELETE /api/brew-logs`
+- `GET/POST/DELETE /api/brew-notes`
+- `GET/POST/PUT/DELETE /api/posts` — community feed
+- `PUT /api/posts/:id/like` — upvote a post
+- `GET /api/health`
+
+**DB Schema highlights:**
+- `products` + `product_variants` — canonical product deduplication (3,097 SKUs → 1,718 products)
+- `recipes` — steps stored as JSON array of `{ timeSec, instruction, pourGrams }`; `isPublic`, `authorName`, `authorSetup` columns added via migration
+- `community_posts` — title, body, authorName, recipeId (FK to recipes), likes counter
+- 13 indexes on filter/join columns
+- Additive migrations via `PRAGMA table_info` + `ALTER TABLE` (safe to re-run)
+
+### Frontend
+
+| Layer | Tech |
+|---|---|
+| Framework | React 18 + Vite |
+| Routing | React Router v6 |
+| Styling | TailwindCSS (custom luxury theme) |
+| HTTP | Axios with response interceptor + vanilla DOM toast |
+| Search | Fuse.js fuzzy re-ranking on current page |
+| State | useState / useReducer / useMemo / custom hooks |
+
+**Custom hooks:**
+- `useFilters` — manages all filter state, fetches filter-options when category changes, exposes `activeFilters` via `useMemo` for reference stability
+- `useProducts` — server-side paginated fetching with cancellation tokens, initial-load-only loading flag, `filtersKey` via `JSON.stringify` to prevent infinite re-fetch loops
+- `useProductDetail` — modal open/close, optimistic review list updates
+
+**Pour timer (pure functional):**
+```
+isPourover(brewerType)
+derivePourSchedule(steps, totalWater)   → schedule from recipe steps
+buildQuickSchedule(numPours, intervalSec, totalWater)  → even-split manual schedule
+computePourState(elapsed, schedule)     → { pourIndex, isPouring, nextPourIn, cumulativeGrams, allDone }
+```
+All state is computed from `elapsed` time on every render — no extra reducer actions, no drift.
+
+---
+
+## What We're Planning to Add
+
+### Grinder Conversion & Dial-In Assistant
+When importing a community recipe, the app will ask for your grinder model. A conversion layer maps grind sizes between grinder types (e.g. Comandante clicks → Timemore clicks → generic coarseness scale). Users can then share "dialed-in" versions of a recipe that are specific to their grinder + coffee combination, so others with the same setup can get a starting point instantly.
+
+### Auth & User Profiles
+Sign up with email or OAuth. User profile captures: display name, grinder, default brewer. This unlocks:
+- Attributing posts and recipes to an account
+- Private vs shared brew logs
+- Following other brewers
+- Personalised recipe recommendations
+
+### Dial-In Sharing
+Each coffee product page gets a "dialed-in setups" section — community members post their exact parameters (grinder, grind setting, dose, yield, time, temp, tasting notes) for that specific coffee. Filterable by grinder model. Think a collaborative dial-in database per coffee.
+
+### Adjust Recipe (Beta)
+When importing a community recipe, an "Adjust for my setup" option runs the recipe through a parameter adjustment model:
+- Grind size conversion (grinder mapping table)
+- Dose/yield scaling (ratio preserved, absolute weights recalculated)
+- Water temperature adjustments for altitude (future)
+
+### Grinder Database
+A reference table of grinder models with their grind range and step size. Used by the conversion layer and the dial-in sharing feature. Community-contributed and admin-curated.
+
+### Notifications / Brew Reminders
+Push or in-app reminders for: "your beans have been open for 14 days", "try a new recipe", etc.
+
+### Offline Mode (PWA)
+Service worker caching for the brew timer and recipe viewer so you can use it without internet mid-brew.
+
+---
+
+## Security Considerations
+
+### Current State (No Auth)
+The app currently has no authentication. All write operations (create recipe, post to community, like, delete) are unauthenticated. This is intentional for the initial version — the focus is on core functionality first.
+
+**Mitigations in place:**
+- All SQL uses parameterized queries (`?` placeholders) — no SQL injection surface
+- `helmet` middleware sets security headers (CSP, HSTS, X-Frame-Options, etc.)
+- CORS configured via `CORS_ORIGIN` env var — locked to frontend origin in production
+- Input validation on required fields (name, brewerType, title, etc.) before DB writes
+- Likes are increment-only — no decrement, no negative values possible
+- `isBuiltIn` recipes are protected from edit/delete at the route level (403 response)
+
+### When Auth Is Added
+- Passwords: bcrypt with work factor ≥ 12, never stored plain
+- Sessions: short-lived JWTs (15min access + refresh token rotation) or `express-session` with a server-side store
+- All write routes gated behind `requireAuth` middleware
+- Recipe/post ownership: only the author (by userId) can edit or delete their content
+- Rate limiting: `express-rate-limit` on auth endpoints and write operations
+- CSRF protection: `SameSite=Strict` cookies or double-submit cookie pattern
+- Content sanitization: strip HTML from all user-supplied text fields before storing
+
+### Data Exposure
+- Currently: all posts, recipes, and brew logs marked `isPublic=1` are world-readable — expected behaviour for a no-auth community feature
+- When auth lands: private brew logs (isPublic=0) must be behind ownership check; currently they're just "not shown in UI" which is not sufficient for sensitive data
+- The SQLite database file should never be in a public directory or committed with real user data — add `backend/coffee.db` to `.gitignore` for production forks
+
+### Input Risks to Watch
+- Recipe `steps` field is stored as JSON and parsed on read — validate that steps is an array of objects before insertion (currently trusts client shape)
+- `authorName` and post `body` are rendered as `textContent` (not `innerHTML`) in React — safe from XSS as-is, but enforce this on any future rich-text upgrade
+- File uploads are not implemented yet — when added, validate MIME type server-side, not just extension; store outside the web root
+
+---
+
+## Setup
+
+### Prerequisites
 - Node.js 18+
-- `cleaned_coffee_products.json` in the project root (same folder as this `README.md`).
+- `cleaned_coffee_products.json` in the project root (product catalogue)
 
-2. **Install dependencies**
-
-From the project root (`PythonProject`):
-
+### Install
 ```bash
 npm install
 ```
+Uses npm workspaces — installs backend and frontend dependencies together.
 
-This uses npm workspaces to install both `backend` and `frontend` dependencies.
-
-3. **Seed the database**
-
+### Seed the database
 ```bash
+# Seed coffee products
 npm run seed
+
+# Seed built-in brew recipes
+node backend/seedRecipes.js
 ```
 
-This runs:
-
-```bash
-node backend/seed.js cleaned_coffee_products.json
-```
-
-It will:
-
-- Create `backend/coffee.db` if needed.
-- Create `products` and `reviews` tables.
-- Load and normalize each entry from `cleaned_coffee_products.json` into `products`.
-- Add a couple of sample reviews per product into `reviews`.
-
-4. **Run the app in development**
-
+### Run in development
 ```bash
 npm run dev
 ```
+- Backend API: `http://localhost:4000`
+- Frontend: `http://localhost:5173` (proxies `/api` to backend)
 
-This starts:
+### Environment variables
+Copy `.env.example` to `.env`:
+```
+BACKEND_PORT=4000
+DATABASE_PATH=./backend/coffee.db
+CORS_ORIGIN=http://localhost:5173
+```
 
-- Backend API on `http://localhost:4000`
-- Frontend dev server on `http://localhost:5173`
-
-The frontend dev server proxies `/api` to the backend, so you only open the frontend URL in your browser.
-
-5. **Run tests**
-
-- Backend tests (Jest + Supertest) and frontend tests (Vitest) from root:
-
+### Run tests
 ```bash
 npm test
 ```
 
-### Example API usage (curl)
+---
 
-Assuming backend on `http://localhost:4000`.
+## Project Structure
 
-- **List products (page 1, 24 per page, newest)**
-
-```bash
-curl "http://localhost:4000/api/products?page=1&limit=24&sort=newest"
+```
+coffee-project/
+├── backend/
+│   ├── src/
+│   │   ├── app.js              Express app setup
+│   │   ├── db.js               Schema, indexes, migrations
+│   │   └── routes/
+│   │       ├── products.js
+│   │       ├── reviews.js
+│   │       ├── recipes.js
+│   │       ├── inventory.js
+│   │       ├── brewLogs.js
+│   │       ├── brewNotes.js
+│   │       └── posts.js        Community post feed
+│   ├── seed.js                 Product catalogue seeder
+│   └── seedRecipes.js          Built-in recipe seeder
+├── frontend/
+│   └── src/
+│       ├── api/client.js       Axios instance + all API functions
+│       ├── hooks/
+│       │   ├── useFilters.js
+│       │   ├── useProducts.js
+│       │   └── useProductDetail.js
+│       └── pages/
+│           ├── ExplorePage.jsx
+│           └── brew/
+│               ├── BrewNowPage.jsx   Pour timer, bean/recipe selection
+│               ├── RecipesPage.jsx   My recipes + community feed
+│               ├── InventoryPage.jsx
+│               └── BrewLogPage.jsx
+├── TECHNICAL_CHANGES.md        Architecture decisions log
+└── README.md
 ```
 
-- **Filter by roaster and roast type**
+---
+
+## API Reference (selected endpoints)
 
 ```bash
-curl "http://localhost:4000/api/products?roaster=Blue%20Tokai,Araku&roastType=Medium%20Roast"
+# Products
+GET  /api/products?roaster=Blue+Tokai&roastType=Light+Roast&page=1&limit=24
+GET  /api/products/filter-options
+GET  /api/products/:id
+
+# Recipes
+GET  /api/recipes               # built-in + my recipes
+GET  /api/recipes?community=1   # public community recipes
+POST /api/recipes
+PUT  /api/recipes/:id
+DELETE /api/recipes/:id
+
+# Community posts
+GET  /api/posts
+POST /api/posts                 # { title, body, authorName, recipeId? }
+PUT  /api/posts/:id/like
+DELETE /api/posts/:id
+
+# Brew logs
+GET  /api/brew-logs
+POST /api/brew-logs             # { recipeId, beanInventoryId, coffeeGrams, ... }
+
+# Inventory
+GET  /api/inventory
+POST /api/inventory             # { productId? | customName, gramsRemaining, ... }
 ```
-
-- **Search (server-side LIKE)**
-
-```bash
-curl "http://localhost:4000/api/products?search=chocolate"
-```
-
-- **Get single product with reviews**
-
-```bash
-curl "http://localhost:4000/api/products/1"
-```
-
-- **Create a review**
-
-```bash
-curl -X POST "http://localhost:4000/api/reviews" \
-  -H "Content-Type: application/json" \
-  -d '{"productId":1,"name":"Vansh","rating":5,"comment":"Loved this coffee!"}'
-```
-
-- **Update a review**
-
-```bash
-curl -X PUT "http://localhost:4000/api/reviews/1" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Vansh","rating":4,"comment":"Still good, a bit bright."}'
-```
-
-- **Delete a review**
-
-```bash
-curl -X DELETE "http://localhost:4000/api/reviews/1"
-```
-
-### Environment configuration
-
-Copy `.env.example` to `.env` in the project root and adjust as needed:
-
-```bash
-cp .env.example .env
-```
-
-Defaults:
-
-- `BACKEND_PORT=4000` – Express server port
-- `DATABASE_PATH=./backend/coffee.db` – SQLite file path
-- `CORS_ORIGIN=http://localhost:5173` – frontend origin allowed to call backend
-
-### Docker & deployment
-
-Optional Docker setup is included:
-
-- `Dockerfile.backend` – builds the backend (Express + SQLite)
-- `Dockerfile.frontend` – builds the frontend (Vite static bundle served via `vite preview`)
-- `docker-compose.yml` – runs both services together
-
-Build and run with Docker:
-
-```bash
-docker-compose build
-docker-compose up
-```
-
-This exposes:
-
-- Backend on `http://localhost:4000`
-- Frontend on `http://localhost:5173` (proxied from container’s 4173)
-
-For deployment to services like Render/Heroku (backend) and Vercel/Netlify (frontend):
-
-- Deploy the **backend** as a Node.js service using `backend/src/server.js`, with `DATABASE_PATH` pointing to a persistent volume or managed SQLite/other DB.
-- Deploy the **frontend** as a static site built with `npm --workspace frontend run build`, serving the `frontend/dist` folder and configuring the API URL via environment variable (or proxy).
-
-### Search design choices
-
-- **Frontend fuzzy search (Fuse.js)**: For fast, user‑friendly search across relatively small to medium datasets, the app pulls a page of products from the backend and uses Fuse.js to do fuzzy matching across `name`, `roaster`, `tastingNotes`, and `origin`. This gives instant feedback and flexible matching without extra DB complexity.
-- **Backend search (SQLite LIKE)**: The backend also supports a simple `search` query param, implemented with `LIKE` on the same fields. This is useful when datasets grow, or when you want server‑side filtering before sending data to the client.
-
-**Scaling later**: For larger datasets, you can:
-
-- Move to SQLite FTS5 (or a dedicated search engine) and build an FTS index over `tastingNotes`, `name`, etc., backing `/api/products` with `MATCH` queries.
-- Keep Fuse.js only for client‑side refinement on top of server‑filtered subsets, or drop it entirely in favor of server‑side ranking.
-
-### Data model notes
-
-- The backend normalizes each product from `cleaned_coffee_products.json` into a consistent schema (`normalizeProduct` in `backend/seed.js`), with sensible defaults for missing fields (e.g., price/image optional).
-- Reviews are modeled in a separate table and aggregated via `AVG(rating)` and `COUNT(*)` in product list/detail queries so sorting by rating and displaying counts is efficient.
-
-All done — repo created and runnable. Hit me if you want Tailwind theme tweaks, authentication (signup/login), or deployment scripts to a cloud provider.
-

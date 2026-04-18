@@ -3,107 +3,105 @@ const { getDb } = require("../db");
 
 const router = express.Router();
 
-function dbGet(db, sql, params = {}) {
-  return new Promise((resolve, reject) =>
-    db.get(sql, params, (err, row) => err ? reject(err) : resolve(row))
-  );
-}
-function dbAll(db, sql, params = {}) {
-  return new Promise((resolve, reject) =>
-    db.all(sql, params, (err, rows) => err ? reject(err) : resolve(rows))
-  );
-}
-function dbRun(db, sql, params = {}) {
-  return new Promise((resolve, reject) =>
-    db.run(sql, params, function (err) { err ? reject(err) : resolve({ lastID: this.lastID, changes: this.changes }); })
-  );
+function parseSteps(row) {
+  return { ...row, steps: row.steps ? JSON.parse(row.steps) : [] };
 }
 
-// GET /api/recipes — list all (built-in first, then user-created)
-router.get("/", async (req, res, next) => {
-  const db = getDb();
+// GET /api/recipes?community=1  — public community recipes only
+// GET /api/recipes               — all (built-in + user custom)
+router.get("/", (req, res, next) => {
   try {
-    const rows = await dbAll(db, "SELECT * FROM recipes ORDER BY isBuiltIn DESC, createdAt DESC");
-    res.json(rows.map(r => ({ ...r, steps: r.steps ? JSON.parse(r.steps) : [] })));
+    const db = getDb();
+    const { community } = req.query;
+    let rows;
+    if (community === "1" || community === "true") {
+      rows = db.prepare(
+        "SELECT * FROM recipes WHERE isPublic = 1 ORDER BY createdAt DESC"
+      ).all();
+    } else {
+      rows = db.prepare(
+        "SELECT * FROM recipes WHERE isPublic = 0 OR isBuiltIn = 1 ORDER BY isBuiltIn DESC, createdAt DESC"
+      ).all();
+    }
+    res.json(rows.map(parseSteps));
   } catch (err) { next(err); }
 });
 
 // GET /api/recipes/:id
-router.get("/:id", async (req, res, next) => {
-  const db = getDb();
-  const id = parseInt(req.params.id, 10);
-  if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
+router.get("/:id", (req, res, next) => {
   try {
-    const row = await dbGet(db, "SELECT * FROM recipes WHERE id = @id", { id });
+    const db = getDb();
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
+    const row = db.prepare("SELECT * FROM recipes WHERE id = ?").get(id);
     if (!row) return res.status(404).json({ error: "Recipe not found" });
-    res.json({ ...row, steps: row.steps ? JSON.parse(row.steps) : [] });
+    res.json(parseSteps(row));
   } catch (err) { next(err); }
 });
 
 // POST /api/recipes
-router.post("/", async (req, res, next) => {
-  const db = getDb();
-  const { name, brewerType, grindSize, coffeeGrams, waterGrams, waterTempC,
-          bloomTimeSec, targetBrewTimeSec, steps, sourceRecipe, notes } = req.body;
-  if (!name || !brewerType) return res.status(400).json({ error: "name and brewerType are required" });
-  const now = new Date().toISOString();
+router.post("/", (req, res, next) => {
   try {
-    const info = await dbRun(db,
+    const db = getDb();
+    const { name, brewerType, grindSize, coffeeGrams, waterGrams, waterTempC,
+            bloomTimeSec, targetBrewTimeSec, steps, sourceRecipe, notes,
+            isPublic, authorName, authorSetup } = req.body;
+    if (!name || !brewerType) return res.status(400).json({ error: "name and brewerType are required" });
+    const now = new Date().toISOString();
+    const info = db.prepare(
       `INSERT INTO recipes (name, brewerType, grindSize, coffeeGrams, waterGrams, waterTempC,
-        bloomTimeSec, targetBrewTimeSec, steps, isBuiltIn, sourceRecipe, notes, createdAt, updatedAt)
-       VALUES (@name, @brewerType, @grindSize, @coffeeGrams, @waterGrams, @waterTempC,
-        @bloomTimeSec, @targetBrewTimeSec, @steps, 0, @sourceRecipe, @notes, @now, @now)`,
-      { name, brewerType, grindSize: grindSize || null, coffeeGrams: coffeeGrams || null,
-        waterGrams: waterGrams || null, waterTempC: waterTempC || null,
-        bloomTimeSec: bloomTimeSec || null, targetBrewTimeSec: targetBrewTimeSec || null,
-        steps: steps ? JSON.stringify(steps) : null, sourceRecipe: sourceRecipe || null,
-        notes: notes || null, now }
-    );
-    const created = await dbGet(db, "SELECT * FROM recipes WHERE id = @id", { id: info.lastID });
-    res.status(201).json({ ...created, steps: created.steps ? JSON.parse(created.steps) : [] });
+        bloomTimeSec, targetBrewTimeSec, steps, isBuiltIn, sourceRecipe, notes,
+        isPublic, authorName, authorSetup, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(name, brewerType, grindSize || null, coffeeGrams || null, waterGrams || null,
+          waterTempC || null, bloomTimeSec || null, targetBrewTimeSec || null,
+          steps ? JSON.stringify(steps) : null, sourceRecipe || null, notes || null,
+          isPublic ? 1 : 0, authorName || null,
+          authorSetup ? JSON.stringify(authorSetup) : null, now, now);
+    const created = db.prepare("SELECT * FROM recipes WHERE id = ?").get(info.lastInsertRowid);
+    res.status(201).json(parseSteps(created));
   } catch (err) { next(err); }
 });
 
 // PUT /api/recipes/:id
-router.put("/:id", async (req, res, next) => {
-  const db = getDb();
-  const id = parseInt(req.params.id, 10);
-  if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
+router.put("/:id", (req, res, next) => {
   try {
-    const existing = await dbGet(db, "SELECT * FROM recipes WHERE id = @id", { id });
+    const db = getDb();
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
+    const existing = db.prepare("SELECT * FROM recipes WHERE id = ?").get(id);
     if (!existing) return res.status(404).json({ error: "Recipe not found" });
     if (existing.isBuiltIn) return res.status(403).json({ error: "Built-in recipes cannot be edited — fork it first" });
     const b = req.body;
     const now = new Date().toISOString();
-    await dbRun(db,
-      `UPDATE recipes SET name=@name, brewerType=@brewerType, grindSize=@grindSize,
-        coffeeGrams=@coffeeGrams, waterGrams=@waterGrams, waterTempC=@waterTempC,
-        bloomTimeSec=@bloomTimeSec, targetBrewTimeSec=@targetBrewTimeSec,
-        steps=@steps, sourceRecipe=@sourceRecipe, notes=@notes, updatedAt=@now
-       WHERE id=@id`,
-      { id, name: b.name ?? existing.name, brewerType: b.brewerType ?? existing.brewerType,
-        grindSize: b.grindSize ?? existing.grindSize, coffeeGrams: b.coffeeGrams ?? existing.coffeeGrams,
-        waterGrams: b.waterGrams ?? existing.waterGrams, waterTempC: b.waterTempC ?? existing.waterTempC,
-        bloomTimeSec: b.bloomTimeSec ?? existing.bloomTimeSec,
-        targetBrewTimeSec: b.targetBrewTimeSec ?? existing.targetBrewTimeSec,
-        steps: b.steps ? JSON.stringify(b.steps) : existing.steps,
-        sourceRecipe: b.sourceRecipe ?? existing.sourceRecipe, notes: b.notes ?? existing.notes, now }
-    );
-    const updated = await dbGet(db, "SELECT * FROM recipes WHERE id = @id", { id });
-    res.json({ ...updated, steps: updated.steps ? JSON.parse(updated.steps) : [] });
+    db.prepare(
+      `UPDATE recipes SET name=?, brewerType=?, grindSize=?, coffeeGrams=?, waterGrams=?, waterTempC=?,
+        bloomTimeSec=?, targetBrewTimeSec=?, steps=?, sourceRecipe=?, notes=?,
+        isPublic=?, authorName=?, updatedAt=? WHERE id=?`
+    ).run(b.name ?? existing.name, b.brewerType ?? existing.brewerType,
+          b.grindSize ?? existing.grindSize, b.coffeeGrams ?? existing.coffeeGrams,
+          b.waterGrams ?? existing.waterGrams, b.waterTempC ?? existing.waterTempC,
+          b.bloomTimeSec ?? existing.bloomTimeSec, b.targetBrewTimeSec ?? existing.targetBrewTimeSec,
+          b.steps ? JSON.stringify(b.steps) : existing.steps,
+          b.sourceRecipe ?? existing.sourceRecipe, b.notes ?? existing.notes,
+          b.isPublic !== undefined ? (b.isPublic ? 1 : 0) : existing.isPublic,
+          b.authorName ?? existing.authorName,
+          now, id);
+    const updated = db.prepare("SELECT * FROM recipes WHERE id = ?").get(id);
+    res.json(parseSteps(updated));
   } catch (err) { next(err); }
 });
 
 // DELETE /api/recipes/:id
-router.delete("/:id", async (req, res, next) => {
-  const db = getDb();
-  const id = parseInt(req.params.id, 10);
-  if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
+router.delete("/:id", (req, res, next) => {
   try {
-    const existing = await dbGet(db, "SELECT id, isBuiltIn FROM recipes WHERE id = @id", { id });
+    const db = getDb();
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
+    const existing = db.prepare("SELECT id, isBuiltIn FROM recipes WHERE id = ?").get(id);
     if (!existing) return res.status(404).json({ error: "Recipe not found" });
     if (existing.isBuiltIn) return res.status(403).json({ error: "Built-in recipes cannot be deleted" });
-    await dbRun(db, "DELETE FROM recipes WHERE id = @id", { id });
+    db.prepare("DELETE FROM recipes WHERE id = ?").run(id);
     res.status(204).send();
   } catch (err) { next(err); }
 });

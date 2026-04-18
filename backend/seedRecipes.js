@@ -5,8 +5,7 @@
  * Usage: node backend/seedRecipes.js
  */
 
-const path = require("path");
-const { getDb, initSchema } = require("./src/db");
+const { getDb, initSchema, runMigrations } = require("./src/db");
 
 const BUILT_IN_RECIPES = [
   {
@@ -98,59 +97,65 @@ const BUILT_IN_RECIPES = [
       { timeSec: 285, instruction: "Listen for a gurgling sound — remove from heat immediately. Coffee is done.", pourGrams: 0 },
     ],
   },
+  {
+    name: "Chemex Classic",
+    brewerType: "Chemex",
+    grindSize: "Medium-Coarse",
+    coffeeGrams: 42,
+    waterGrams: 700,
+    waterTempC: 94,
+    bloomTimeSec: 45,
+    targetBrewTimeSec: 300,
+    notes: "The Chemex produces a very clean, bright cup due to the thick paper filter. Grind coarser than V60 to account for the slower flow rate.",
+    steps: [
+      { timeSec: 0,   instruction: "Pour 80g water for bloom. Ensure all grounds are saturated.", pourGrams: 80 },
+      { timeSec: 45,  instruction: "Pour to 350g in slow concentric circles, keeping water level steady.", pourGrams: 270 },
+      { timeSec: 120, instruction: "Pour to 530g as the water level drops.", pourGrams: 180 },
+      { timeSec: 200, instruction: "Pour remaining 170g to reach 700g total.", pourGrams: 170 },
+      { timeSec: 300, instruction: "Drawdown complete. Remove filter. Swirl Chemex and serve.", pourGrams: 0 },
+    ],
+  },
 ];
 
-async function main() {
+function main() {
   const db = getDb();
   initSchema(db);
+  runMigrations(db);
 
   const now = new Date().toISOString();
   let seeded = 0;
   let skipped = 0;
 
-  await new Promise((resolve) => {
-    db.serialize(() => {
-      db.run("BEGIN TRANSACTION");
+  const checkStmt = db.prepare("SELECT id FROM recipes WHERE name = ? AND isBuiltIn = 1");
+  const insertStmt = db.prepare(
+    `INSERT INTO recipes
+     (name, brewerType, grindSize, coffeeGrams, waterGrams, waterTempC,
+      bloomTimeSec, targetBrewTimeSec, steps, isBuiltIn, sourceRecipe, notes,
+      isPublic, authorName, authorSetup, createdAt, updatedAt)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NULL, ?, 0, NULL, NULL, ?, ?)`
+  );
 
-      let pending = BUILT_IN_RECIPES.length;
-      const done = () => { if (--pending === 0) resolve(); };
-
-      BUILT_IN_RECIPES.forEach((recipe) => {
-        db.get(
-          "SELECT id FROM recipes WHERE name = ? AND isBuiltIn = 1",
-          [recipe.name],
-          (err, existing) => {
-            if (err) { console.error(err); done(); return; }
-            if (existing) { skipped++; done(); return; }
-
-            db.run(
-              `INSERT INTO recipes
-               (name, brewerType, grindSize, coffeeGrams, waterGrams, waterTempC,
-                bloomTimeSec, targetBrewTimeSec, steps, isBuiltIn, notes, createdAt, updatedAt)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?)`,
-              [
-                recipe.name, recipe.brewerType, recipe.grindSize, recipe.coffeeGrams,
-                recipe.waterGrams, recipe.waterTempC, recipe.bloomTimeSec,
-                recipe.targetBrewTimeSec, JSON.stringify(recipe.steps), recipe.notes, now, now,
-              ],
-              (insertErr) => {
-                if (insertErr) console.error("Insert error:", insertErr);
-                else seeded++;
-                done();
-              }
-            );
-          }
-        );
-      });
-    });
+  const seedAll = db.transaction(() => {
+    for (const recipe of BUILT_IN_RECIPES) {
+      const existing = checkStmt.get(recipe.name);
+      if (existing) { skipped++; continue; }
+      insertStmt.run(
+        recipe.name, recipe.brewerType, recipe.grindSize, recipe.coffeeGrams,
+        recipe.waterGrams, recipe.waterTempC, recipe.bloomTimeSec,
+        recipe.targetBrewTimeSec, JSON.stringify(recipe.steps),
+        recipe.notes, now, now
+      );
+      seeded++;
+    }
   });
 
-  await new Promise((resolve) => {
-    db.run("COMMIT", () => {
-      console.log(`✅ Built-in recipes: ${seeded} seeded, ${skipped} already existed.`);
-      process.exit(0);
-    });
-  });
+  seedAll();
+  console.log(`✅ Built-in recipes: ${seeded} seeded, ${skipped} already existed.`);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+try {
+  main();
+} catch (e) {
+  console.error(e);
+  process.exit(1);
+}
