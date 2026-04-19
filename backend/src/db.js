@@ -183,6 +183,15 @@ function runMigrations(db) {
   if (!existingCols.includes("authorSetup")) {
     db.exec("ALTER TABLE recipes ADD COLUMN authorSetup TEXT");
   }
+  if (!existingCols.includes("roastLevel")) {
+    db.exec("ALTER TABLE recipes ADD COLUMN roastLevel TEXT");
+  }
+  if (!existingCols.includes("coffeeBrand")) {
+    db.exec("ALTER TABLE recipes ADD COLUMN coffeeBrand TEXT");
+  }
+  if (!existingCols.includes("coffeeName")) {
+    db.exec("ALTER TABLE recipes ADD COLUMN coffeeName TEXT");
+  }
 }
 
 module.exports = {

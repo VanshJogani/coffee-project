@@ -7,6 +7,8 @@ import {
 
 const BREWER_TYPES = ["V60", "AeroPress", "French Press", "Moka Pot", "Chemex", "Clever", "Kalita", "Other"];
 const GRIND_SIZES  = ["Extra Fine", "Fine", "Medium-Fine", "Medium", "Medium-Coarse", "Coarse"];
+const ROAST_LEVELS = ["Light", "Medium-Light", "Medium", "Medium-Dark", "Dark"];
+const COFFEE_BRANDS = ["Blue Tokai", "Greysoul", "Fraction9", "Corridors of Power", "Bloom", "Savorworks", "Subko", "KC Roasters", "Curious Life", "Other"];
 
 const BREWER_ICONS = {
   "V60": "\u25BD", "AeroPress": "\u2299", "French Press": "\u2B1B", "Moka Pot": "\u25B3",
@@ -324,6 +326,21 @@ function RecipeCard({ recipe, onView, onEdit, onFork, onDelete, onBrew, onShare 
         </div>
       </div>
 
+      {(recipe.roastLevel || recipe.coffeeBrand) && (
+        <div className="flex flex-wrap gap-1.5">
+          {recipe.roastLevel && (
+            <span className="text-[9px] font-bold uppercase tracking-widest bg-luxury-umber/10 text-luxury-umber px-1.5 py-0.5 rounded-full">
+              {recipe.roastLevel}
+            </span>
+          )}
+          {recipe.coffeeBrand && (
+            <span className="text-[9px] font-bold uppercase tracking-widest bg-luxury-gold/10 text-luxury-gold px-1.5 py-0.5 rounded-full">
+              {recipe.coffeeBrand}
+            </span>
+          )}
+        </div>
+      )}
+
       {recipe.steps?.length > 0 && (
         <div className="text-[10px] text-luxury-clay/70">
           {stepCounts(recipe.steps)}
@@ -410,6 +427,26 @@ function CommunityRecipeCard({ recipe, onBrew, onImport }) {
           <div className="text-xs font-bold text-luxury-umber mt-0.5">{recipe.grindSize || "\u2014"}</div>
         </div>
       </div>
+
+      {(recipe.roastLevel || recipe.coffeeBrand || recipe.coffeeName) && (
+        <div className="flex flex-wrap gap-1.5">
+          {recipe.roastLevel && (
+            <span className="text-[9px] font-bold uppercase tracking-widest bg-luxury-umber/10 text-luxury-umber px-1.5 py-0.5 rounded-full">
+              {recipe.roastLevel}
+            </span>
+          )}
+          {recipe.coffeeBrand && (
+            <span className="text-[9px] font-bold uppercase tracking-widest bg-luxury-gold/10 text-luxury-gold px-1.5 py-0.5 rounded-full">
+              {recipe.coffeeBrand}
+            </span>
+          )}
+          {recipe.coffeeName && (
+            <span className="text-[9px] font-bold uppercase tracking-widest bg-luxury-clay/10 text-luxury-clay px-1.5 py-0.5 rounded-full">
+              {recipe.coffeeName}
+            </span>
+          )}
+        </div>
+      )}
 
       {recipe.steps?.length > 0 && (
         <div className="text-[10px] text-luxury-clay/70">{stepCounts(recipe.steps)}</div>
@@ -532,6 +569,7 @@ function StepEditor({ steps, onChange }) {
 const EMPTY_FORM = {
   name: "", brewerType: "V60", grindSize: "Medium", coffeeGrams: "", waterGrams: "",
   waterTempC: "", bloomTimeSec: "", targetBrewTimeSec: "", notes: "",
+  roastLevel: "", coffeeBrand: "", coffeeName: "",
   steps: [{ phase: "brew", timeSec: "", instruction: "", pourGrams: "" }],
 };
 
@@ -546,6 +584,9 @@ function recipeToForm(r) {
     bloomTimeSec: r.bloomTimeSec ?? "",
     targetBrewTimeSec: r.targetBrewTimeSec ?? "",
     notes: r.notes || "",
+    roastLevel: r.roastLevel || "",
+    coffeeBrand: r.coffeeBrand || "",
+    coffeeName: r.coffeeName || "",
     steps: (r.steps || [{ phase: "brew", timeSec: "", instruction: "", pourGrams: "" }]).map(s => ({
       phase: s.phase || "brew",
       timeSec: s.timeSec ?? "",
@@ -639,6 +680,25 @@ function RecipeModal({ recipe, mode: initMode, onClose, onSave }) {
                   </div>
                 ))}
               </div>
+              {(recipe?.roastLevel || recipe?.coffeeBrand || recipe?.coffeeName) && (
+                <div className="flex flex-wrap gap-2">
+                  {recipe.roastLevel && (
+                    <span className="text-[10px] font-bold uppercase tracking-widest bg-luxury-umber/10 text-luxury-umber px-2 py-1 rounded-full">
+                      {recipe.roastLevel} Roast
+                    </span>
+                  )}
+                  {recipe.coffeeBrand && (
+                    <span className="text-[10px] font-bold uppercase tracking-widest bg-luxury-gold/10 text-luxury-gold px-2 py-1 rounded-full">
+                      {recipe.coffeeBrand}
+                    </span>
+                  )}
+                  {recipe.coffeeName && (
+                    <span className="text-[10px] font-bold uppercase tracking-widest bg-luxury-clay/10 text-luxury-clay px-2 py-1 rounded-full">
+                      {recipe.coffeeName}
+                    </span>
+                  )}
+                </div>
+              )}
               {recipe?.notes && (
                 <div className="bg-luxury-gold/5 border border-luxury-gold/20 rounded-xl p-4">
                   <div className="text-[10px] uppercase tracking-widest text-luxury-gold font-bold mb-1">Notes</div>
@@ -738,6 +798,33 @@ function RecipeModal({ recipe, mode: initMode, onClose, onSave }) {
                     className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold" />
                 </div>
               </div>
+              <div className="border-t border-luxury-clay/10 pt-4">
+                <div className="text-[10px] uppercase tracking-widest text-luxury-gold font-bold mb-3">Coffee Used (optional)</div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[9px] uppercase tracking-widest text-luxury-clay font-bold mb-1">Roast Level</label>
+                    <select value={form.roastLevel} onChange={e => set("roastLevel", e.target.value)}
+                      className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold bg-white">
+                      <option value="">—</option>
+                      {ROAST_LEVELS.map(r => <option key={r}>{r}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[9px] uppercase tracking-widest text-luxury-clay font-bold mb-1">Brand</label>
+                    <select value={form.coffeeBrand} onChange={e => set("coffeeBrand", e.target.value)}
+                      className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold bg-white">
+                      <option value="">—</option>
+                      {COFFEE_BRANDS.map(b => <option key={b}>{b}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[9px] uppercase tracking-widest text-luxury-clay font-bold mb-1">Coffee Name</label>
+                    <input type="text" value={form.coffeeName} onChange={e => set("coffeeName", e.target.value)}
+                      placeholder="e.g. Attikan Estate"
+                      className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold" />
+                  </div>
+                </div>
+              </div>
               <div>
                 <label className="block text-[10px] uppercase tracking-widest text-luxury-gold font-bold mb-1">Notes</label>
                 <textarea rows={2} value={form.notes} onChange={e => set("notes", e.target.value)}
@@ -791,6 +878,8 @@ function RecipesPage() {
   const [communityLoading, setCommunityLoading] = useState(false);
   const [communityLoaded, setCommunityLoaded] = useState(false);
   const [brewerFilter, setBrewerFilter] = useState("");
+  const [roastFilter, setRoastFilter] = useState("");
+  const [brandFilter, setBrandFilter] = useState("");
 
   const loadRecipes = async () => {
     setLoading(true);
@@ -854,11 +943,21 @@ function RecipesPage() {
   const builtIn = recipes.filter(r => r.isBuiltIn);
   const mine = recipes.filter(r => !r.isBuiltIn);
 
-  const filteredCommunityRecipes = brewerFilter
-    ? communityRecipes.filter(r => r.brewerType === brewerFilter)
-    : communityRecipes;
+  const filteredCommunityRecipes = communityRecipes
+    .filter(r => !brewerFilter || r.brewerType === brewerFilter)
+    .filter(r => !roastFilter || r.roastLevel === roastFilter)
+    .filter(r => !brandFilter || r.coffeeBrand === brandFilter)
+    .sort((a, b) => {
+      // Sort by roast level first, then brand, then name
+      const roastOrder = ROAST_LEVELS.indexOf(a.roastLevel || "") - ROAST_LEVELS.indexOf(b.roastLevel || "");
+      if (roastOrder !== 0) return roastOrder;
+      if ((a.coffeeBrand || "") !== (b.coffeeBrand || "")) return (a.coffeeBrand || "").localeCompare(b.coffeeBrand || "");
+      return a.name.localeCompare(b.name);
+    });
 
   const communityBrewerTypes = [...new Set(communityRecipes.map(r => r.brewerType))].sort();
+  const communityRoastLevels = [...new Set(communityRecipes.map(r => r.roastLevel).filter(Boolean))];
+  const communityBrands = [...new Set(communityRecipes.map(r => r.coffeeBrand).filter(Boolean))].sort();
 
   return (
     <div className="space-y-6">
@@ -966,27 +1065,73 @@ function RecipesPage() {
         <div className="space-y-8">
           {/* Shared Recipes Section */}
           <section>
-            <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-              <h3 className="text-[11px] font-bold uppercase tracking-widest text-luxury-gold">Shared Recipes</h3>
-              {communityBrewerTypes.length > 1 && (
-                <div className="flex gap-1 flex-wrap">
-                  <button type="button" onClick={() => setBrewerFilter("")}
-                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
-                      !brewerFilter ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
-                    }`}>
-                    All
-                  </button>
-                  {communityBrewerTypes.map(t => (
-                    <button key={t} type="button" onClick={() => setBrewerFilter(t)}
+            <h3 className="text-[11px] font-bold uppercase tracking-widest text-luxury-gold mb-3">Shared Recipes</h3>
+
+            {/* Filters */}
+            {communityRecipes.length > 0 && (
+              <div className="space-y-2 mb-4">
+                {/* Brewer filter */}
+                {communityBrewerTypes.length > 1 && (
+                  <div className="flex gap-1 flex-wrap items-center">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-luxury-clay mr-1">Brewer</span>
+                    <button type="button" onClick={() => setBrewerFilter("")}
                       className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
-                        brewerFilter === t ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                        !brewerFilter ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
                       }`}>
-                      {t}
+                      All
                     </button>
-                  ))}
-                </div>
-              )}
-            </div>
+                    {communityBrewerTypes.map(t => (
+                      <button key={t} type="button" onClick={() => setBrewerFilter(t)}
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                          brewerFilter === t ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                        }`}>
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {/* Roast level filter */}
+                {communityRoastLevels.length > 0 && (
+                  <div className="flex gap-1 flex-wrap items-center">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-luxury-clay mr-1">Roast</span>
+                    <button type="button" onClick={() => setRoastFilter("")}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                        !roastFilter ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                      }`}>
+                      All
+                    </button>
+                    {communityRoastLevels.map(r => (
+                      <button key={r} type="button" onClick={() => setRoastFilter(r)}
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                          roastFilter === r ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                        }`}>
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {/* Brand filter */}
+                {communityBrands.length > 0 && (
+                  <div className="flex gap-1 flex-wrap items-center">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-luxury-clay mr-1">Brand</span>
+                    <button type="button" onClick={() => setBrandFilter("")}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                        !brandFilter ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                      }`}>
+                      All
+                    </button>
+                    {communityBrands.map(b => (
+                      <button key={b} type="button" onClick={() => setBrandFilter(b)}
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                          brandFilter === b ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                        }`}>
+                        {b}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {communityLoading ? (
               <div className="py-10 text-center text-luxury-clay text-sm">Loading shared recipes\u2026</div>
@@ -994,10 +1139,12 @@ function RecipesPage() {
               <div className="py-8 text-center border-2 border-dashed border-luxury-clay/20 rounded-2xl">
                 <div className="text-2xl mb-2">\u2615</div>
                 <div className="font-bold text-luxury-umber mb-1">
-                  {brewerFilter ? `No ${brewerFilter} recipes shared yet` : "No shared recipes yet"}
+                  {(brewerFilter || roastFilter || brandFilter) ? "No matching recipes" : "No shared recipes yet"}
                 </div>
                 <div className="text-sm text-luxury-clay">
-                  Share your recipes from My Recipes to see them here.
+                  {(brewerFilter || roastFilter || brandFilter)
+                    ? "Try adjusting the filters."
+                    : "Share your recipes from My Recipes to see them here."}
                 </div>
               </div>
             ) : (
@@ -1018,7 +1165,7 @@ function RecipesPage() {
               <div className="py-10 text-center text-luxury-clay text-sm">Loading posts\u2026</div>
             ) : posts.length === 0 ? (
               <div className="py-10 text-center border-2 border-dashed border-luxury-clay/20 rounded-2xl">
-                <div className="text-2xl mb-2">\u{1F4AC}</div>
+                <div className="text-2xl mb-2">&#x1F4AC;</div>
                 <div className="font-bold text-luxury-umber mb-1">No posts yet</div>
                 <div className="text-sm text-luxury-clay mb-4">
                   Share a brew, a recipe, or a tip with the community.

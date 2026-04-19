@@ -86,7 +86,9 @@ export async function deleteRecipe(id) {
 export async function forkRecipe(recipe) {
   const { id: _id, isBuiltIn: _bi, createdAt: _ca, updatedAt: _ua,
           isPublic: _ip, authorName: _an, authorSetup: _as, ...fields } = recipe;
-  return createRecipe({ ...fields, sourceRecipe: recipe.name, isPublic: 0 });
+  return createRecipe({ ...fields, sourceRecipe: recipe.name, isPublic: 0,
+    roastLevel: recipe.roastLevel || null, coffeeBrand: recipe.coffeeBrand || null,
+    coffeeName: recipe.coffeeName || null });
 }
 
 // ── Bean Inventory ────────────────────────────────────────────────────────────
