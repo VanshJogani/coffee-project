@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   fetchRecipes, createRecipe, updateRecipe, deleteRecipe, forkRecipe,
-  fetchPosts, createPost, likePost, deletePost,
+  fetchPosts, createPost, likePost, deletePost, fetchCommunityRecipes,
 } from "../../api/client";
 
 const BREWER_TYPES = ["V60", "AeroPress", "French Press", "Moka Pot", "Chemex", "Clever", "Kalita", "Other"];
 const GRIND_SIZES  = ["Extra Fine", "Fine", "Medium-Fine", "Medium", "Medium-Coarse", "Coarse"];
 
 const BREWER_ICONS = {
-  "V60": "▽", "AeroPress": "⊙", "French Press": "⬛", "Moka Pot": "△",
-  "Chemex": "⌗", "Clever": "◻", "Kalita": "◇", "Other": "☕",
+  "V60": "\u25BD", "AeroPress": "\u2299", "French Press": "\u2B1B", "Moka Pot": "\u25B3",
+  "Chemex": "\u2317", "Clever": "\u25FB", "Kalita": "\u25C7", "Other": "\u2615",
 };
 
 function formatTime(sec) {
-  if (!sec && sec !== 0) return "—";
+  if (!sec && sec !== 0) return "\u2014";
   const m = Math.floor(sec / 60);
   const s = sec % 60;
   return m > 0 ? `${m}m ${s > 0 ? s + "s" : ""}`.trim() : `${s}s`;
@@ -40,9 +40,21 @@ function RatioDisplay({ coffeeGrams, waterGrams }) {
   return <span>1 : {(waterGrams / coffeeGrams).toFixed(1)}</span>;
 }
 
-// ── Compact recipe card (used inside community posts) ─────────────────────────
+function stepCounts(steps) {
+  if (!steps?.length) return null;
+  const prep = steps.filter(s => s.phase === "prep").length;
+  const brew = steps.filter(s => s.phase !== "prep").length;
+  const pours = steps.filter(s => s.pourGrams > 0).length;
+  const parts = [];
+  if (prep > 0) parts.push(`${prep} prep`);
+  parts.push(`${brew} brew`);
+  if (pours > 0) parts.push(`${pours} pours`);
+  return parts.join(" \u00B7 ");
+}
+
+// -- Compact recipe card (used inside community posts) ------------------------
 function AttachedRecipeCard({ recipe, onBrew, onImport, importing }) {
-  const icon = BREWER_ICONS[recipe.brewerType] || "☕";
+  const icon = BREWER_ICONS[recipe.brewerType] || "\u2615";
   return (
     <div className="border border-luxury-gold/30 bg-luxury-gold/5 rounded-xl p-4 space-y-3">
       <div className="flex items-center gap-3">
@@ -89,14 +101,14 @@ function AttachedRecipeCard({ recipe, onBrew, onImport, importing }) {
         </button>
         <button type="button" onClick={onImport} disabled={importing}
           className="flex-1 py-1.5 bg-luxury-umber text-white text-[11px] font-bold uppercase tracking-widest rounded-lg hover:bg-luxury-dark transition-colors disabled:opacity-50">
-          {importing ? "Importing…" : "Add to My Recipes"}
+          {importing ? "Importing\u2026" : "Add to My Recipes"}
         </button>
       </div>
     </div>
   );
 }
 
-// ── Community Post Card ───────────────────────────────────────────────────────
+// -- Community Post Card ------------------------------------------------------
 function PostCard({ post, onBrew, onImportRecipe, onLike, onDelete }) {
   const [importing, setImporting] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -120,7 +132,6 @@ function PostCard({ post, onBrew, onImportRecipe, onLike, onDelete }) {
 
   return (
     <div className="premium-card p-5 space-y-4">
-      {/* Post header */}
       <div className="flex items-start gap-3">
         <div className="w-9 h-9 rounded-full bg-luxury-umber/10 flex items-center justify-center text-sm font-bold text-luxury-umber shrink-0">
           {initials(post.authorName)}
@@ -134,12 +145,10 @@ function PostCard({ post, onBrew, onImportRecipe, onLike, onDelete }) {
         </div>
       </div>
 
-      {/* Post body */}
       {post.body && (
         <p className="text-sm text-luxury-clay leading-relaxed">{post.body}</p>
       )}
 
-      {/* Attached recipe */}
       {post.attachedRecipe && (
         <AttachedRecipeCard
           recipe={post.attachedRecipe}
@@ -154,13 +163,12 @@ function PostCard({ post, onBrew, onImportRecipe, onLike, onDelete }) {
         </div>
       )}
 
-      {/* Post footer */}
       <div className="flex items-center gap-4 pt-1 border-t border-luxury-clay/10">
         <button type="button" onClick={handleLike}
           className={`flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest transition-colors ${
             liked ? "text-luxury-gold" : "text-luxury-clay/60 hover:text-luxury-gold"
           }`}>
-          <span className="text-base">{liked ? "♥" : "♡"}</span>
+          <span className="text-base">{liked ? "\u2665" : "\u2661"}</span>
           <span>{likesCount}</span>
         </button>
         <div className="flex-1" />
@@ -175,7 +183,7 @@ function PostCard({ post, onBrew, onImportRecipe, onLike, onDelete }) {
   );
 }
 
-// ── Compose Post Modal ────────────────────────────────────────────────────────
+// -- Compose Post Modal -------------------------------------------------------
 function ComposeModal({ myRecipes, preAttachedRecipe, onClose, onPost }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -229,7 +237,7 @@ function ComposeModal({ myRecipes, preAttachedRecipe, onClose, onPost }) {
           <div>
             <label className="block text-[10px] uppercase tracking-widest text-luxury-gold font-bold mb-1">Body</label>
             <textarea rows={4} value={body} onChange={e => setBody(e.target.value)}
-              placeholder="Share your experience, tips, thoughts on this recipe…"
+              placeholder="Share your experience, tips, thoughts on this recipe\u2026"
               className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold resize-none" />
           </div>
 
@@ -237,7 +245,7 @@ function ComposeModal({ myRecipes, preAttachedRecipe, onClose, onPost }) {
             <label className="block text-[10px] uppercase tracking-widest text-luxury-gold font-bold mb-1">Attach a Recipe (optional)</label>
             <select value={attachedRecipeId} onChange={e => setAttachedRecipeId(e.target.value)}
               className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold bg-white">
-              <option value="">— No recipe —</option>
+              <option value="">&mdash; No recipe &mdash;</option>
               {customRecipes.map(r => (
                 <option key={r.id} value={r.id}>{r.name} ({r.brewerType})</option>
               ))}
@@ -252,9 +260,9 @@ function ComposeModal({ myRecipes, preAttachedRecipe, onClose, onPost }) {
               if (!r) return null;
               return (
                 <div className="mt-2 text-[11px] text-luxury-clay bg-luxury-stone/30 rounded-lg px-3 py-2">
-                  {r.name} · {r.brewerType}
-                  {r.coffeeGrams && r.waterGrams && ` · 1:${(r.waterGrams / r.coffeeGrams).toFixed(1)}`}
-                  {r.steps?.length > 0 && ` · ${r.steps.filter(s => s.pourGrams > 0).length} pours`}
+                  {r.name} &middot; {r.brewerType}
+                  {r.coffeeGrams && r.waterGrams && ` \u00B7 1:${(r.waterGrams / r.coffeeGrams).toFixed(1)}`}
+                  {r.steps?.length > 0 && ` \u00B7 ${stepCounts(r.steps)}`}
                 </div>
               );
             })()}
@@ -268,7 +276,7 @@ function ComposeModal({ myRecipes, preAttachedRecipe, onClose, onPost }) {
           </button>
           <button type="button" onClick={handlePost} disabled={posting || !title.trim()}
             className="flex-1 py-2.5 bg-luxury-umber text-white rounded-xl text-sm font-bold hover:bg-luxury-dark transition-colors disabled:opacity-50">
-            {posting ? "Posting…" : "Post"}
+            {posting ? "Posting\u2026" : "Post"}
           </button>
         </div>
       </div>
@@ -277,9 +285,9 @@ function ComposeModal({ myRecipes, preAttachedRecipe, onClose, onPost }) {
   );
 }
 
-// ── Recipe Card (My Recipes tab) ───────────────────────────────────────────────
+// -- Recipe Card (My Recipes tab) ---------------------------------------------
 function RecipeCard({ recipe, onView, onEdit, onFork, onDelete, onBrew, onShare }) {
-  const icon = BREWER_ICONS[recipe.brewerType] || "☕";
+  const icon = BREWER_ICONS[recipe.brewerType] || "\u2615";
   return (
     <div className="premium-card p-5 flex flex-col gap-3">
       <div className="flex items-start gap-3">
@@ -312,13 +320,13 @@ function RecipeCard({ recipe, onView, onEdit, onFork, onDelete, onBrew, onShare 
         </div>
         <div className="bg-luxury-stone/30 rounded-lg py-1.5">
           <div className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Grind</div>
-          <div className="text-xs font-bold text-luxury-umber mt-0.5">{recipe.grindSize || "—"}</div>
+          <div className="text-xs font-bold text-luxury-umber mt-0.5">{recipe.grindSize || "\u2014"}</div>
         </div>
       </div>
 
       {recipe.steps?.length > 0 && (
         <div className="text-[10px] text-luxury-clay/70">
-          {recipe.steps.length} steps · {recipe.steps.filter(s => s.pourGrams > 0).length} pours
+          {stepCounts(recipe.steps)}
         </div>
       )}
 
@@ -348,7 +356,7 @@ function RecipeCard({ recipe, onView, onEdit, onFork, onDelete, onBrew, onShare 
             </button>
             <button type="button" onClick={() => onDelete(recipe.id)}
               className="px-3 py-1.5 border border-red-200 text-red-400 hover:border-red-400 hover:text-red-600 rounded-lg text-[11px] transition-colors">
-              ×
+              &times;
             </button>
           </>
         )}
@@ -357,9 +365,86 @@ function RecipeCard({ recipe, onView, onEdit, onFork, onDelete, onBrew, onShare 
   );
 }
 
-// ── Step Editor ───────────────────────────────────────────────────────────────
+// -- Community Recipe Card (shared recipes grid) ------------------------------
+function CommunityRecipeCard({ recipe, onBrew, onImport }) {
+  const [importing, setImporting] = useState(false);
+  const [imported, setImported] = useState(false);
+  const icon = BREWER_ICONS[recipe.brewerType] || "\u2615";
+
+  const handleImport = async () => {
+    setImporting(true);
+    try {
+      await onImport(recipe);
+      setImported(true);
+    } finally { setImporting(false); }
+  };
+
+  return (
+    <div className="premium-card p-5 flex flex-col gap-3">
+      <div className="flex items-start gap-3">
+        <div className="w-11 h-11 rounded-xl bg-luxury-gold/10 border border-luxury-gold/20 flex items-center justify-center text-xl shrink-0 text-luxury-gold">
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-luxury-gold">{recipe.brewerType}</div>
+          <div className="font-semibold text-sm text-luxury-umber leading-snug mt-0.5">{recipe.name}</div>
+          {recipe.authorName && (
+            <div className="text-[10px] text-luxury-clay mt-0.5">by {recipe.authorName}</div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2 text-center">
+        <div className="bg-luxury-stone/30 rounded-lg py-1.5">
+          <div className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Ratio</div>
+          <div className="text-xs font-bold text-luxury-umber mt-0.5">
+            <RatioDisplay coffeeGrams={recipe.coffeeGrams} waterGrams={recipe.waterGrams} />
+          </div>
+        </div>
+        <div className="bg-luxury-stone/30 rounded-lg py-1.5">
+          <div className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Time</div>
+          <div className="text-xs font-bold text-luxury-umber mt-0.5">{formatTime(recipe.targetBrewTimeSec)}</div>
+        </div>
+        <div className="bg-luxury-stone/30 rounded-lg py-1.5">
+          <div className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Grind</div>
+          <div className="text-xs font-bold text-luxury-umber mt-0.5">{recipe.grindSize || "\u2014"}</div>
+        </div>
+      </div>
+
+      {recipe.steps?.length > 0 && (
+        <div className="text-[10px] text-luxury-clay/70">{stepCounts(recipe.steps)}</div>
+      )}
+
+      {recipe.notes && (
+        <p className="text-[11px] text-luxury-clay leading-relaxed line-clamp-2">{recipe.notes}</p>
+      )}
+
+      <div className="flex gap-2 pt-1 border-t border-luxury-clay/10">
+        <button type="button" onClick={() => onBrew(recipe)}
+          className="flex-1 py-1.5 bg-luxury-gold/90 text-luxury-umber text-[11px] font-bold uppercase tracking-widest rounded-lg hover:bg-luxury-gold transition-colors">
+          Try
+        </button>
+        {imported ? (
+          <div className="flex-1 py-1.5 text-center text-[11px] font-bold text-green-600 bg-green-50 rounded-lg">
+            Imported!
+          </div>
+        ) : (
+          <button type="button" onClick={handleImport} disabled={importing}
+            className="flex-1 py-1.5 bg-luxury-umber text-white text-[11px] font-bold uppercase tracking-widest rounded-lg hover:bg-luxury-dark transition-colors disabled:opacity-50">
+            {importing ? "Importing\u2026" : "Import"}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// -- Step Editor --------------------------------------------------------------
 function StepEditor({ steps, onChange }) {
-  const add = () => onChange([...steps, { timeSec: "", instruction: "", pourGrams: "" }]);
+  const add = (phase) => onChange([...steps, phase === "prep"
+    ? { phase: "prep", instruction: "" }
+    : { phase: "brew", timeSec: "", instruction: "", pourGrams: "" }
+  ]);
   const remove = (i) => onChange(steps.filter((_, idx) => idx !== i));
   const update = (i, field, val) => onChange(steps.map((s, idx) => idx === i ? { ...s, [field]: val } : s));
   const move = (i, dir) => {
@@ -369,56 +454,85 @@ function StepEditor({ steps, onChange }) {
     [next[i], next[swap]] = [next[swap], next[i]];
     onChange(next);
   };
+  const togglePhase = (i) => {
+    const step = steps[i];
+    if (step.phase === "prep") {
+      onChange(steps.map((s, idx) => idx === i ? { ...s, phase: "brew", timeSec: s.timeSec ?? "", pourGrams: s.pourGrams ?? "" } : s));
+    } else {
+      onChange(steps.map((s, idx) => idx === i ? { phase: "prep", instruction: s.instruction } : s));
+    }
+  };
 
   return (
     <div className="space-y-2">
-      {steps.map((step, i) => (
-        <div key={i} className="flex gap-2 items-start bg-luxury-stone/20 rounded-xl p-3">
-          <div className="flex flex-col gap-1 shrink-0">
-            <button type="button" onClick={() => move(i, -1)} disabled={i === 0}
-              className="text-luxury-clay hover:text-luxury-umber disabled:opacity-30 text-xs leading-none">▲</button>
-            <span className="text-[10px] font-bold text-luxury-gold text-center">{i + 1}</span>
-            <button type="button" onClick={() => move(i, 1)} disabled={i === steps.length - 1}
-              className="text-luxury-clay hover:text-luxury-umber disabled:opacity-30 text-xs leading-none">▼</button>
+      {steps.map((step, i) => {
+        const isPrep = step.phase === "prep";
+        return (
+          <div key={i} className={`flex gap-2 items-start rounded-xl p-3 ${isPrep ? "bg-luxury-clay/5 border border-luxury-clay/10" : "bg-luxury-stone/20"}`}>
+            <div className="flex flex-col gap-1 shrink-0">
+              <button type="button" onClick={() => move(i, -1)} disabled={i === 0}
+                className="text-luxury-clay hover:text-luxury-umber disabled:opacity-30 text-xs leading-none">&blacktriangle;</button>
+              <span className="text-[10px] font-bold text-luxury-gold text-center">{i + 1}</span>
+              <button type="button" onClick={() => move(i, 1)} disabled={i === steps.length - 1}
+                className="text-luxury-clay hover:text-luxury-umber disabled:opacity-30 text-xs leading-none">&blacktriangledown;</button>
+            </div>
+            <div className="flex-1 space-y-2">
+              <button type="button" onClick={() => togglePhase(i)}
+                className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full transition-colors ${
+                  isPrep
+                    ? "bg-luxury-clay/10 text-luxury-clay hover:bg-luxury-clay/20"
+                    : "bg-luxury-gold/10 text-luxury-gold hover:bg-luxury-gold/20"
+                }`}>
+                {isPrep ? "Prep" : "Brew"}
+              </button>
+              {!isPrep && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Time (sec)</label>
+                    <input type="number" min="0" value={step.timeSec}
+                      onChange={e => update(i, "timeSec", e.target.value)}
+                      className="w-full rounded-lg border border-luxury-clay/40 px-2 py-1.5 text-xs focus:outline-none focus:border-luxury-gold" />
+                  </div>
+                  <div>
+                    <label className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Pour (g)</label>
+                    <input type="number" min="0" value={step.pourGrams}
+                      onChange={e => update(i, "pourGrams", e.target.value)}
+                      className="w-full rounded-lg border border-luxury-clay/40 px-2 py-1.5 text-xs focus:outline-none focus:border-luxury-gold" />
+                  </div>
+                </div>
+              )}
+              <div>
+                <label className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Instruction</label>
+                <input type="text" value={step.instruction}
+                  onChange={e => update(i, "instruction", e.target.value)}
+                  placeholder={isPrep ? "Prep step\u2026" : "What to do at this step\u2026"}
+                  className="w-full rounded-lg border border-luxury-clay/40 px-2 py-1.5 text-xs focus:outline-none focus:border-luxury-gold" />
+              </div>
+            </div>
+            <button type="button" onClick={() => remove(i)}
+              className="shrink-0 text-red-300 hover:text-red-500 text-xs mt-1 transition-colors">&times;</button>
           </div>
-          <div className="flex-1 grid grid-cols-2 gap-2">
-            <div>
-              <label className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Time (sec)</label>
-              <input type="number" min="0" value={step.timeSec}
-                onChange={e => update(i, "timeSec", e.target.value)}
-                className="w-full rounded-lg border border-luxury-clay/40 px-2 py-1.5 text-xs focus:outline-none focus:border-luxury-gold" />
-            </div>
-            <div>
-              <label className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Pour (g)</label>
-              <input type="number" min="0" value={step.pourGrams}
-                onChange={e => update(i, "pourGrams", e.target.value)}
-                className="w-full rounded-lg border border-luxury-clay/40 px-2 py-1.5 text-xs focus:outline-none focus:border-luxury-gold" />
-            </div>
-            <div className="col-span-2">
-              <label className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Instruction</label>
-              <input type="text" value={step.instruction}
-                onChange={e => update(i, "instruction", e.target.value)}
-                placeholder="What to do at this step…"
-                className="w-full rounded-lg border border-luxury-clay/40 px-2 py-1.5 text-xs focus:outline-none focus:border-luxury-gold" />
-            </div>
-          </div>
-          <button type="button" onClick={() => remove(i)}
-            className="shrink-0 text-red-300 hover:text-red-500 text-xs mt-1 transition-colors">✕</button>
-        </div>
-      ))}
-      <button type="button" onClick={add}
-        className="w-full py-2 border-2 border-dashed border-luxury-clay/30 rounded-xl text-[11px] text-luxury-clay hover:border-luxury-gold hover:text-luxury-umber transition-colors font-bold uppercase tracking-widest">
-        + Add Step
-      </button>
+        );
+      })}
+      <div className="flex gap-2">
+        <button type="button" onClick={() => add("prep")}
+          className="flex-1 py-2 border-2 border-dashed border-luxury-clay/30 rounded-xl text-[11px] text-luxury-clay hover:border-luxury-clay/60 hover:text-luxury-umber transition-colors font-bold uppercase tracking-widest">
+          + Prep Step
+        </button>
+        <button type="button" onClick={() => add("brew")}
+          className="flex-1 py-2 border-2 border-dashed border-luxury-gold/30 rounded-xl text-[11px] text-luxury-gold hover:border-luxury-gold hover:text-luxury-umber transition-colors font-bold uppercase tracking-widest">
+          + Brew Step
+        </button>
+      </div>
     </div>
   );
 }
 
-// ── Recipe Modal ──────────────────────────────────────────────────────────────
+// -- Recipe Modal -------------------------------------------------------------
 const EMPTY_FORM = {
   name: "", brewerType: "V60", grindSize: "Medium", coffeeGrams: "", waterGrams: "",
   waterTempC: "", bloomTimeSec: "", targetBrewTimeSec: "", notes: "",
-  steps: [{ timeSec: "", instruction: "", pourGrams: "" }],
+  steps: [{ phase: "brew", timeSec: "", instruction: "", pourGrams: "" }],
 };
 
 function recipeToForm(r) {
@@ -432,7 +546,8 @@ function recipeToForm(r) {
     bloomTimeSec: r.bloomTimeSec ?? "",
     targetBrewTimeSec: r.targetBrewTimeSec ?? "",
     notes: r.notes || "",
-    steps: (r.steps || [{ timeSec: "", instruction: "", pourGrams: "" }]).map(s => ({
+    steps: (r.steps || [{ phase: "brew", timeSec: "", instruction: "", pourGrams: "" }]).map(s => ({
+      phase: s.phase || "brew",
       timeSec: s.timeSec ?? "",
       instruction: s.instruction || "",
       pourGrams: s.pourGrams ?? "",
@@ -459,11 +574,17 @@ function RecipeModal({ recipe, mode: initMode, onClose, onSave }) {
         waterTempC: form.waterTempC !== "" ? Number(form.waterTempC) : null,
         bloomTimeSec: form.bloomTimeSec !== "" ? Number(form.bloomTimeSec) : null,
         targetBrewTimeSec: form.targetBrewTimeSec !== "" ? Number(form.targetBrewTimeSec) : null,
-        steps: form.steps.map(s => ({
-          timeSec: s.timeSec !== "" ? Number(s.timeSec) : 0,
-          instruction: s.instruction,
-          pourGrams: s.pourGrams !== "" ? Number(s.pourGrams) : 0,
-        })),
+        steps: form.steps.map(s => {
+          if (s.phase === "prep") {
+            return { phase: "prep", instruction: s.instruction };
+          }
+          return {
+            phase: "brew",
+            timeSec: s.timeSec !== "" ? Number(s.timeSec) : 0,
+            instruction: s.instruction,
+            pourGrams: s.pourGrams !== "" ? Number(s.pourGrams) : 0,
+          };
+        }),
       };
       await onSave(payload, recipe?.id);
       onClose();
@@ -505,12 +626,12 @@ function RecipeModal({ recipe, mode: initMode, onClose, onSave }) {
               )}
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  ["Coffee", recipe?.coffeeGrams ? `${recipe.coffeeGrams}g` : "—"],
-                  ["Water", recipe?.waterGrams ? `${recipe.waterGrams}g` : "—"],
-                  ["Ratio", recipe?.coffeeGrams && recipe?.waterGrams ? `1 : ${(recipe.waterGrams / recipe.coffeeGrams).toFixed(1)}` : "—"],
-                  ["Temp", recipe?.waterTempC ? `${recipe.waterTempC}°C` : "—"],
-                  ["Target Time", recipe?.targetBrewTimeSec ? formatTime(recipe.targetBrewTimeSec) : "—"],
-                  ["Grind", recipe?.grindSize || "—"],
+                  ["Coffee", recipe?.coffeeGrams ? `${recipe.coffeeGrams}g` : "\u2014"],
+                  ["Water", recipe?.waterGrams ? `${recipe.waterGrams}g` : "\u2014"],
+                  ["Ratio", recipe?.coffeeGrams && recipe?.waterGrams ? `1 : ${(recipe.waterGrams / recipe.coffeeGrams).toFixed(1)}` : "\u2014"],
+                  ["Temp", recipe?.waterTempC ? `${recipe.waterTempC}\u00B0C` : "\u2014"],
+                  ["Target Time", recipe?.targetBrewTimeSec ? formatTime(recipe.targetBrewTimeSec) : "\u2014"],
+                  ["Grind", recipe?.grindSize || "\u2014"],
                 ].map(([label, val]) => (
                   <div key={label} className="bg-luxury-stone/30 rounded-xl p-3 text-center">
                     <div className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">{label}</div>
@@ -524,29 +645,52 @@ function RecipeModal({ recipe, mode: initMode, onClose, onSave }) {
                   <p className="text-sm text-luxury-clay leading-relaxed">{recipe.notes}</p>
                 </div>
               )}
-              {recipe?.steps?.length > 0 && (
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest text-luxury-gold font-bold mb-2">Steps</div>
-                  <div className="space-y-2">
-                    {recipe.steps.map((step, i) => (
-                      <div key={i} className="flex items-start gap-3 bg-luxury-stone/20 rounded-xl p-3">
-                        <div className="w-8 h-8 rounded-full bg-luxury-umber/10 flex items-center justify-center text-xs font-bold text-luxury-umber shrink-0">{i + 1}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-1">
-                            <span className="text-[10px] text-luxury-clay">{formatTime(step.timeSec)}</span>
-                            {step.pourGrams > 0 && (
-                              <span className="text-[10px] font-bold text-luxury-gold bg-luxury-gold/10 px-1.5 py-0.5 rounded-full">
-                                {step.pourGrams}g
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-luxury-umber leading-relaxed">{step.instruction}</p>
+              {recipe?.steps?.length > 0 && (() => {
+                const prepSteps = recipe.steps.filter(s => s.phase === "prep");
+                const brewSteps = recipe.steps.filter(s => s.phase !== "prep");
+                return (
+                  <div className="space-y-4">
+                    {prepSteps.length > 0 && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-widest text-luxury-clay font-bold mb-2">Prep</div>
+                        <div className="space-y-2">
+                          {prepSteps.map((step, i) => (
+                            <div key={`prep-${i}`} className="flex items-start gap-3 bg-luxury-clay/5 border border-luxury-clay/10 rounded-xl p-3">
+                              <div className="w-6 h-6 rounded-full bg-luxury-clay/10 flex items-center justify-center text-[10px] font-bold text-luxury-clay shrink-0">{i + 1}</div>
+                              <p className="text-xs text-luxury-umber leading-relaxed flex-1">{step.instruction}</p>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
+                    )}
+                    {brewSteps.length > 0 && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-widest text-luxury-gold font-bold mb-2">
+                          {prepSteps.length > 0 ? "Brew" : "Steps"}
+                        </div>
+                        <div className="space-y-2">
+                          {brewSteps.map((step, i) => (
+                            <div key={`brew-${i}`} className="flex items-start gap-3 bg-luxury-stone/20 rounded-xl p-3">
+                              <div className="w-8 h-8 rounded-full bg-luxury-umber/10 flex items-center justify-center text-xs font-bold text-luxury-umber shrink-0">{i + 1}</div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-1">
+                                  <span className="text-[10px] text-luxury-clay">{formatTime(step.timeSec)}</span>
+                                  {step.pourGrams > 0 && (
+                                    <span className="text-[10px] font-bold text-luxury-gold bg-luxury-gold/10 px-1.5 py-0.5 rounded-full">
+                                      {step.pourGrams}g
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-xs text-luxury-umber leading-relaxed">{step.instruction}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </>
           ) : (
             <>
@@ -578,13 +722,13 @@ function RecipeModal({ recipe, mode: initMode, onClose, onSave }) {
                 </div>
                 <div>
                   <label className="block text-[10px] uppercase tracking-widest text-luxury-gold font-bold mb-1">
-                    Water (g) {ratio && <span className="text-luxury-clay font-normal normal-case tracking-normal">— 1:{ratio}</span>}
+                    Water (g) {ratio && <span className="text-luxury-clay font-normal normal-case tracking-normal">&mdash; 1:{ratio}</span>}
                   </label>
                   <input type="number" min="0" value={form.waterGrams} onChange={e => set("waterGrams", e.target.value)}
                     className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold" />
                 </div>
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-luxury-gold font-bold mb-1">Temp (°C)</label>
+                  <label className="block text-[10px] uppercase tracking-widest text-luxury-gold font-bold mb-1">Temp (&deg;C)</label>
                   <input type="number" min="0" max="100" value={form.waterTempC} onChange={e => set("waterTempC", e.target.value)}
                     className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold" />
                 </div>
@@ -597,7 +741,7 @@ function RecipeModal({ recipe, mode: initMode, onClose, onSave }) {
               <div>
                 <label className="block text-[10px] uppercase tracking-widest text-luxury-gold font-bold mb-1">Notes</label>
                 <textarea rows={2} value={form.notes} onChange={e => set("notes", e.target.value)}
-                  placeholder="Tips, technique notes…"
+                  placeholder="Tips, technique notes\u2026"
                   className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold resize-none" />
               </div>
               <div>
@@ -616,7 +760,7 @@ function RecipeModal({ recipe, mode: initMode, onClose, onSave }) {
             </button>
             <button type="button" onClick={handleSave} disabled={saving}
               className="flex-1 py-2.5 bg-luxury-umber text-white rounded-xl text-sm font-bold hover:bg-luxury-dark transition-colors disabled:opacity-50">
-              {saving ? "Saving…" : "Save Recipe"}
+              {saving ? "Saving\u2026" : "Save Recipe"}
             </button>
           </div>
         )}
@@ -626,7 +770,7 @@ function RecipeModal({ recipe, mode: initMode, onClose, onSave }) {
   );
 }
 
-// ── Main RecipesPage ──────────────────────────────────────────────────────────
+// -- Main RecipesPage ---------------------------------------------------------
 function RecipesPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState("my"); // "my" | "community"
@@ -635,12 +779,18 @@ function RecipesPage() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
-  const [composeModal, setComposeModal] = useState(null); // { preAttachedRecipe? }
+  const [composeModal, setComposeModal] = useState(null);
 
   // Community feed state
   const [posts, setPosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(false);
   const [postsLoaded, setPostsLoaded] = useState(false);
+
+  // Community shared recipes state
+  const [communityRecipes, setCommunityRecipes] = useState([]);
+  const [communityLoading, setCommunityLoading] = useState(false);
+  const [communityLoaded, setCommunityLoaded] = useState(false);
+  const [brewerFilter, setBrewerFilter] = useState("");
 
   const loadRecipes = async () => {
     setLoading(true);
@@ -652,10 +802,19 @@ function RecipesPage() {
     try { setPosts(await fetchPosts()); setPostsLoaded(true); } finally { setPostsLoading(false); }
   };
 
+  const loadCommunityRecipes = async () => {
+    setCommunityLoading(true);
+    try { setCommunityRecipes(await fetchCommunityRecipes()); setCommunityLoaded(true); }
+    finally { setCommunityLoading(false); }
+  };
+
   useEffect(() => { loadRecipes(); }, []);
 
   useEffect(() => {
-    if (tab === "community" && !postsLoaded) loadPosts();
+    if (tab === "community") {
+      if (!postsLoaded) loadPosts();
+      if (!communityLoaded) loadCommunityRecipes();
+    }
   }, [tab]);
 
   const handleSaveRecipe = async (payload, id) => {
@@ -682,7 +841,6 @@ function RecipesPage() {
 
   const handleLike = async (postId) => {
     await likePost(postId);
-    // optimistic update already done in PostCard
   };
 
   const handleDeletePost = async (postId) => {
@@ -696,6 +854,12 @@ function RecipesPage() {
   const builtIn = recipes.filter(r => r.isBuiltIn);
   const mine = recipes.filter(r => !r.isBuiltIn);
 
+  const filteredCommunityRecipes = brewerFilter
+    ? communityRecipes.filter(r => r.brewerType === brewerFilter)
+    : communityRecipes;
+
+  const communityBrewerTypes = [...new Set(communityRecipes.map(r => r.brewerType))].sort();
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -705,7 +869,7 @@ function RecipesPage() {
           <p className="text-sm text-luxury-clay mt-0.5">
             {tab === "my"
               ? `${mine.length} custom recipe${mine.length !== 1 ? "s" : ""}`
-              : `${posts.length} post${posts.length !== 1 ? "s" : ""} from the community`}
+              : `${communityRecipes.length} shared recipe${communityRecipes.length !== 1 ? "s" : ""}`}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -736,11 +900,11 @@ function RecipesPage() {
         ))}
       </div>
 
-      {/* ── My Recipes Tab ── */}
+      {/* -- My Recipes Tab -- */}
       {tab === "my" && (
         <>
           {loading ? (
-            <div className="py-20 text-center text-luxury-clay text-sm">Loading recipes…</div>
+            <div className="py-20 text-center text-luxury-clay text-sm">Loading recipes\u2026</div>
           ) : (
             <>
               {builtIn.length > 0 && (
@@ -764,7 +928,7 @@ function RecipesPage() {
                 <h3 className="text-[11px] font-bold uppercase tracking-widest text-luxury-gold mb-3">My Recipes</h3>
                 {mine.length === 0 ? (
                   <div className="py-10 text-center border-2 border-dashed border-luxury-clay/20 rounded-2xl">
-                    <div className="text-3xl mb-3">📋</div>
+                    <div className="text-3xl mb-3">&#x1F4CB;</div>
                     <div className="font-bold text-luxury-umber mb-1">No custom recipes yet</div>
                     <div className="text-sm text-luxury-clay mb-4">Create your own or import one from the community.</div>
                     <div className="flex justify-center gap-2">
@@ -797,35 +961,86 @@ function RecipesPage() {
         </>
       )}
 
-      {/* ── Community Tab ── */}
+      {/* -- Community Tab -- */}
       {tab === "community" && (
-        <>
-          {postsLoading ? (
-            <div className="py-20 text-center text-luxury-clay text-sm">Loading community…</div>
-          ) : posts.length === 0 ? (
-            <div className="py-16 text-center border-2 border-dashed border-luxury-clay/20 rounded-2xl">
-              <div className="text-3xl mb-3">☕</div>
-              <div className="font-bold text-luxury-umber mb-1">No posts yet</div>
-              <div className="text-sm text-luxury-clay mb-4">
-                Share a brew, a recipe, or a tip with the community.
+        <div className="space-y-8">
+          {/* Shared Recipes Section */}
+          <section>
+            <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-luxury-gold">Shared Recipes</h3>
+              {communityBrewerTypes.length > 1 && (
+                <div className="flex gap-1 flex-wrap">
+                  <button type="button" onClick={() => setBrewerFilter("")}
+                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                      !brewerFilter ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                    }`}>
+                    All
+                  </button>
+                  {communityBrewerTypes.map(t => (
+                    <button key={t} type="button" onClick={() => setBrewerFilter(t)}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                        brewerFilter === t ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                      }`}>
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {communityLoading ? (
+              <div className="py-10 text-center text-luxury-clay text-sm">Loading shared recipes\u2026</div>
+            ) : filteredCommunityRecipes.length === 0 ? (
+              <div className="py-8 text-center border-2 border-dashed border-luxury-clay/20 rounded-2xl">
+                <div className="text-2xl mb-2">\u2615</div>
+                <div className="font-bold text-luxury-umber mb-1">
+                  {brewerFilter ? `No ${brewerFilter} recipes shared yet` : "No shared recipes yet"}
+                </div>
+                <div className="text-sm text-luxury-clay">
+                  Share your recipes from My Recipes to see them here.
+                </div>
               </div>
-              <button type="button" onClick={() => setComposeModal({})}
-                className="px-5 py-2.5 bg-luxury-umber text-white text-sm font-bold rounded-xl hover:bg-luxury-dark transition-colors">
-                Write a Post
-              </button>
-            </div>
-          ) : (
-            <div className="max-w-2xl mx-auto space-y-4">
-              {posts.map(post => (
-                <PostCard key={post.id} post={post}
-                  onBrew={handleBrew}
-                  onImportRecipe={handleForkRecipe}
-                  onLike={handleLike}
-                  onDelete={handleDeletePost} />
-              ))}
-            </div>
-          )}
-        </>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredCommunityRecipes.map(r => (
+                  <CommunityRecipeCard key={r.id} recipe={r}
+                    onBrew={handleBrew}
+                    onImport={handleForkRecipe} />
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Posts Section */}
+          <section>
+            <h3 className="text-[11px] font-bold uppercase tracking-widest text-luxury-gold mb-3">Discussion</h3>
+            {postsLoading ? (
+              <div className="py-10 text-center text-luxury-clay text-sm">Loading posts\u2026</div>
+            ) : posts.length === 0 ? (
+              <div className="py-10 text-center border-2 border-dashed border-luxury-clay/20 rounded-2xl">
+                <div className="text-2xl mb-2">\u{1F4AC}</div>
+                <div className="font-bold text-luxury-umber mb-1">No posts yet</div>
+                <div className="text-sm text-luxury-clay mb-4">
+                  Share a brew, a recipe, or a tip with the community.
+                </div>
+                <button type="button" onClick={() => setComposeModal({})}
+                  className="px-5 py-2.5 bg-luxury-umber text-white text-sm font-bold rounded-xl hover:bg-luxury-dark transition-colors">
+                  Write a Post
+                </button>
+              </div>
+            ) : (
+              <div className="max-w-2xl mx-auto space-y-4">
+                {posts.map(post => (
+                  <PostCard key={post.id} post={post}
+                    onBrew={handleBrew}
+                    onImportRecipe={handleForkRecipe}
+                    onLike={handleLike}
+                    onDelete={handleDeletePost} />
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
       )}
 
       {/* Modals */}
