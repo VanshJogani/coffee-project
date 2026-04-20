@@ -25,7 +25,7 @@ app.use(express.json());
 const corsOrigin = process.env.CORS_ORIGIN || "*";
 app.use(
   cors({
-    origin: corsOrigin === "*" ? undefined : corsOrigin,
+    origin: corsOrigin === "*" ? true : corsOrigin,
     credentials: true
   })
 );
