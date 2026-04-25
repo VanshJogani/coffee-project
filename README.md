@@ -1,212 +1,113 @@
-## Coffee Explorer – Full‑stack App
+## Caffe Elegante – Indian Specialty Coffee Explorer
 
-A production‑ready example app to browse, filter, search, sort and review specialty coffee products, backed by SQLite and served via an Express API, with a React + Vite + Tailwind frontend.
-
-The app expects a `cleaned_coffee_products.json` file in the project root containing an array of cleaned product objects.
+A full-stack app to discover, browse, filter, and review specialty coffee from 60+ Indian roasters. Features multiple browsing modes including a Tinder-style swipe interface, card carousel, and traditional grid view.
 
 ### Project structure
 
-- **backend/** – Express API + SQLite
-- **frontend/** – React + Vite + Tailwind UI
-- **pipeline/**, **ScraperScripts/**, **Cleaners/** – your existing scraping/cleaning code (unchanged)
-- **results/** – not used directly by this app, kept for your pipeline
+```
+backend/          Express API + SQLite
+frontend/         React + Vite + Tailwind UI
+scrapers/         Scraper framework (Shopify + HTML base classes)
+pipeline/         Data cleaning pipeline
+ScraperScripts/   Legacy scraper scripts
+Cleaners/         Legacy cleaner scripts
+results/          Scraped & cleaned data (parsed → cleaned → merged)
+```
 
-### Backend overview
+### Features
 
-- **Tech**: Node.js, Express, `better-sqlite3`, Jest + Supertest
-- **DB**: SQLite file (default `backend/coffee.db`)
-- **Core tables**:
-  - `products(id, productId, name, roaster, roastType, origin, tastingNotes, score, price, imageUrl, cuppingDate)`
-  - `reviews(id, productId → products.id, reviewerName, rating, comment, createdAt, updatedAt)`
+- **Three view modes**: Grid (filterable), Cards (swipeable carousel), Swipe (Tinder-style like/dislike)
+- **Coffee Randomizer**: "I'm Feeling Lucky" button with fully-random or preference-filtered random selection
+- **Swipe preferences**: Like/dislike coffees with persistent localStorage tracking; view and manage your picks
+- **Discover mode**: Randomized roaster ordering on every page load for variety
+- **Multi-filter system**: Roaster, roast type, origin, process, tasting notes (flavour wheel), price range
+- **Categories**: Coffee, Tea, Accessories, Events, Subscriptions
+- **Fuzzy search**: Client-side Fuse.js + server-side SQLite LIKE
+- **Product variants**: Multiple weights/sizes grouped as one product with price comparison
+- **Reviews**: Community ratings with star display
+- **Flavour Wheel**: Interactive reference for tasting note exploration
+
+### Data pipeline
+
+```
+[Roaster websites] → scrapers/ → results/parsed/*.csv → pipeline/cleaner.py → results/cleaned/*.csv → results/merged → seed.js → SQLite
+```
+
+**Scraper framework** (`scrapers/`):
+- `ShopifyScraper` — Base class for Shopify stores (JSON API, automatic variant/price extraction)
+- `HtmlScraper` — Base class for WooCommerce/custom sites (CSS selector-based extraction with fallbacks)
+- `NaivoScraper` — Custom Playwright-based scraper for dynamic-loading sites
+- 60+ roaster configurations with `FILTER_COFFEE=True` where non-coffee items need filtering
+
+**Pipeline cleaner** (`pipeline/cleaner.py`):
+- Product categorization (Coffee/Tea/Accessories/Events/Subscriptions)
+- Roast level detection (15+ patterns: explicit phrases, labeled fields, contextual keywords)
+- Tasting notes extraction (labeled sections, "notes of" patterns, sentence scoring)
+- Non-coffee filtering (merch, food, equipment, apparel keywords)
+- Weight normalization ("250 Grams" → "250g", brewing methods filtered out)
+- Origin and process extraction from descriptions
+- Variant price parsing with brewing-method detection (V60/Pour Over won't appear as weights)
+
+### Backend
+
+- **Tech**: Node.js, Express, `better-sqlite3`
+- **DB**: SQLite (`backend/coffee.db`)
+- **Tables**: `products`, `reviews`, `recipes`, `brew_logs`, `brew_notes`, `bean_inventory`
 - **Endpoints**:
-  - `GET /api/products?roaster=&roastType=&origin=&search=&sort=&page=&limit=`
-    - Filters: multi-roaster, multi-roastType, single origin
-    - Search: basic `LIKE` over name/roaster/tastingNotes (backend) + Fuse.js fuzzy search (frontend)
-    - Sort: `newest`, `rating`, `roastType`, `priceAsc`, `priceDesc`
-    - Returns `{ data: [...], pagination: { page, limit, total, totalPages } }`
-  - `GET /api/products/:id` – single product with `avgRating`, `reviewCount`, and `reviews[]`
-  - `POST /api/reviews` – body `{ productId, name, rating (1–5), comment }`
-  - `PUT /api/reviews/:id` – update rating/comment/name
-  - `DELETE /api/reviews/:id`
-  - `GET /api/health` – health check
+  - `GET /api/products?roaster=&roastType=&origin=&process=&category=&search=&sort=&page=&limit=`
+  - `GET /api/products/:id` — single product with reviews
+  - `POST/PUT/DELETE /api/reviews`
+  - `GET /api/health`
 
-Basic input validation/sanitization is done in `backend/src/validation.js`. CORS is configured via `.env` (`CORS_ORIGIN`).
+### Frontend
 
-### Frontend overview
+- **Tech**: React 18, Vite, TailwindCSS, Fuse.js
+- **Key components**:
+  - `ProductCard` — grid card with price + weight display
+  - `CardCarousel` — single-card browsing with touch/swipe navigation
+  - `SwipeView` — Tinder-style card stack with like/dislike, preference tabs, undo
+  - `CoffeeRandomizer` — "I'm Feeling Lucky" modal with customize/random paths
+  - `FiltersPanel` — multi-select filters with price range slider
+  - `ProductDetailModal` — full detail with variants, "Try Another" for randomizer flow
+  - `InteractiveFlavourWheel` — visual tasting note reference
+  - `SortSelect` — Discover / Newest / Rating / Roast / Price sorting
 
-- **Tech**: React 18, Vite, React Router, TailwindCSS, Fuse.js, Vitest + Testing Library
-- **Key components** (in `frontend/src/components`):
-  - `ProductCard` – product card in grid
-  - `FiltersPanel` – roaster / roast type / origin multi-select filters
-  - `SearchBar` – global search box
-  - `SortSelect` – sort dropdown
-  - `ProductDetailModal` – detail view with image, origin map link, tasting notes, description and reviews
-  - `Reviews` – list + add/delete review UI
-  - `RatingStars` – star rating display
-  - `Pagination` – simple previous/next pager
-
-The main UI lives in `frontend/src/App.jsx` and uses `/api/products` and `/api/products/:id` to hydrate data. Client‑side fuzzy search is implemented with Fuse.js for quick filtering by name, roaster, tasting notes and origin.
-
-### Setup & running locally
-
-1. **Prerequisites**
-
-- Node.js 18+
-- `cleaned_coffee_products.json` in the project root (same folder as this `README.md`).
-
-2. **Install dependencies**
-
-From the project root (`PythonProject`):
+### Setup
 
 ```bash
-npm install
+npm install              # installs backend + frontend (workspaces)
+npm run seed             # seeds SQLite from cleaned_coffee_products.json
+npm run dev              # starts backend :4000 + frontend :5173
+npm test                 # runs backend + frontend tests
 ```
 
-This uses npm workspaces to install both `backend` and `frontend` dependencies.
+### Environment
 
-3. **Seed the database**
+Copy `.env.example` to `.env`:
+
+```
+BACKEND_PORT=4000
+DATABASE_PATH=./backend/coffee.db
+CORS_ORIGIN=http://localhost:5173
+```
+
+### Running the scraper pipeline
 
 ```bash
-npm run seed
+cd scrapers && python run_all.py       # scrape all roasters → results/parsed/
+cd pipeline && python cleaner.py       # clean all → results/cleaned/
+cd results && python merger.py         # merge → cleaned_coffee_products.json
+npm run seed                           # re-seed database
 ```
 
-This runs:
+Requires: `pip install requests beautifulsoup4 pandas playwright`
+
+For dynamic sites (Naivo): `playwright install chromium`
+
+### Docker
 
 ```bash
-node backend/seed.js cleaned_coffee_products.json
+docker-compose build && docker-compose up
 ```
 
-It will:
-
-- Create `backend/coffee.db` if needed.
-- Create `products` and `reviews` tables.
-- Load and normalize each entry from `cleaned_coffee_products.json` into `products`.
-- Add a couple of sample reviews per product into `reviews`.
-
-4. **Run the app in development**
-
-```bash
-npm run dev
-```
-
-This starts:
-
-- Backend API on `http://localhost:4000`
-- Frontend dev server on `http://localhost:5173`
-
-The frontend dev server proxies `/api` to the backend, so you only open the frontend URL in your browser.
-
-5. **Run tests**
-
-- Backend tests (Jest + Supertest) and frontend tests (Vitest) from root:
-
-```bash
-npm test
-```
-
-### Example API usage (curl)
-
-Assuming backend on `http://localhost:4000`.
-
-- **List products (page 1, 24 per page, newest)**
-
-```bash
-curl "http://localhost:4000/api/products?page=1&limit=24&sort=newest"
-```
-
-- **Filter by roaster and roast type**
-
-```bash
-curl "http://localhost:4000/api/products?roaster=Blue%20Tokai,Araku&roastType=Medium%20Roast"
-```
-
-- **Search (server-side LIKE)**
-
-```bash
-curl "http://localhost:4000/api/products?search=chocolate"
-```
-
-- **Get single product with reviews**
-
-```bash
-curl "http://localhost:4000/api/products/1"
-```
-
-- **Create a review**
-
-```bash
-curl -X POST "http://localhost:4000/api/reviews" \
-  -H "Content-Type: application/json" \
-  -d '{"productId":1,"name":"Vansh","rating":5,"comment":"Loved this coffee!"}'
-```
-
-- **Update a review**
-
-```bash
-curl -X PUT "http://localhost:4000/api/reviews/1" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Vansh","rating":4,"comment":"Still good, a bit bright."}'
-```
-
-- **Delete a review**
-
-```bash
-curl -X DELETE "http://localhost:4000/api/reviews/1"
-```
-
-### Environment configuration
-
-Copy `.env.example` to `.env` in the project root and adjust as needed:
-
-```bash
-cp .env.example .env
-```
-
-Defaults:
-
-- `BACKEND_PORT=4000` – Express server port
-- `DATABASE_PATH=./backend/coffee.db` – SQLite file path
-- `CORS_ORIGIN=http://localhost:5173` – frontend origin allowed to call backend
-
-### Docker & deployment
-
-Optional Docker setup is included:
-
-- `Dockerfile.backend` – builds the backend (Express + SQLite)
-- `Dockerfile.frontend` – builds the frontend (Vite static bundle served via `vite preview`)
-- `docker-compose.yml` – runs both services together
-
-Build and run with Docker:
-
-```bash
-docker-compose build
-docker-compose up
-```
-
-This exposes:
-
-- Backend on `http://localhost:4000`
-- Frontend on `http://localhost:5173` (proxied from container’s 4173)
-
-For deployment to services like Render/Heroku (backend) and Vercel/Netlify (frontend):
-
-- Deploy the **backend** as a Node.js service using `backend/src/server.js`, with `DATABASE_PATH` pointing to a persistent volume or managed SQLite/other DB.
-- Deploy the **frontend** as a static site built with `npm --workspace frontend run build`, serving the `frontend/dist` folder and configuring the API URL via environment variable (or proxy).
-
-### Search design choices
-
-- **Frontend fuzzy search (Fuse.js)**: For fast, user‑friendly search across relatively small to medium datasets, the app pulls a page of products from the backend and uses Fuse.js to do fuzzy matching across `name`, `roaster`, `tastingNotes`, and `origin`. This gives instant feedback and flexible matching without extra DB complexity.
-- **Backend search (SQLite LIKE)**: The backend also supports a simple `search` query param, implemented with `LIKE` on the same fields. This is useful when datasets grow, or when you want server‑side filtering before sending data to the client.
-
-**Scaling later**: For larger datasets, you can:
-
-- Move to SQLite FTS5 (or a dedicated search engine) and build an FTS index over `tastingNotes`, `name`, etc., backing `/api/products` with `MATCH` queries.
-- Keep Fuse.js only for client‑side refinement on top of server‑filtered subsets, or drop it entirely in favor of server‑side ranking.
-
-### Data model notes
-
-- The backend normalizes each product from `cleaned_coffee_products.json` into a consistent schema (`normalizeProduct` in `backend/seed.js`), with sensible defaults for missing fields (e.g., price/image optional).
-- Reviews are modeled in a separate table and aggregated via `AVG(rating)` and `COUNT(*)` in product list/detail queries so sorting by rating and displaying counts is efficient.
-
-All done — repo created and runnable. Hit me if you want Tailwind theme tweaks, authentication (signup/login), or deployment scripts to a cloud provider.
-
+Exposes backend on `:4000`, frontend on `:5173`.
