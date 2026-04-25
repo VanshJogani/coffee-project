@@ -185,7 +185,10 @@ The app currently has no authentication. All write operations (create recipe, po
 
 ### Install
 ```bash
-npm install
+npm install              # installs backend + frontend (workspaces)
+npm run seed             # seeds SQLite from cleaned_coffee_products.json
+npm run dev              # starts backend :4000 + frontend :5173
+npm test                 # runs backend + frontend tests
 ```
 Uses npm workspaces — installs backend and frontend dependencies together.
 

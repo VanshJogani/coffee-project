@@ -14,6 +14,7 @@ runner_output.txt
 
 # Generated data artifacts
 *.png
+.vercel
 
 # SQLite WAL/journal files (transient, not for version control)
 *.db-shm
