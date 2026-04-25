@@ -1,5 +1,5 @@
-Name,Roaster,Price,Quantity,Roast_Level,Tasting_Notes,Desc,URL,Image_URL
-Breakfast Blend Light Roast Beans,Odd Coffee Roasters,549.0,250g,Light Roast,"× Close Light Roast FRUITY | FLORAL | MILK CHOCOLATE A fruity, floral and milk chocolate blend of light roasted Arabica beans.","×   
+Name,Roaster,Price,Quantity,Roast_Level,Tasting_Notes,Origin,Process,Desc,URL,Image_URL,Category
+Breakfast Blend Light Roast Beans,Odd Coffee Roasters,549.0,250g,Light Roast,"× Close Light Roast FRUITY | FLORAL | MILK CHOCOLATE A fruity, floral and milk chocolate blend of light roasted Arabica",,,"×   
  
    
   Close  
@@ -14,8 +14,8 @@ Breakfast Blend Light Roast Beans,Odd Coffee Roasters,549.0,250g,Light Roast,"×
   100% Arabica 
     No Preservatives  
     Fruity and Floral flavor   
-    Light Roast",https://oddcoffee.in/products/breakfast-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/BreakfastBlend.png?v=1755772277
-Breakfast Blend Light Roast Beans,Odd Coffee Roasters,999.0,500g,Light Roast,"× Close Light Roast FRUITY | FLORAL | MILK CHOCOLATE A fruity, floral and milk chocolate blend of light roasted Arabica beans.","×   
+    Light Roast",https://oddcoffee.in/products/breakfast-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/BreakfastBlend.png?v=1755772277,Coffee
+Breakfast Blend Light Roast Beans,Odd Coffee Roasters,999.0,500g,Light Roast,"× Close Light Roast FRUITY | FLORAL | MILK CHOCOLATE A fruity, floral and milk chocolate blend of light roasted Arabica",,,"×   
  
    
   Close  
@@ -30,8 +30,8 @@ Breakfast Blend Light Roast Beans,Odd Coffee Roasters,999.0,500g,Light Roast,"×
   100% Arabica 
     No Preservatives  
     Fruity and Floral flavor   
-    Light Roast",https://oddcoffee.in/products/breakfast-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/BreakfastBlend.png?v=1755772277
-Breakfast Blend Light Roast Beans,Odd Coffee Roasters,1799.0,1kg,Light Roast,"× Close Light Roast FRUITY | FLORAL | MILK CHOCOLATE A fruity, floral and milk chocolate blend of light roasted Arabica beans.","×   
+    Light Roast",https://oddcoffee.in/products/breakfast-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/BreakfastBlend.png?v=1755772277,Coffee
+Breakfast Blend Light Roast Beans,Odd Coffee Roasters,1799.0,1kg,Light Roast,"× Close Light Roast FRUITY | FLORAL | MILK CHOCOLATE A fruity, floral and milk chocolate blend of light roasted Arabica",,,"×   
  
    
   Close  
@@ -46,8 +46,8 @@ Breakfast Blend Light Roast Beans,Odd Coffee Roasters,1799.0,1kg,Light Roast,"×
   100% Arabica 
     No Preservatives  
     Fruity and Floral flavor   
-    Light Roast",https://oddcoffee.in/products/breakfast-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/BreakfastBlend.png?v=1755772277
-Breakfast Blend Light Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd Coffee Roasters,449.0,,Light Roast,"× Close Light Roast FRUITY | FLORAL | MILK CHOCOLATE A fruity, floral and milk chocolate blend of light roasted Arabica Beans.","×   
+    Light Roast",https://oddcoffee.in/products/breakfast-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/BreakfastBlend.png?v=1755772277,Coffee
+Breakfast Blend Light Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd Coffee Roasters,449.0,,Light Roast,"× Close Light Roast FRUITY | FLORAL | MILK CHOCOLATE A fruity, floral and milk chocolate blend of light roasted Arabica",,,"×   
  
    
   Close  
@@ -62,8 +62,8 @@ Breakfast Blend Light Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd C
   100% Arabica 
     No Preservatives  
     Fruity Flavor  
-    Light Roast",https://oddcoffee.in/products/breakfast-blend,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/BreakfastBlendBox.png?v=1755772239
-House Blend 60:40 Medium Roast Beans,Odd Coffee Roasters,539.0,250g,Medium Roast,"× Close Medium Roast SIGNATURE TASTE | NUTTY | CHOCOLATY A nutty, chocolaty and signature taste blend of medium roasted Arabica and Robusta beans.","×   
+    Light Roast",https://oddcoffee.in/products/breakfast-blend,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/BreakfastBlendBox.png?v=1755772239,Accessories
+House Blend 60:40 Medium Roast Beans,Odd Coffee Roasters,539.0,250g,Medium Roast,"× Close Medium Roast SIGNATURE TASTE | NUTTY | CHOCOLATY A nutty, chocolaty and signature taste blend of medium roasted",,Natural,"×   
  
    
   Close  
@@ -79,8 +79,8 @@ House Blend 60:40 Medium Roast Beans,Odd Coffee Roasters,539.0,250g,Medium Roast
  
     No Preservatives  
     Nutty and Chocolaty flavor   
-    Medium Roast",https://oddcoffee.in/products/house-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/HouseBlend.png?v=1755772291
-House Blend 60:40 Medium Roast Beans,Odd Coffee Roasters,969.0,500g,Medium Roast,"× Close Medium Roast SIGNATURE TASTE | NUTTY | CHOCOLATY A nutty, chocolaty and signature taste blend of medium roasted Arabica and Robusta beans.","×   
+    Medium Roast",https://oddcoffee.in/products/house-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/HouseBlend.png?v=1755772291,Coffee
+House Blend 60:40 Medium Roast Beans,Odd Coffee Roasters,969.0,500g,Medium Roast,"× Close Medium Roast SIGNATURE TASTE | NUTTY | CHOCOLATY A nutty, chocolaty and signature taste blend of medium roasted",,Natural,"×   
  
    
   Close  
@@ -96,8 +96,8 @@ House Blend 60:40 Medium Roast Beans,Odd Coffee Roasters,969.0,500g,Medium Roast
  
     No Preservatives  
     Nutty and Chocolaty flavor   
-    Medium Roast",https://oddcoffee.in/products/house-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/HouseBlend.png?v=1755772291
-House Blend 60:40 Medium Roast Beans,Odd Coffee Roasters,1699.0,1kg,Medium Roast,"× Close Medium Roast SIGNATURE TASTE | NUTTY | CHOCOLATY A nutty, chocolaty and signature taste blend of medium roasted Arabica and Robusta beans.","×   
+    Medium Roast",https://oddcoffee.in/products/house-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/HouseBlend.png?v=1755772291,Coffee
+House Blend 60:40 Medium Roast Beans,Odd Coffee Roasters,1699.0,1kg,Medium Roast,"× Close Medium Roast SIGNATURE TASTE | NUTTY | CHOCOLATY A nutty, chocolaty and signature taste blend of medium roasted",,Natural,"×   
  
    
   Close  
@@ -113,8 +113,8 @@ House Blend 60:40 Medium Roast Beans,Odd Coffee Roasters,1699.0,1kg,Medium Roast
  
     No Preservatives  
     Nutty and Chocolaty flavor   
-    Medium Roast",https://oddcoffee.in/products/house-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/HouseBlend.png?v=1755772291
-House Blend Medium Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd Coffee Roasters,449.0,,Medium Roast,"× Close Medium Roast SIGNATURE TASTE | CHOCOLATY | NUTTY A chocolatety, nutty and signature taste blend of roasted Arabica and premium Robustas 100% Natural No Preservatives Nutty Flavor Medium Roast","×   
+    Medium Roast",https://oddcoffee.in/products/house-blend-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/HouseBlend.png?v=1755772291,Coffee
+House Blend Medium Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd Coffee Roasters,449.0,,Medium Roast,"× Close Medium Roast SIGNATURE TASTE | CHOCOLATY | NUTTY A chocolatety, nutty and signature taste blend of roasted",,Natural,"×   
  
    
   Close  
@@ -130,8 +130,8 @@ House Blend Medium Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd Coff
  
     No Preservatives  
     Nutty Flavor  
-    Medium Roast",https://oddcoffee.in/products/house-blend,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/HouseBlendBox.png?v=1755772225
-Monsooned Malabar Medium Dark Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd Coffee Roasters,499.0,,Medium-Dark Roast,"Medium Dark Roast EARTHY | BAKER'S CHOCOLATE An intensely flavourful, baker’s chocolate and earthy blend of medium dark roasted AA Arabica Beans.","Medium Dark Roast 
+    Medium Roast",https://oddcoffee.in/products/house-blend,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/HouseBlendBox.png?v=1755772225,Accessories
+Monsooned Malabar Medium Dark Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd Coffee Roasters,499.0,,Medium-Dark Roast,"Medium Dark Roast EARTHY | BAKER'S CHOCOLATE An intensely flavourful, baker’s chocolate and earthy blend of medium dark",,,"Medium Dark Roast 
  EARTHY | BAKER'S CHOCOLATE 
  An intensely flavourful, baker’s chocolate and earthy blend of medium dark roasted AA Arabica Beans. Kick start your - with musty-earth aroma. 
  
@@ -139,8 +139,8 @@ Monsooned Malabar Medium Dark Roast Pour Over Bags | No Equipment Needed (10 Cup
  100% Arabica 
     No Preservatives  
     Earthy Flavor  
-    Medium Dark Roast",https://oddcoffee.in/products/monsooned-malabar-pour-over-bags,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/1.2.png?v=1761822543
-ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5g,Medium Roast,,".coffee-section h3 {
+    Medium Dark Roast",https://oddcoffee.in/products/monsooned-malabar-pour-over-bags,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/1.2.png?v=1761822543,Accessories
+ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -230,8 +230,8 @@ ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5g,Medium 
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-cold-brew-no-equipment-needed-pack-of-5-brew-bags-brews-upto-15-cups,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Cold_Brew_Pour_Over_Bags.png?v=1766487020
-ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,10g,Medium Roast,,".coffee-section h3 {
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-cold-brew-no-equipment-needed-pack-of-5-brew-bags-brews-upto-15-cups,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Cold_Brew_Pour_Over_Bags.png?v=1766487020,Coffee
+ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,10g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -321,8 +321,8 @@ ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,10g,Mediu
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-cold-brew-no-equipment-needed-pack-of-5-brew-bags-brews-upto-15-cups,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Cold_Brew_Pour_Over_Bags.png?v=1766487020
-ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Medium Roast,,".coffee-section h3 {
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-cold-brew-no-equipment-needed-pack-of-5-brew-bags-brews-upto-15-cups,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Cold_Brew_Pour_Over_Bags.png?v=1766487020,Coffee
+ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -412,8 +412,8 @@ ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Mediu
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-cold-brew-no-equipment-needed-pack-of-5-brew-bags-brews-upto-15-cups,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Cold_Brew_Pour_Over_Bags.png?v=1766487020
-"ODD Coffee Pack of 2 | House Blend Medium Roast Beans, OL' Smoky Dark Roast Beans",Odd Coffee Roasters,,,Medium Roast,"× Freshly Roasted House Blend Medium Roast Beans, OL' Smoky Dark Roast Beans About this item 100% Arabica (MIX of 60% premium Arabica &amp; 40% premium robustas) Nutty, Chocolaty flavor &amp; Smoky Flavor No Preservatives Medium Roast Dark Roast","×   
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-cold-brew-no-equipment-needed-pack-of-5-brew-bags-brews-upto-15-cups,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Cold_Brew_Pour_Over_Bags.png?v=1766487020,Coffee
+"ODD Coffee Pack of 2 | House Blend Medium Roast Beans, OL' Smoky Dark Roast Beans",Odd Coffee Roasters,949.0,,Medium Roast,"× Freshly Roasted House Blend Medium Roast Beans, OL' Smoky Dark Roast Beans About this item 100% Arabica (MIX of 60%",,,"×   
  
  
  
@@ -427,8 +427,8 @@ ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Mediu
    Nutty, Chocolaty flavor &amp; Smoky Flavor  
    No Preservatives   
    Medium Roast  
-   Dark Roast",https://oddcoffee.in/products/odd-coffee-pack-of-2-coarse-grind-house-blend-medium-roast-beans-ol-smoky-dark-roast-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/House_OL_SmokyBlend_1.png?v=1755772368
-"ODD Coffee Pack of 2 |Breakfast Blend Light Roast Beans, House Blend Medium Roast Beans",Odd Coffee Roasters,,,Light Roast,"× Freshly Roasted House Blend Medium Roast Beans, Breakfast Blend Light Roast Beans About this item 100% Arabica (MIX of 60% premium Arabica &amp; 40% premium robustas) Nutty &amp; Chocolaty flavor Fruity Flavor No Preservatives Light Roast Medium Roast","×   
+   Dark Roast",https://oddcoffee.in/products/odd-coffee-pack-of-2-coarse-grind-house-blend-medium-roast-beans-ol-smoky-dark-roast-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/House_OL_SmokyBlend_1.png?v=1755772368,Coffee
+"ODD Coffee Pack of 2 |Breakfast Blend Light Roast Beans, House Blend Medium Roast Beans",Odd Coffee Roasters,979.0,,Light Roast,"× Freshly Roasted House Blend Medium Roast Beans, Breakfast Blend Light Roast Beans About this item 100% Arabica (MIX",,,"×   
  
  
  
@@ -445,8 +445,8 @@ ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Mediu
     Fruity Flavor    
    No Preservatives    
    Light Roast  
-   Medium Roast",https://oddcoffee.in/products/odd-coffee-pack-of-2-fine-grind-house-blend-medium-roast-beans-breakfast-blend-light-roast-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Breakfast_HouseBlend.png?v=1755772353
-"ODD Coffee Pack of 3 | House Blend Medium Roast Beans, OL' Smoky Dark Roast Beans, Breakfast Blend Light Roast Beans",Odd Coffee Roasters,,,Light Roast,,"×   
+   Medium Roast",https://oddcoffee.in/products/odd-coffee-pack-of-2-fine-grind-house-blend-medium-roast-beans-breakfast-blend-light-roast-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Breakfast_HouseBlend.png?v=1755772353,Coffee
+"ODD Coffee Pack of 3 | House Blend Medium Roast Beans, OL' Smoky Dark Roast Beans, Breakfast Blend Light Roast Beans",Odd Coffee Roasters,1399.0,,Light Roast,,,,"×   
  
  
  
@@ -464,8 +464,8 @@ ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Mediu
    No Preservatives    
    Light Roast  
    Medium Roast  
-   Dark Roast",https://oddcoffee.in/products/odd-coffee-pack-of-3-whole-beans-house-blend-medium-roast-beans-ol-smoky-dark-roast-beans-breakfast-blend-light-roast-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Breakfast_House_OL_SmokyBlend.png?v=1755772340
-"ODD Coffee Pour Over Bags| Pack of 2 | Makes 20 Cups | House Blend Medium Roast, Breakfast Blend Light Roast",Odd Coffee Roasters,849.0,,Light Roast,"× Freshly Roasted House Blend Medium Roast, Breakfast Blend Light Roast About this item 100% Arabica (MIX of 60% premium Arabica &amp; 40% premium robustas) Nutty &amp; Chocolaty flavor Fruity Flavor No Preservatives Light Roast Medium Roast 3 Step Brew - No Equipment Required","×   
+   Dark Roast",https://oddcoffee.in/products/odd-coffee-pack-of-3-whole-beans-house-blend-medium-roast-beans-ol-smoky-dark-roast-beans-breakfast-blend-light-roast-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Breakfast_House_OL_SmokyBlend.png?v=1755772340,Coffee
+"ODD Coffee Pour Over Bags| Pack of 2 | Makes 20 Cups | House Blend Medium Roast, Breakfast Blend Light Roast",Odd Coffee Roasters,849.0,,Light Roast,"× Freshly Roasted House Blend Medium Roast, Breakfast Blend Light Roast About this item 100% Arabica (MIX of 60%",,,"×   
  
  
  
@@ -484,8 +484,8 @@ ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Mediu
    Light Roast  
    Medium Roast  
  
-   3 Step Brew - No Equipment Required",https://oddcoffee.in/products/odd-coffee-pour-over-bags-pack-of-2-makes-20-cups-house-blend-medium-roast-breakfast-blend-light-roast,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Breakfast_HouseBlendBox.png?v=1755772170
-"ODD Coffee Pour Over Bags| Pack of 2 | Makes 20 Cups | House Blend Medium Roast, OL' Smoky Dark Roast",Odd Coffee Roasters,899.0,,Medium Roast,"× Freshly Roasted House Blend Medium Roast, OL' Smoky Dark Roast About this item 100% Arabica (MIX of 60% premium Arabica &amp; 40% premium robustas) Nutty, Chocolaty flavor &amp; Smoky Flavor Fruity Flavor No Preservatives Medium Roast Dark Roast 3 Step Brew - No Equipment Required","×   
+   3 Step Brew - No Equipment Required",https://oddcoffee.in/products/odd-coffee-pour-over-bags-pack-of-2-makes-20-cups-house-blend-medium-roast-breakfast-blend-light-roast,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Breakfast_HouseBlendBox.png?v=1755772170,Accessories
+"ODD Coffee Pour Over Bags| Pack of 2 | Makes 20 Cups | House Blend Medium Roast, OL' Smoky Dark Roast",Odd Coffee Roasters,899.0,,Medium Roast,"× Freshly Roasted House Blend Medium Roast, OL' Smoky Dark Roast About this item 100% Arabica (MIX of 60% premium",,,"×   
  
  
  
@@ -504,8 +504,8 @@ ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Mediu
    Medium Roast  
    Dark Roast  
  
-   3 Step Brew - No Equipment Required",https://oddcoffee.in/products/odd-coffee-pour-over-bags-pack-of-2-makes-20-cups-house-blend-medium-roast-ol-smoky-dark-roast,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/House_OL_SmokyBlendBox.png?v=1755772154
-"ODD Coffee Pour Over Bags| Pack of 3 | Makes 30 Cups | House Blend Medium Roast, OL' Smoky Dark Roast, Breakfast Blend Light Roast",Odd Coffee Roasters,1199.0,,Light Roast,,"×   
+   3 Step Brew - No Equipment Required",https://oddcoffee.in/products/odd-coffee-pour-over-bags-pack-of-2-makes-20-cups-house-blend-medium-roast-ol-smoky-dark-roast,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/House_OL_SmokyBlendBox.png?v=1755772154,Accessories
+"ODD Coffee Pour Over Bags| Pack of 3 | Makes 30 Cups | House Blend Medium Roast, OL' Smoky Dark Roast, Breakfast Blend Light Roast",Odd Coffee Roasters,1199.0,,Light Roast,,,,"×   
  
  
  
@@ -524,8 +524,8 @@ ODD Classic Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Mediu
    Medium Roast  
    Dark Roast  
  
-   3 Step Brew - No Equipment Required",https://oddcoffee.in/products/odd-coffee-pour-over-bags-pack-of-3-makes-30-cups-house-blend-medium-roast-ol-smoky-dark-roast-breakfast-blend-light-roast-1,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Breakfast_House_OL_SmokyBlendBox.png?v=1755772321
-ODD Dark Roast Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5g,Medium Roast,,".coffee-section h3 {
+   3 Step Brew - No Equipment Required",https://oddcoffee.in/products/odd-coffee-pour-over-bags-pack-of-3-makes-30-cups-house-blend-medium-roast-ol-smoky-dark-roast-breakfast-blend-light-roast-1,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Breakfast_House_OL_SmokyBlendBox.png?v=1755772321,Accessories
+ODD Dark Roast Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -615,8 +615,8 @@ ODD Dark Roast Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5g,Medi
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-dark-roast-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_23_46_PM.png?v=1766487252
-ODD Dark Roast Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,10g,Medium Roast,,".coffee-section h3 {
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-dark-roast-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_23_46_PM.png?v=1766487252,Coffee
+ODD Dark Roast Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,10g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -706,8 +706,8 @@ ODD Dark Roast Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,10g,Me
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-dark-roast-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_23_46_PM.png?v=1766487252
-ODD Dark Roast Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Medium Roast,,".coffee-section h3 {
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-dark-roast-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_23_46_PM.png?v=1766487252,Coffee
+ODD Dark Roast Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -797,8 +797,8 @@ ODD Dark Roast Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Me
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-dark-roast-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_23_46_PM.png?v=1766487252
-ODD Killa Vanilla Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5g,Medium Roast,,".coffee-section h3 {
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-dark-roast-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_23_46_PM.png?v=1766487252,Coffee
+ODD Killa Vanilla Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -888,8 +888,8 @@ ODD Killa Vanilla Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5g,M
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-killa-vanilla-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPTImageDec23_2025_04_27_27PM.png?v=1766487484
-ODD Killa Vanilla Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,10g,Medium Roast,,".coffee-section h3 {
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-killa-vanilla-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPTImageDec23_2025_04_27_27PM.png?v=1766487484,Coffee
+ODD Killa Vanilla Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,10g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -979,8 +979,8 @@ ODD Killa Vanilla Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,10g
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-killa-vanilla-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPTImageDec23_2025_04_27_27PM.png?v=1766487484
-ODD Killa Vanilla Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Medium Roast,,".coffee-section h3 {
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-killa-vanilla-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPTImageDec23_2025_04_27_27PM.png?v=1766487484,Coffee
+ODD Killa Vanilla Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -1070,8 +1070,8 @@ ODD Killa Vanilla Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-killa-vanilla-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPTImageDec23_2025_04_27_27PM.png?v=1766487484
-ODD Turkish Hazelnut Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5g,Medium Roast,,".coffee-section h3 {
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-killa-vanilla-cold-brew-no-equipment-needed,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPTImageDec23_2025_04_27_27PM.png?v=1766487484,Coffee
+ODD Turkish Hazelnut Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -1161,8 +1161,8 @@ ODD Turkish Hazelnut Cold Brew | No Equipment Needed,Odd Coffee Roasters,540.0,5
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-hazelnut-cold-brew-no-equipment-needed-copy,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_19_49_PM.png?v=1766487052
-ODD Turkish Hazelnut Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,10g,Medium Roast,,".coffee-section h3 {
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-hazelnut-cold-brew-no-equipment-needed-copy,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_19_49_PM.png?v=1766487052,Coffee
+ODD Turkish Hazelnut Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,10g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -1252,8 +1252,8 @@ ODD Turkish Hazelnut Cold Brew | No Equipment Needed,Odd Coffee Roasters,1039.0,
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-hazelnut-cold-brew-no-equipment-needed-copy,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_19_49_PM.png?v=1766487052
-ODD Turkish Hazelnut Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Medium Roast,,".coffee-section h3 {
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-hazelnut-cold-brew-no-equipment-needed-copy,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_19_49_PM.png?v=1766487052,Coffee
+ODD Turkish Hazelnut Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,15g,Medium Roast,,,Natural,".coffee-section h3 {
     font-size: 26px;
     margin-bottom: 5px;
     font-weight: 700;
@@ -1343,8 +1343,8 @@ ODD Turkish Hazelnut Cold Brew | No Equipment Needed,Odd Coffee Roasters,1529.0,
  
  
  
- Remove the bag and enjoy",https://oddcoffee.in/products/odd-hazelnut-cold-brew-no-equipment-needed-copy,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_19_49_PM.png?v=1766487052
-OL' Smoky Dark Roast Beans,Odd Coffee Roasters,549.0,250g,Dark Roast,,"×   
+ Remove the bag and enjoy",https://oddcoffee.in/products/odd-hazelnut-cold-brew-no-equipment-needed-copy,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/ChatGPT_Image_Dec_23_2025_04_19_49_PM.png?v=1766487052,Coffee
+OL' Smoky Dark Roast Beans,Odd Coffee Roasters,549.0,250g,Dark Roast,,,Natural,"×   
  
    
   Close  
@@ -1361,8 +1361,8 @@ OL' Smoky Dark Roast Beans,Odd Coffee Roasters,549.0,250g,Dark Roast,,"×
  
     No Preservatives  
     Smoky flavor   
-    Dark Roast",https://oddcoffee.in/products/ol-smoky-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/OL_Smoky_4811ea36-6f12-4e5c-84e8-23ba1326dd48.png?v=1755772263
-OL' Smoky Dark Roast Beans,Odd Coffee Roasters,999.0,500g,Dark Roast,,"×   
+    Dark Roast",https://oddcoffee.in/products/ol-smoky-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/OL_Smoky_4811ea36-6f12-4e5c-84e8-23ba1326dd48.png?v=1755772263,Coffee
+OL' Smoky Dark Roast Beans,Odd Coffee Roasters,999.0,500g,Dark Roast,,,Natural,"×   
  
    
   Close  
@@ -1379,8 +1379,8 @@ OL' Smoky Dark Roast Beans,Odd Coffee Roasters,999.0,500g,Dark Roast,,"×
  
     No Preservatives  
     Smoky flavor   
-    Dark Roast",https://oddcoffee.in/products/ol-smoky-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/OL_Smoky_4811ea36-6f12-4e5c-84e8-23ba1326dd48.png?v=1755772263
-OL' Smoky Dark Roast Beans,Odd Coffee Roasters,1799.0,1kg,Dark Roast,,"×   
+    Dark Roast",https://oddcoffee.in/products/ol-smoky-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/OL_Smoky_4811ea36-6f12-4e5c-84e8-23ba1326dd48.png?v=1755772263,Coffee
+OL' Smoky Dark Roast Beans,Odd Coffee Roasters,1799.0,1kg,Dark Roast,,,Natural,"×   
  
    
   Close  
@@ -1397,8 +1397,8 @@ OL' Smoky Dark Roast Beans,Odd Coffee Roasters,1799.0,1kg,Dark Roast,,"×
  
     No Preservatives  
     Smoky flavor   
-    Dark Roast",https://oddcoffee.in/products/ol-smoky-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/OL_Smoky_4811ea36-6f12-4e5c-84e8-23ba1326dd48.png?v=1755772263
-OL' Smoky Dark Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd Coffee Roasters,449.0,,Dark Roast,,"×    
+    Dark Roast",https://oddcoffee.in/products/ol-smoky-beans,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/OL_Smoky_4811ea36-6f12-4e5c-84e8-23ba1326dd48.png?v=1755772263,Coffee
+OL' Smoky Dark Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd Coffee Roasters,449.0,,Dark Roast,,,,"×    
    
   Close  
  
@@ -1413,8 +1413,8 @@ OL' Smoky Dark Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd Coffee R
  
     No Preservatives  
     Smoky Flavor   
-    Dark Roast",https://oddcoffee.in/products/ol-smoky,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/OL_SmokyBox.png?v=1755772209
-"Sampler Pack | House Blend Medium Roast, OL' Smoky Dark Roast, Breakfast Blend Light Roast (3 Cups)",Odd Coffee Roasters,149.0,,Light Roast,"About this item 100% Arabica (MIX of 60% premium Arabica &amp; 40% premium robustas) Nutty, Chocolaty flavor &amp; Smoky Flavor Fruity Flavor No Preservatives Light Roast Medium Roast Dark Roast 3 Step Brew - No Equipment Required","×   
+    Dark Roast",https://oddcoffee.in/products/ol-smoky,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/OL_SmokyBox.png?v=1755772209,Accessories
+"Sampler Pack | House Blend Medium Roast, OL' Smoky Dark Roast, Breakfast Blend Light Roast (3 Cups)",Odd Coffee Roasters,149.0,,Light Roast,About this item 100% Arabica (MIX of 60% premium Arabica &amp; 40% premium robustas) Nutty,,,"×   
  
  
  
@@ -1432,4 +1432,4 @@ OL' Smoky Dark Roast Pour Over Bags | No Equipment Needed (10 Cups),Odd Coffee R
    Medium Roast  
    Dark Roast  
  
-   3 Step Brew - No Equipment Required",https://oddcoffee.in/products/odd-coffee-pour-over-bags-pack-of-3-samples-makes-3-cups-house-blend-medium-roast-ol-smoky-dark-roast-breakfast-blend-light-roast,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Sampler.png?v=1755772306
+   3 Step Brew - No Equipment Required",https://oddcoffee.in/products/odd-coffee-pour-over-bags-pack-of-3-samples-makes-3-cups-house-blend-medium-roast-ol-smoky-dark-roast-breakfast-blend-light-roast,https://cdn.shopify.com/s/files/1/0624/2674/3014/files/Sampler.png?v=1755772306,Coffee

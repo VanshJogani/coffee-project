@@ -1,5 +1,84 @@
-roaster,name,price,currency,description,product_url,image_url,variants
-Estate Monkey,AA ARABICA PLANTATION,Regular price Rs. 450.00 Regular price Rs. 0.00 Sale price Rs. 450.00 Unit price / per Sale Sold out,Rs.,"Arabica beans are of premium quality. Shade-grown and washed coffee from the regions of Coorg, Karnataka Fresh single origin 100% Arabica coffee beans, roasted in limited collection and with care Roast Level - Medium Coffee Notes - Cereally, Vanilla and Chocolate Net Quantity - 200 grams",https://www.estatemonkeys.com/products/aa-arabica-plantation-200g,//estatemonkeys.com/cdn/shop/files/AAArabica200g.png?v=1715171760&width=1946,
-Estate Monkey,AAA ARABICA PLANTATION,Regular price Rs. 475.00 Regular price Sale price Rs. 475.00 Unit price / per Sale Sold out,Rs.,"Arabica beans are of premium quality. Shade-grown and washed coffee from the regions of Coorg, Karnataka Fresh single origin 100% Arabica coffee beans, roasted in limited collection and with care Roast Level - Medium Recommended Brewing Methods - Espresso, Aeropress, Moka Pot, Coffee Filter, South Indian Filter, French Press Coffee Notes - Citrus and Hint of Spices Net Quantity - 75 grams | 200 grams",https://www.estatemonkeys.com/products/aaa-arabica-plantation-200g,//estatemonkeys.com/cdn/shop/files/AAAArabica200g.png?v=1715172759&width=1946,
-Estate Monkey,ARABICA CHERRY,Regular price Rs. 400.00 Regular price Sale price Rs. 400.00 Unit price / per Sale Sold out,Rs.,"Arabica beans are of premium quality. Shade-grown and unwashed coffee from the regions of Somwarpet, Coorg. Fresh single origin 100% Arabica coffee beans, roasted in limited collection and with care Roast Level - Medium Recommended Brewing Methods - Espresso, Aeropress, Moka Pot, Coffee Filter, South Indian Filter, French Press Coffee Notes - Dark Chocolate Net Quantity - 75 grams | 200 grams",https://www.estatemonkeys.com/products/arabica-cherry-200g,//estatemonkeys.com/cdn/shop/files/Arabicacherry200g.png?v=1715172808&width=1946,
-Estate Monkey,"arabica select, DAWN",Regular price Rs. 500.00 Regular price Rs. 625.00 Sale price Rs. 500.00 Unit price / per Sale Sold out,Rs.,"The Arabica Select collection is for discerning coffee drinkers who appreciate authentic, specialty-grade Indian coffee, expertly blended from farms with heritage and recognition — delivering the genuine flavours of Coorg straight from estate to cup. DAWN is a signature blend crafted from the celebrated Baragalli Estate, recognized by its Geographical Indication (GI) status, and enriched with AAA-grade Arabica cherries exclusively from Coorg. This washed and sun-dried Arabica blend exemplifies Estate Monkeys' commitment to origin purity and top-tier quality. DAWN stands out for its enveloping chocolaty note—rich and bold, yet balanced with a subtle natural sweetness that reflects the best of Coorg’s coffee terroir. Origin: Single-origin, Coorg (Baragalli Estate + Arabica Cherry AAA) Packaged in a 250g pack, our coffee is freshly roasted and sealed to preserve its aroma and flavour. Brew it strong, enjoy it black, or pair it with frothy milk for the ultimate South Indian filter coffee experience.",https://www.estatemonkeys.com/products/arabica-select-dawn,//estatemonkeys.com/cdn/shop/files/1_b8c68afc-7179-4a3b-b952-d5600455f7e0.png?v=1757582347&width=1946,
+roaster,name,price,currency,description,product_url,image_url,variant_prices,roast_type
+Estate Monkey,AA ARABICA PLANTATION,Rs. 450.00,INR,"Arabica beans are of premium quality. Shade-grown and washed coffee from the regions of Coorg, Karnataka  
+  Fresh single origin 100% Arabica coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Coffee Notes - Cereally, Vanilla and Chocolate  
+  Net Quantity - 200 grams",https://www.estatemonkeys.com/products/aa-arabica-plantation-200g,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/AAArabica200g.png?v=1715171760,:450.00,
+Estate Monkey,AAA ARABICA PLANTATION,Rs. 475.00,INR,"Arabica beans are of premium quality. Shade-grown and washed coffee from the regions of Coorg, Karnataka  
+  Fresh single origin 100% Arabica coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Recommended Brewing Methods - Espresso, Aeropress, Moka Pot, Coffee Filter, South Indian Filter, French Press  
+  Coffee Notes - Citrus and Hint of Spices  
+  Net Quantity - 75 grams | 200 grams",https://www.estatemonkeys.com/products/aaa-arabica-plantation-200g,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/AAAArabica200g.png?v=1715172759,:475.00,
+Estate Monkey,ARABICA PEABERRY PLANTATION,Rs. 450.00,INR,"Arabica beans are of premium quality. Shade-grown and washed coffee from the regions of Somwarpet, Coorg.  
+  Fresh single origin 100% Arabica coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Recommended Brewing Methods - Espresso, Aeropress, Moka Pot, Coffee Filter, South Indian Filter, French Press  
+  Coffee Notes - Fruity, Citrus and slight Cereally  
+  Net Quantity - 75 grams | 200 grams",https://www.estatemonkeys.com/products/peaberry-arabica-plantation-200g,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/Peaberryarabica200g.png?v=1715179683,:450.00,
+Estate Monkey,ARABICA | SINGLE ESTATE BOX,Rs. 950.00,INR,"GI Tagged Arabica coffee estates of Coorg  
+  Baragalli Estate &amp; Puttanna Koppalu Estate produce some of the finest Arabica coffees of Coorg  
+  Fresh single estate 100% Arabica coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Recommended Brewing Methods - Espresso, Aeropress, Moka Pot, Coffee Filter, South Indian Filter, French Press  
+  Net Quantity - 200 grams x 2 packs",https://www.estatemonkeys.com/products/single-estate-combo,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/1_4c88651b-b5ac-4021-9061-d91b27c87e8d.png?v=1713270019,:950.00,
+Estate Monkey,ARABICA | SINGLE ESTATE SMALL BOX,Rs. 340.00,INR,"GI Tagged Arabica coffee estates of Coorg  
+  Baragalli Estate &amp; Puttanna Koppalu Estate produce some of the finest Arabica coffees of Coorg  
+  Fresh single estate 100% Arabica coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Recommended Brewing Methods - Espresso, Aeropress, Moka Pot, Coffee Filter, South Indian Filter, French Press  
+  Net Quantity - 75 grams x 2 packs",https://www.estatemonkeys.com/products/arabica-single-estate-box,https://cdn.shopify.com/s/files/1/0244/5734/7152/products/SingleEstateCombocopy.png?v=1716976745,:340.00,
+Estate Monkey,ArRo 01,Rs. 400.00,INR,"Arabica and Robusta beans are of premium quality. Shade-grown coffee from the regions of Coorg.  
+  Fresh single origin 100% coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Coffee Blend - Arabica Plantation AAA, Arabica Plantation Peaberry, Robusta Cherry  
+  Net Quantity - 75 grams | 200 grams",https://www.estatemonkeys.com/products/arro-01-200g-1,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/ArRo01200g.png?v=1715178591,:400.00,
+Estate Monkey,ArRo 03,Rs. 400.00,INR,"Arabica and Robusta beans are of premium quality. Shade-grown coffee from the regions of Coorg.  
+  Fresh single origin 100% coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Coffee Blend - Arabica Plantation AA, Robusta Cherry  
+  Net Quantity - 75 grams | 200 grams",https://www.estatemonkeys.com/products/arro-03-200g,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/ArRo03200g.png?v=1715179231,:400.00,
+Estate Monkey,BARAGALLI ESTATE,Rs. 475.00,INR,"Baragalli arabica beans are of premium quality. Shade-grown and washed coffee from the regions of Somwarpet, Coorg.  
+  Fresh single estate 100% Arabica coffee beans, roasted in limited collection and with care  
+  Recommended Brewing Methods - Espresso, Aeropress, Moka Pot, Coffee Filter, South Indian Filter, French Press  
+  Coffee Notes - Orange, Hint of Spicy, Herbal  
+  Net Quantity - 75 grams | 200 grams",https://www.estatemonkeys.com/products/baragalli-estate,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/Baragalliestate200g.png?v=1715179324,:475.00,
+Estate Monkey,COORG ARABICA | COFFEE BOX,Rs. 1200.00,INR,"Arabicas of Coorg. Premium quality shade-grown coffee from the regions of Coorg  
+  Fresh single origin 100% Arabica coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Coffee Packs - Arabica Plantation AAA, Arabica Plantation AA, Arabica Plantation Peaberry  
+   Net Quantity -   200 grams x 3 pac",https://www.estatemonkeys.com/products/coorg-arabica-plantation-coffee-range-box,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/6copy.png?v=1715661870,:1200.00,
+Estate Monkey,COORG ARABICA | COFFEE SMALL BOX,Rs. 415.00,INR,"Arabicas of Coorg. Premium quality shade-grown coffee from the regions of Coorg  
+  Fresh single origin 100% Arabica coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Coffee Packs - Arabica Plantation AAA, Arabica Plantation AA, Arabica Plantation Peaberry  
+   Net Quantity - 75 grams x 3 packs",https://www.estatemonkeys.com/products/coorg-arabica-coffee-box,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/temp_d914d9a3-b662-49bd-8cac-dc974d87cc9e.png?v=1733743616,:415.00,
+Estate Monkey,DAWN,Rs. 450.00,INR,"Arabicas of Coorg. Premium quality shade-grown coffee from the regions of Coorg  
+  Fresh single origin 100% Arabica coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Coffee Blend - Arabica Plantation AAA, Arabica Plantation AA, Arabica Plantation Peaberry  
+  Net Quantity - 200 g",https://www.estatemonkeys.com/products/dawn-200g,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/Dawn200g.png?v=1715179379,:450.00,
+Estate Monkey,MELLOW,Rs. 450.00,INR,"Arabicas of Coorg. Premium quality shade-grown coffee from the regions of Coorg  
+  Fresh single origin 100% Arabica coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Coffee Blend - Arabica Plantation AAA, Arabica Plantation AA, Arabica Plantation Peaberry  
+  Coffee Notes - Citrus and Roasted Nuts",https://www.estatemonkeys.com/products/mellow-200g,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/Mellow200g.png?v=1715179628,:450.00,
+Estate Monkey,PUTTANA KOPPALU ESTATE,Rs. 475.00,INR,"Puttana Koppalu arabica beans are of premium quality. Shade-grown and washed coffee from the regions of Somwarpet, Coorg.  
+  Fresh single estate 100% Arabica coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Recommended Brewing Methods - Espresso, Aeropress, Moka Pot, Coffee Filter, South Indian Filter, French Press  
+  Coffee Notes - Orange, Hint of Spicy, Herbal  
+  Net Quantity - 75 grams | 200 grams",https://www.estatemonkeys.com/products/puttana-koppalu-estate,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/PKestate200g.png?v=1715179753,:475.00,
+Estate Monkey,ROBUSTA CHERRY,Rs. 350.00,INR,"Robusta beans are of premium quality. Shade-grown and washed coffee from the regions of Somwarpet, Coorg.  
+  Fresh single origin 100% Robusta coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Recommended Brewing Methods - Espresso, Aeropress, Moka Pot, Coffee Filter, South Indian Filter, French Press  
+  Coffee Notes - Malt and Cereally  
+  Net Quantity - 75 grams | 200 grams",https://www.estatemonkeys.com/products/robusta-cherry-200g,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/Robustacherry200g.png?v=1715179804,:350.00,
+Estate Monkey,SHADOW,Rs. 450.00,INR,"Arabicas of Coorg. Premium quality shade-grown coffee from the regions of Coorg  
+ 
+ 
+  Fresh single origin 100% Arabica coffee beans, roasted in limited collection and with care  
+  Roast Level - Medium  
+  Coffee Blend - Arabica Plantation AAA, Arabica Plantation AA, Arabica Plantation Peaberry  
+  Coffee Notes - Sweet Chocolate and Yellow Fruits",https://www.estatemonkeys.com/products/shadow-200g,https://cdn.shopify.com/s/files/1/0244/5734/7152/files/Shadow200g.png?v=1715179840,:450.00,

@@ -14,3 +14,4 @@ runner_output.txt
 
 # Generated data artifacts (keep sources in scrapers/, results/ only)
 *.png
+.vercel

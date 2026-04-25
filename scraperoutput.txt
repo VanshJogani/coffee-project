@@ -1,0 +1,1013 @@
+  Kappi Kottai
+============================================================
+  Fetching Kappi Kottai via https://kapikottai.coffee/collections/all/products.json …
+    page 1: 8 products
+  -> 8 products scraped for Subko
+  ✅ Saved 8 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\subko_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\subko_clean_products.csv
+
+============================================================
+  Savorworks
+============================================================
+  Fetching Savorworks via https://www.savorworksroasters.com/collections/coffee/products.json …
+    page 1: 23 products
+    SKIP (non-coffee): '75g - Pulneys Sampler'
+    SKIP (non-coffee): '75g - Thogarihunkal Sampler'
+    SKIP (non-coffee): 'AeroPress Filter Paper Storage Box – Lightweight, Durable, and Travel-Friendly'
+    SKIP (non-coffee): 'Coffee Bean Cellar - Amber Acrylic Storage Jar | 1 Pc'
+    SKIP (non-coffee): 'Coffee Bean Cellar - Amber Glass Storage Jar | 1 Pc'
+    SKIP (non-coffee): 'Coffee Stickers 2 pcs'
+    SKIP (non-coffee): 'Coffee Subscription'
+    SKIP (non-coffee): "Don't Stress, Just Aero Press Badge"
+    SKIP (non-coffee): 'RDT Spray Bottle | Amber | 30ml'
+    SKIP (non-coffee): 'RDT Spray Bottle | Matte Black | 30ml'
+    SKIP (non-coffee): 'Sampler'
+    SKIP (non-coffee): 'Tulum Brew Stick – A Tool to Better your Pour-Over Game | Glass | 1 Pc'
+    SKIP (non-coffee): 'Tulum Coffee Gift Card'
+    SKIP (non-coffee): 'Tulum Tote Bag'
+  -> 9 products scraped for Tulum
+  ✅ Saved 9 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\tulum_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\tulum_clean_products.csv
+
+============================================================
+  Quick Brown Fox
+============================================================
+  Fetching Quick Brown Fox via https://www.qbfcoffee.com/collections/all-coffees/products.json …
+    page 1: 19 products
+  -> 19 products scraped for Bloom Coffee
+  ✅ Saved 19 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\bloom_coffee_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\bloom_coffee_clean_products.csv
+
+============================================================
+  Fraction 9
+============================================================
+  Fetching Fraction 9 via https://www.fraction9coffee.com/collections/all/products.json …
+    page 1: 12 products
+  -> 12 products scraped for Kappi Kottai
+  ✅ Saved 12 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\kappi_kottai_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\kappi_kottai_clean_products.csv
+
+============================================================
+  Curious Life
+============================================================
+    page 1: 8 products
+  -> 8 products scraped for Savorworks
+  ✅ Saved 8 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\savorworks_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\savorworks_clean_products.csv
+
+============================================================
+  Alchemist
+============================================================
+    page 1: 4 products
+  -> 4 products scraped for Quick Brown Fox
+  ✅ Saved 4 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\quick_brown_fox_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\quick_brown_fox_clean_products.csv
+
+============================================================
+  Ainmane
+============================================================
+    listing page 1: https://www.ainmane.com/coffee.html
+    page 1: 45 products
+  -> 45 products scraped for Fraction 9
+  ✅ Saved 45 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\fraction_9_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\fraction_9_clean_products.csv
+
+============================================================
+  A B Coffee
+============================================================
+  Fetching A B Coffee via https://www.abcoffee.in/collections/all/products.json …
+  ⚠  No product links found for Ainmane
+  [!] No products for Ainmane - skipping CSV.
+
+============================================================
+  Naivo
+============================================================
+  ✗ Playwright not installed — run: pip install playwright && playwright install chromium
+  [!] No products for Naivo - skipping CSV.
+
+============================================================
+  Caffeine Baar
+============================================================
+  Fetching Caffeine Baar via https://www.thecaffeinebaar.com/collections/all/products.json …
+  [x] FAILED (A B Coffee): 404 Client Error: Not Found for url: https://www.abcoffee.in/collections/all/products.json?limit=250&page=1
+
+============================================================
+  Humble Express
+============================================================
+  Fetching Humble Express via https://www.humbleexpress.com/collections/all/products.json …
+  [x] FAILED (Alchemist): 404 Client Error: Not Found for url: https://alchemistroastery.com/shop
+
+============================================================
+  Bili Hu
+============================================================
+  Fetching Bili Hu via https://bilihu.in/collections/all/products.json …
+    page 1: 19 products
+  -> 19 products scraped for Caffeine Baar
+  ✅ Saved 19 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\caffeine_baar_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\caffeine_baar_clean_products.csv
+
+============================================================
+  Corridor Seven
+============================================================
+  Fetching Corridor Seven via https://corridorseven.coffee/collections/all/products.json …
+    page 1: 39 products
+  -> 39 products scraped for Humble Express
+  ✅ Saved 39 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\humble_express_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\humble_express_clean_products.csv
+
+============================================================
+  Estate Monkey
+============================================================
+  Fetching Estate Monkey via https://www.estatemonkeys.com/collections/all/products.json …
+    page 1: 15 products
+  -> 15 products scraped for Estate Monkey
+  ✅ Saved 15 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\estate_monkey_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\estate_monkey_clean_products.csv
+
+============================================================
+  Silk Road
+============================================================
+  Fetching Silk Road via https://silkroad.coffee/collections/coffee-beans/products.json …
+    page 1: 51 products
+    SKIP (non-coffee): 'AeroPress Coffee Maker- (The better coffee press)'
+    SKIP (non-coffee): 'Aeropress Filters'
+    SKIP (non-coffee): 'Chemex Filter Papers'
+    SKIP (non-coffee): 'FRENCH PRESS'
+    SKIP (non-coffee): 'Gift Card'
+    SKIP (non-coffee): 'Hario Dripper Filter Paper - Size 02'
+    SKIP (non-coffee): 'Hario V-60 Pourover ( with filter papers )'
+    SKIP (non-coffee): 'Hario Weighing Scale'
+    SKIP (non-coffee): 'SAMPLER PACK'
+  -> 42 products scraped for Corridor Seven
+  ✅ Saved 42 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\corridor_seven_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\corridor_seven_clean_products.csv
+
+============================================================
+  Rossette
+============================================================
+  Fetching Rossette via https://rossettecoffee.com/collections/all/products.json …
+    page 1: 42 products
+  -> 42 products scraped for Bili Hu
+  ✅ Saved 42 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\bili_hu_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\bili_hu_clean_products.csv
+
+============================================================
+  Korebi
+============================================================
+  Fetching Korebi via https://korebi.coffee/collections/all/products.json …
+  [x] FAILED (Silk Road): 402 Client Error: Payment Required for url: https://silkroad.coffee/collections/coffee-beans/products.json?limit=250&page=1
+
+============================================================
+  Koffee Genetics
+============================================================
+  Fetching Koffee Genetics via https://genetics.coffee/collections/all/products.json …
+    page 1: 17 products
+  -> 17 products scraped for Rossette
+  ✅ Saved 17 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\rossette_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\rossette_clean_products.csv
+
+============================================================
+  Kat and Kin
+============================================================
+  Fetching Kat and Kin via https://katandkincoffee.com/collections/all/products.json …
+    page 1: 22 products
+  -> 22 products scraped for Koffee Genetics
+  ✅ Saved 22 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\koffee_genetics_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\koffee_genetics_clean_products.csv
+
+============================================================
+  Home Blend
+============================================================
+  Fetching Home Blend via https://homeblendcoffee.com/collections/all/products.json …
+    page 1: 95 products
+    page 1: 12 products
+    SKIP (non-coffee): 'Joy Resolve ClearBrew Moka Pot, Stovetop Coffee Brewer, 240 ML, 5-6 Espresso Cups, Glass, Compatible with Induction / Gas / Electric / Ceramic - Black'
+    SKIP (non-coffee): 'Joy Resolve Double Walled Glass French Press Coffee Maker - 1000 ML / 1 Litre, 4-Layer Filteration System, Brew Coffee or Tea, Hot or Cold, Keeps Hot or Cold - 40% More, BLACK'
+  -> 12 products scraped for Kat and Kin
+    SKIP (non-coffee): 'Komorebi Tote Bag'
+    SKIP (non-coffee): 'Korebi Sip & Dip Oversized T-Shirt (Unisex) – Size Down Recommended'
+    SKIP (non-coffee): 'Orgami Dripper Holder - Black Resin'
+    SKIP (non-coffee): 'Origami Coffee Dripper Air Medium'
+    SKIP (non-coffee): 'Origami Coffee Dripper Air Small'
+  ✅ Saved 12 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\kat_and_kin_products_generic.csv
+    SKIP (non-coffee): 'Origami Coffee Dripper Medium'
+    SKIP (non-coffee): 'Origami Coffee Dripper Small'
+    SKIP (non-coffee): 'Origami Dripper Holder - Wooden'
+    SKIP (non-coffee): 'Subminimal Subscale - Digital Coffee Measuring Cup, Invisible LED Display, Touch Activated, USB-C Rechargeable - 400 mAh Battery, IPX-4 Splash Resistant, BLACK'
+    SKIP (non-coffee): 'WPM #06 Round Spout Espresso Steaming Milk Frothing Pitcher | Stainless Steel | Milk Jug & Barista Tools for Cappuccino & Latte Art, For Amateurs, Professionals & Coffee Lover, 450 ML'
+    SKIP (non-coffee): 'WPM #07 Sharp Spout Espresso Steaming Milk Frothing Pitcher | Stainless Steel | Milk Jug & Barista Tools for Cappuccino & Latte Art, For Amateurs, Professionals & Coffee Lover, 450 ML'
+    SKIP (non-coffee): 'WPM #09 Wide Spout Espresso Steaming Milk Frothing Pitcher | Stainless Steel | Milk Jug & Barista Tool for Cappuccino & Latte, Amateurs, Professionals & Coffee Lover, 650 ML'
+    SKIP (non-coffee): 'WPM #16 Long Sharp Spout Espresso Steaming Milk Frothing Pitcher | Stainless Steel | Milk Jug & Barista Tools for Cappuccino & Latte Art, For Amateurs, Professionals & Coffee Lover, 500 ML'
+    SKIP (non-coffee): 'WPM #21 Round Tapered Spout Espresso Steaming Milk Frothing Pitcher | Stainless Steel | Milk Jug & Barista Tool for Cappuccino & Latte, Amateurs, Professionals & Coffee Lover, 500 ML, Brushed Steel'
+    SKIP (non-coffee): 'WPM #22 Slow Pour Extra Round Spout Espresso Steaming Milk Frothing Pitcher | Stainless Steel | Milk Jug & Barista Tool for Cappuccino & Latte, Amateurs, Professionals & Coffee Lover, 450 ML, Peach Fuzz'
+    SKIP (non-coffee): 'WPM Coffee Portable Scale with Timer & Ratios (Rechargable)'
+    SKIP (non-coffee): 'WPM KIMERA Tri-Spout Handleless Espresso Steaming Milk Frothing Pitcher | Stainless Steel | Milk Jug & Barista Tool for Cappuccino & Latte, Amateurs, Professionals & Coffee Lover, 500 ML'
+    SKIP (non-coffee): 'WPM Pour Over Kettle - 550 ML'
+    SKIP (non-coffee): 'WPM Spring Loaded Tamper with Wooden Handle (58mm)'
+    SKIP (non-coffee): 'WPM ZP-1 Single Dose Grinder Black'
+    SKIP (non-coffee): '[COMBO] Origami Coffee Dripper Air Medium +  Bourbon Coffee (250GM)'
+    SKIP (non-coffee): '[COMBO] Origami Coffee Dripper Air Medium +  Bubble Bliss Coffee (250 GM)'
+    SKIP (non-coffee): '[COMBO] Origami Coffee Dripper Medium +  Bourbon Coffee (250 GM)'
+    SKIP (non-coffee): '[COMBO] Origami Coffee Dripper Medium +  Bubble Bliss Coffee (250 GM)'
+  -> 69 products scraped for Korebi
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\kat_and_kin_clean_products.csv
+
+============================================================
+  Siolim
+============================================================
+  Fetching Siolim via https://www.siolim.coffee/collections/all/products.json …
+  ✅ Saved 69 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\korebi_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\korebi_clean_products.csv
+
+============================================================
+  Bombay Island
+============================================================
+  Fetching Bombay Island via https://www.bombayisland.com/collections/all/products.json …
+  Found 14 product URLs for Curious Life
+    [1/14] https://curiouslifecoffee.com/product/single-origin-kenya-filter/
+    page 1: 20 products
+    SKIP (non-coffee): 'Solo Dripper — Mazelab'
+  -> 19 products scraped for Siolim
+  ✅ Saved 19 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\siolim_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\siolim_clean_products.csv
+
+============================================================
+  Dope
+============================================================
+  Fetching Dope via https://dopecoffee.in/collections/all/products.json …
+    page 1: 89 products
+  -> 89 products scraped for Home Blend
+  ✅ Saved 89 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\home_blend_products_generic.csv
+    page 1: 32 products
+  -> 32 products scraped for Bombay Island
+  ✅ Saved 32 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\bombay_island_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\home_blend_clean_products.csv
+
+============================================================
+  Grey Soul
+============================================================
+  Fetching Grey Soul via https://greysoul.coffee/collections/coffee/products.json …
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\bombay_island_clean_products.csv
+
+============================================================
+  Hunkal Heights
+============================================================
+  Fetching Hunkal Heights via https://www.hunkalestatecoffee.com/collections/all/products.json …
+    page 1: 50 products
+    SKIP (non-coffee): 'Aeropress Coffee Maker'
+    SKIP (non-coffee): 'AEROPRESS GO'
+    SKIP (non-coffee): 'Compact Hand Coffee Grinder 24gm (Plastic)'
+    SKIP (non-coffee): 'Compact Hand Coffee Grinder 24gm (Plastic)'
+    SKIP (non-coffee): 'Drip Scale & Timer'
+    SKIP (non-coffee): 'Electric Milk Foamer with glass server'
+    SKIP (non-coffee): 'French Press Starter Kit'
+    SKIP (non-coffee): 'Kalita Cafe Tall Plastic'
+    SKIP (non-coffee): 'Manual Milk Foamer 70ml'
+    SKIP (non-coffee): 'Measuring Spoon 12gm'
+    SKIP (non-coffee): 'MIZUDASHI Cold Brew Pot (1000ml)'
+    SKIP (non-coffee): 'Slim Café French Press'
+    SKIP (non-coffee): 'Stagg EKG Electric Kettle'
+    SKIP (non-coffee): 'Timemore Black Mirror Scale'
+    SKIP (non-coffee): 'Timemore Chestnut  C2'
+    SKIP (non-coffee): 'Timemore Crystal Eye Dripper'
+    SKIP (non-coffee): 'Timemore U French Press'
+    SKIP (non-coffee): 'V60 Dripper & Server Combo'
+    SKIP (non-coffee): 'V60 Plastic Coffee Dripper/Pour Over'
+    SKIP (non-coffee): 'Wobh Filters Sampler (V60 Filter & Cold Brew Bag)'
+    SKIP (non-coffee): 'Wobh Filters Samples (V60 Filter & Cold Brew Bag)'
+  -> 29 products scraped for Dope
+  ✅ Saved 29 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\dope_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\dope_clean_products.csv
+
+============================================================
+  Half Light
+============================================================
+  Fetching Half Light via https://halflightcoffee.com/collections/all/products.json …
+    page 1: 11 products
+  -> 11 products scraped for Grey Soul
+  ✅ Saved 11 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\grey_soul_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\grey_soul_clean_products.csv
+
+============================================================
+  Pandurange Chikmagalur
+============================================================
+  Fetching Pandurange Chikmagalur via https://www.pandurangacoffee.com/collections/coffee-without-chicory/products.json …
+    page 1: 12 products
+    SKIP (non-coffee): 'Aeropress'
+    SKIP (non-coffee): 'Halflight Coffee Gift Card'
+    SKIP (non-coffee): 'Hario V 60 Filter Paper'
+    SKIP (non-coffee): 'Hario V60 Dripper 02'
+    SKIP (non-coffee): 'Sampler Pack'
+    SKIP (non-coffee): 'Timemore French Press'
+  -> 6 products scraped for Half Light
+  ✅ Saved 6 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\half_light_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\half_light_clean_products.csv
+
+============================================================
+  Devans
+============================================================
+  Fetching Devans via https://www.devans.in/collections/all/products.json …
+    page 1: 14 products
+    SKIP (non-coffee): 'French Press Coffee'
+    SKIP (non-coffee): 'Gift Card'
+    SKIP (non-coffee): 'Hunkal Estate Coffee - Gift Card'
+  -> 11 products scraped for Hunkal Heights
+  ✅ Saved 11 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\hunkal_heights_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\hunkal_heights_clean_products.csv
+
+============================================================
+  Black Baza
+============================================================
+  Fetching Black Baza via https://www.blackbazacoffee.com/collections/all/products.json …
+    page 1: 10 products
+  -> 10 products scraped for Pandurange Chikmagalur
+  ✅ Saved 10 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\pandurange_chikmagalur_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\pandurange_chikmagalur_clean_products.csv
+
+============================================================
+  Caarabi
+============================================================
+  Fetching Caarabi via https://caarabicoffee.com/collections/all/products.json …
+    page 1: 77 products
+    SKIP (non-coffee): 'Atlasware Steel Coffee Maker  (1 cup)'
+    SKIP (non-coffee): 'Atlasware Steel Coffee Maker (2 cup)'
+    SKIP (non-coffee): 'Atlasware Steel Coffee Maker (4 cups)'
+    SKIP (non-coffee): 'Cappuccino Cup 180 ml (0.18 litre)'
+    SKIP (non-coffee): 'Devans Gift card'
+    SKIP (non-coffee): 'Drip Bags for Coffee'
+    SKIP (non-coffee): 'Espresso Cup 100 ml (0.1 litre)'
+    SKIP (non-coffee): 'Gift Box - Barrel 100 g'
+    SKIP (non-coffee): 'Gift Box Wooden 250 g'
+    SKIP (non-coffee): 'Gift Box Wooden 500 g'
+    SKIP (non-coffee): 'Hario V60 Paper Coffee Filters, Size 02, 100 Count, Natural'
+    SKIP (non-coffee): 'Hario V60 Plastic Coffee Dripper (Size 02, White)'
+    SKIP (non-coffee): 'Hario V60 Plastic Coffee Dripper, Size 2, Red'
+    SKIP (non-coffee): 'Tall Mug 250 ml (0.25 litre)'
+    SKIP (non-coffee): 'Tea Infuser Ball ( 2-3 cups)'
+    SKIP (non-coffee): 'Tea Infuser Ball (1-2 cup)'
+    SKIP (non-coffee): 'Tote Bag Flamingo'
+    SKIP (non-coffee): 'Tote Bag Kashmir Stag'
+  -> 59 products scraped for Devans
+  ✅ Saved 59 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\devans_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\devans_clean_products.csv
+
+============================================================
+  Vui
+============================================================
+  Fetching Vui via https://vuivui.in/collections/all/products.json …
+    page 1: 87 products
+    SKIP (non-coffee): '24 Parcels Subscription'
+    SKIP (non-coffee): '6 Parcels Subscription'
+    SKIP (non-coffee): 'AeroPress Go'
+    SKIP (non-coffee): 'AeroPress Metal Filter'
+    SKIP (non-coffee): 'Black Baza Stickers'
+    SKIP (non-coffee): 'Black Baza Tote Bags'
+    SKIP (non-coffee): 'Cloth Filters for AeroPress'
+    SKIP (non-coffee): 'Coffee Mug'
+    SKIP (non-coffee): 'Coffee Mug (Colour: Yellow Mushroom)'
+    SKIP (non-coffee): 'Coffee Sampler Pack'
+    SKIP (non-coffee): 'Coffee Shuffle'
+    SKIP (non-coffee): 'Favourite-On-Repeat'
+    SKIP (non-coffee): 'French Press'
+    SKIP (non-coffee): 'Gift A Subscription'
+    SKIP (non-coffee): 'Gooseneck Kettle'
+    SKIP (non-coffee): 'Limited Lots'
+    SKIP (non-coffee): 'Luna Gift Box: Lappet Pin'
+    SKIP (non-coffee): 'Luna Gift Box: Noctuid Earrings'
+    SKIP (non-coffee): 'The Ant Loop Gift Box'
+    SKIP (non-coffee): 'The Classic Coffee Gift Box'
+    SKIP (non-coffee): "The Coffee Lover's Gift Box"
+  -> 66 products scraped for Black Baza
+  ✅ Saved 66 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\black_baza_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\black_baza_clean_products.csv
+
+============================================================
+  Seven Beans
+============================================================
+  Fetching Seven Beans via https://sevenbeans.co/collections/all/products.json …
+    page 1: 13 products
+  -> 13 products scraped for Vui
+  ✅ Saved 13 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\vui_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\vui_clean_products.csv
+
+============================================================
+  Dancing Goat
+============================================================
+  Fetching Dancing Goat via https://www.dancinggoatcoffee.in/collections/all-products/products.json …
+    page 1: 56 products
+    SKIP (non-coffee): 'Aeropress Clear Coffee Maker'
+    SKIP (non-coffee): 'Aeropress clear- Pink'
+    SKIP (non-coffee): 'Aeropress GO'
+    SKIP (non-coffee): 'Aeropress GO plus travel coffee press- Cream'
+    SKIP (non-coffee): 'Benki Dripper - Black'
+    SKIP (non-coffee): 'Caarabi - Black T-shirt'
+    SKIP (non-coffee): 'Caarabi - Grey T-shirt'
+    SKIP (non-coffee): 'Caarabi - Sweatshirt'
+    SKIP (non-coffee): 'Caarabi - T-shirt'
+    SKIP (non-coffee): 'Caarabi Brew Book - Log your coffee journey!'
+    SKIP (non-coffee): 'Clear French Press'
+    SKIP (non-coffee): 'Fellow Carter \'Move" Mug - 12 Oz'
+    SKIP (non-coffee): 'Fellow carter move mug- Red'
+    SKIP (non-coffee): 'Get Roasted- Sweatshirt'
+    SKIP (non-coffee): 'Less Drama More coffee - Grey T-shirt'
+    SKIP (non-coffee): 'Less Drama More Coffee - Sweatshirt'
+    SKIP (non-coffee): 'Less Drama More Coffee - T-shirt'
+    SKIP (non-coffee): 'MHW cube coffee scale- Black'
+    SKIP (non-coffee): 'Origami Air Dripper - Black'
+    SKIP (non-coffee): 'Origami dripper AIR (Small, Black)'
+    SKIP (non-coffee): 'Origami Dripper- Filter Papers'
+    SKIP (non-coffee): 'Timemore Chestnut Manual Coffee Grinder (C2) - Grey'
+    SKIP (non-coffee): 'Timemore Chestnut Manual Coffee Grinder (C3) - Black'
+    SKIP (non-coffee): 'Timemore U French Press - Black'
+  -> 32 products scraped for Caarabi
+  ✅ Saved 32 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\caarabi_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\caarabi_clean_products.csv
+
+============================================================
+  Coffee Circus
+============================================================
+  Fetching Coffee Circus via https://www.thecoffeecircus.com/collections/all/products.json …
+    page 1: 24 products
+  -> 24 products scraped for Seven Beans
+  ✅ Saved 24 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\seven_beans_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\seven_beans_clean_products.csv
+
+============================================================
+  Mokka Farms
+============================================================
+  Fetching Mokka Farms via https://www.mokkafarms.com/collections/all/products.json …
+  [x] FAILED (Dancing Goat): Expecting value: line 1 column 1 (char 0)
+
+============================================================
+  Classic
+============================================================
+  Fetching Classic via https://www.classiccoffees.in/collections/all/products.json …
+    page 1: 14 products
+  -> 14 products scraped for Coffee Circus
+  ✅ Saved 14 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\coffee_circus_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\coffee_circus_clean_products.csv
+
+============================================================
+  Maverick and Farmer
+============================================================
+  Fetching Maverick and Farmer via https://www.maverickandfarmer.com/collections/all/products.json …
+    page 1: 63 products
+    SKIP (non-coffee): 'Aeropress Filter Paper'
+    SKIP (non-coffee): 'Aeropress Go Coffee Maker'
+    SKIP (non-coffee): 'Bodum French Press'
+    SKIP (non-coffee): 'Brewista 1.2 Stout Spout Stovetop Kettle'
+    SKIP (non-coffee): 'Cafeor Paperless Dripper'
+    SKIP (non-coffee): 'Classic Festive Gift Box'
+    SKIP (non-coffee): 'Classic Glass French Press'
+    SKIP (non-coffee): 'Classic Limited Edition Gift Box'
+    SKIP (non-coffee): 'Deepavali Gift Box Classic Pride Classic Mountain'
+    SKIP (non-coffee): 'French Press Coffee Kit 1'
+    SKIP (non-coffee): 'French Press Coffee Kit 2'
+    SKIP (non-coffee): 'Hario V60 Pour Over Kit'
+    SKIP (non-coffee): 'Hour Glass Filter Paper'
+  -> 50 products scraped for Classic
+    page 1: 73 products
+  -> 73 products scraped for Mokka Farms
+  ✅ Saved 50 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\classic_products_generic.csv
+  ✅ Saved 73 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\mokka_farms_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\classic_clean_products.csv
+
+============================================================
+  Coffee Mechanics
+============================================================
+  Fetching Coffee Mechanics via https://www.coffeemechanics.co.in/collections/all/products.json …
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\mokka_farms_clean_products.csv
+
+============================================================
+  7000 Steps
+============================================================
+  Fetching 7000 Steps via https://www.7000steps.com/collections/all/products.json …
+    page 1: 73 products
+    SKIP (non-coffee): "3 month subscription -Brewin'-a-cup : Parama"
+    SKIP (non-coffee): 'Aeropress Coffee Maker'
+    SKIP (non-coffee): 'Beginner stainless steel Moka Pot + Coffee pack'
+    SKIP (non-coffee): 'Bialetti 3-cup moka pot - Italian edition'
+    SKIP (non-coffee): 'Coffee grinder - Manual'
+    SKIP (non-coffee): 'Cupcake Icing & Decoration Workshop by Magnolia Bakery'
+    SKIP (non-coffee): 'French Press - TimeMore'
+    SKIP (non-coffee): 'Hario Cafe Press Slim - French press brewer'
+    SKIP (non-coffee): 'Hario v60 coffee dripper - size 02'
+    SKIP (non-coffee): 'Maverick & Farmer ceramic milk pitcher'
+    SKIP (non-coffee): 'Maverick & Farmer handmade ceramic Cappuccino cup / mug'
+    SKIP (non-coffee): 'Pour over filter papers for V60 type brewers - Size 02 1-4 cups'
+    SKIP (non-coffee): 'The coffee soap bar'
+    SKIP (non-coffee): 'This is nuts! - Granola'
+    SKIP (non-coffee): 'Tote Bag Printing Workshop (lino cut) - with Kapila Nahender Atelier'
+    SKIP (non-coffee): 'What The Ale!?'
+  -> 57 products scraped for Maverick and Farmer
+  ✅ Saved 57 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\maverick_and_farmer_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\maverick_and_farmer_clean_products.csv
+
+============================================================
+  Black Poetry
+============================================================
+  Fetching Black Poetry via https://blackpoetry.in/collections/all/products.json …
+    [2/14] https://curiouslifecoffee.com/product/__trashed-4__trashed/
+    page 1: 38 products
+    SKIP (non-coffee): 'Banana Bread Loaf - Vegan'
+    SKIP (non-coffee): 'Brioche Bread Loaf'
+    SKIP (non-coffee): 'Burger Buns - Pack of 4'
+    SKIP (non-coffee): 'Chocolate Brownie - Set of 2'
+    SKIP (non-coffee): 'Chocolate Chip Cookie - Set of 4'
+    SKIP (non-coffee): 'Cold Brew Bags - Gift Box'
+    SKIP (non-coffee): 'Drip ToGo - Gift Box'
+    SKIP (non-coffee): 'Gift Box - Pack of 3'
+    SKIP (non-coffee): 'Granola - Chocolate'
+    SKIP (non-coffee): 'Granola - Classic (500g)'
+    SKIP (non-coffee): 'Granola - Savoury'
+    SKIP (non-coffee): 'Hokkaido Bread Loaf - 900 gms'
+    SKIP (non-coffee): 'Orange Lemon Cake - 300g'
+    SKIP (non-coffee): 'Salted Caramel Popcorn - Layered Cake'
+    SKIP (non-coffee): 'Signature Chocolate Cake - Eggless'
+    SKIP (non-coffee): 'Strawberry Vanilla Layer Cake'
+  -> 22 products scraped for Coffee Mechanics
+  ✅ Saved 22 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\coffee_mechanics_products_generic.csv
+    page 1: 15 products
+  -> 15 products scraped for 7000 Steps
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\coffee_mechanics_clean_products.csv
+
+============================================================
+  Boojee
+============================================================
+  Fetching Boojee via https://boojeecafe.com/collections/all/products.json …
+  ✅ Saved 15 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\7000_steps_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\7000_steps_clean_products.csv
+
+============================================================
+  Broot Coffee Roasters
+============================================================
+  Fetching Broot Coffee Roasters via https://brootcoffee.com/collections/all/products.json …
+    page 1: 15 products
+  -> 15 products scraped for Black Poetry
+  ✅ Saved 15 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\black_poetry_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\black_poetry_clean_products.csv
+
+============================================================
+  Brown Rush Coffee
+============================================================
+  Fetching Brown Rush Coffee via https://brownrushcoffee.com/collections/all/products.json …
+    page 1: 6 products
+  -> 6 products scraped for Brown Rush Coffee
+  ✅ Saved 6 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\brown_rush_coffee_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\brown_rush_coffee_clean_products.csv
+
+============================================================
+  Caffinary
+============================================================
+  Fetching Caffinary via https://caffinary.com/collections/all/products.json …
+    page 1: 20 products
+    SKIP (non-coffee): 'Almond Butter (250 grams)'
+    SKIP (non-coffee): 'Americano Mug'
+    SKIP (non-coffee): 'Apricot & Prunes Energy Bar [60g]'
+    SKIP (non-coffee): 'Boojee Gift Box'
+    SKIP (non-coffee): 'Boojee Reusable Glass Tumbler'
+    SKIP (non-coffee): 'Boojee Safety Apron'
+    SKIP (non-coffee): 'Cocoa Granola (300g)'
+    SKIP (non-coffee): 'Peanut Butter (250 grams)'
+    SKIP (non-coffee): 'Peanut Butter Energy Bar [60g]'
+  -> 11 products scraped for Boojee
+  ✅ Saved 11 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\boojee_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\boojee_clean_products.csv
+
+============================================================
+  Coffeeverse
+============================================================
+  Fetching Coffeeverse via https://coffeeverse.in/collections/all/products.json …
+    page 1: 36 products
+  -> 36 products scraped for Broot Coffee Roasters
+  ✅ Saved 36 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\broot_coffee_roasters_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\broot_coffee_roasters_clean_products.csv
+
+============================================================
+  Dripface Coffee
+============================================================
+  Fetching Dripface Coffee via https://dripface.coffee/collections/all/products.json …
+    page 1: 57 products
+  -> 57 products scraped for Coffeeverse
+  ✅ Saved 57 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\coffeeverse_products_generic.csv
+    page 1: 18 products
+    SKIP (non-coffee): 'Celebrating Mothers Coffee Gift Card'
+  -> 17 products scraped for Caffinary
+  ✅ Saved 17 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\caffinary_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\coffeeverse_clean_products.csv
+
+============================================================
+  First Crack Coffee
+============================================================
+  Fetching First Crack Coffee via https://firstcrackcoffeeroasters.com/collections/all/products.json …
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\caffinary_clean_products.csv
+
+============================================================
+  Guncha Coffee
+============================================================
+  Fetching Guncha Coffee via https://gunchacoffee.com/collections/all/products.json …
+    page 1: 5 products
+  -> 5 products scraped for Dripface Coffee
+  ✅ Saved 5 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\dripface_coffee_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\dripface_coffee_clean_products.csv
+
+============================================================
+  Humble Bean
+============================================================
+  Fetching Humble Bean via https://humblebean.com/collections/all/products.json …
+    page 1: 15 products
+  -> 15 products scraped for Humble Bean
+  ✅ Saved 15 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\humble_bean_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\humble_bean_clean_products.csv
+
+============================================================
+  Kruti Coffee
+============================================================
+  Fetching Kruti Coffee via https://kruticoffee.com/collections/all/products.json …
+    page 1: 10 products
+    page 1: 40 products
+  -> 10 products scraped for Guncha Coffee
+  -> 40 products scraped for First Crack Coffee
+  ✅ Saved 10 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\guncha_coffee_products_generic.csv
+  ✅ Saved 40 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\first_crack_coffee_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\guncha_coffee_clean_products.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\first_crack_coffee_clean_products.csv
+
+============================================================
+  Kup Coffee Roasters
+
+============================================================
+  Lungo
+============================================================
+============================================================
+  Fetching Lungo via https://drinklungo.com/collections/all/products.json …
+  Fetching Kup Coffee Roasters via https://www.kup.world/collections/all/products.json …
+    page 1: 12 products
+  -> 12 products scraped for Kup Coffee Roasters
+  ✅ Saved 12 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\kup_coffee_roasters_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\kup_coffee_roasters_clean_products.csv
+
+============================================================
+  NinetyTwo
+============================================================
+  Fetching NinetyTwo via https://ninetytwobrew.com/collections/all/products.json …
+    page 1: 3 products
+  -> 3 products scraped for Lungo
+  ✅ Saved 3 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\lungo_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\lungo_clean_products.csv
+
+============================================================
+  Odd Coffee Roasters
+============================================================
+  Fetching Odd Coffee Roasters via https://oddcoffee.in/collections/all/products.json …
+    page 1: 22 products
+  -> 22 products scraped for Kruti Coffee
+  ✅ Saved 22 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\kruti_coffee_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\kruti_coffee_clean_products.csv
+
+============================================================
+  Potboiler Coffee
+============================================================
+  Fetching Potboiler Coffee via https://www.potboilercoffee.com/collections/all/products.json …
+    page 1: 4 products
+  -> 4 products scraped for NinetyTwo
+  ✅ Saved 4 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\ninetytwo_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\ninetytwo_clean_products.csv
+
+============================================================
+  Toise Coffee Roasters
+============================================================
+  Fetching Toise Coffee Roasters via https://toise.coffee/collections/all/products.json …
+    page 1: 18 products
+  -> 18 products scraped for Odd Coffee Roasters
+  ✅ Saved 18 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\odd_coffee_roasters_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\odd_coffee_roasters_clean_products.csv
+
+============================================================
+  Roastery
+============================================================
+    listing page 1: https://roasterycoffee.co.in/coffee-beans/
+    page 1: 12 products
+  -> 12 products scraped for Toise Coffee Roasters
+  ✅ Saved 12 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\toise_coffee_roasters_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\toise_coffee_roasters_clean_products.csv
+
+============================================================
+  Marc's Coffee
+============================================================
+    listing page 1: https://coffeeideas.in/product-category/our-coffees/
+    page 1: 5 products
+  -> 5 products scraped for Potboiler Coffee
+  ✅ Saved 5 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\potboiler_coffee_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\potboiler_coffee_clean_products.csv
+
+============================================================
+  Five Farms
+============================================================
+    listing page 1: https://fivefarms.in/product-category/specialty-coffee/
+    listing page 2: https://roasterycoffee.co.in/coffee-beans/?page=2
+    [3/14] https://curiouslifecoffee.com/product/gundikhan-natural-lot-272-filter/
+  Found 14 product URLs for Roastery
+    [1/14] https://roasterycoffee.co.in/product/mooleh-manay-estate-excelsa/
+    listing page 2: https://fivefarms.in/product-category/specialty-coffee/?page=2
+    [2/14] https://roasterycoffee.co.in/product/mooleh-manay-estate/
+    listing page 2: https://coffeeideas.in/product-category/our-coffees/?page=2
+    [3/14] https://roasterycoffee.co.in/product/espresso-milk-blend/
+    [4/14] https://curiouslifecoffee.com/product/gundikhan-washed-lot-799-filter/
+    [4/14] https://roasterycoffee.co.in/product/mandalkhan-estate-2/
+  Found 69 product URLs for Marc's Coffee
+    [1/69] https://coffeeideas.in/product/our-coffees/limited-edition/ratna-raga-nbc-competition-coffee/
+    [5/14] https://roasterycoffee.co.in/product/baarbara-estate-frozen-cherry/
+    [5/14] https://curiouslifecoffee.com/product/nilgiris-filter-finest-indian-coffee/
+    [2/69] https://coffeeideas.in/product/our-coffees/marcs-single-estate-origin/light-roast-marcs-single-estate-orgin/the-mahseer/
+    [6/14] https://roasterycoffee.co.in/product/baarbara-estate/
+    listing page 3: https://fivefarms.in/product-category/specialty-coffee/?page=3
+    [7/14] https://roasterycoffee.co.in/product/baarbara-estate-pineapple/
+    [8/14] https://roasterycoffee.co.in/product/ratnagiri-estate-amara-rose/
+    [6/14] https://curiouslifecoffee.com/product/rwanda-shyira-espresso/
+    [3/69] https://coffeeideas.in/product/our-coffees/marcs-signature-blends/light-roast/salawara-estate/
+    [9/14] https://roasterycoffee.co.in/product/ratnagiri-estate-saraphina/
+    listing page 4: https://fivefarms.in/product-category/specialty-coffee/?page=4
+    [10/14] https://roasterycoffee.co.in/product/harley-estate-robusta/
+    [4/69] https://coffeeideas.in/product/our-coffees/marcs-signature-blends/dark-roast/old-kent-estate/
+    [11/14] https://roasterycoffee.co.in/product/basan-khan-estate/
+  Found 39 product URLs for Five Farms
+    [1/39] https://fivefarms.in/product-category/specialty-coffee/
+    [7/14] https://curiouslifecoffee.com/product/gachatha-aa-espresso-kenya/
+    [12/14] https://roasterycoffee.co.in/product/cold-coffee-blend/
+    [2/39] https://fivefarms.in/product-category/specialty-coffee/single-origin-coffees/
+    [13/14] https://roasterycoffee.co.in/product/cold-brew-blend/
+    [5/69] https://coffeeideas.in/product/our-coffees/marcs-single-estate-origin/medium-dark-roast/sandalkad/
+    [3/39] https://fivefarms.in/product-category/specialty-coffee/limited-edition/
+    [14/14] https://roasterycoffee.co.in/product/monsoon-malabar/
+    [4/39] https://fivefarms.in/product-category/specialty-coffee/filter-coffee-blends/
+    [8/14] https://curiouslifecoffee.com/product/bison-house-blend-2/
+  → 14 products scraped for Roastery
+  ✅ Saved 14 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\roastery_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\roastery_clean_products.csv
+
+============================================================
+  Handcrafted
+============================================================
+    listing page 1: https://www.cafehandcrafted.com/shop
+    [5/39] https://fivefarms.in/product-category/specialty-coffee/crystal-valley-microlots/
+    listing page 2: https://www.cafehandcrafted.com/shop?page=2
+    [6/69] https://coffeeideas.in/product/our-coffees/marcs-signature-blends/medium-roast/kaveri-espresso-blend/
+    [6/39] https://fivefarms.in/product-category/specialty-coffee/the-artists-blends/
+    [9/14] https://curiouslifecoffee.com/product/honnamatti-estate-washed-espresso/
+    [7/39] https://fivefarms.in/product/pi-peaberry-coffee/
+    [8/39] https://fivefarms.in/product-category/custom-roasted-coffee/
+    listing page 3: https://www.cafehandcrafted.com/shop?page=3
+    [7/69] https://coffeeideas.in/product/our-coffees/marcs-single-estate-origin/light-roast-marcs-single-estate-orgin/monsooned-malabar/
+    [9/39] https://fivefarms.in/product-category/instant-coffee/
+    [10/14] https://curiouslifecoffee.com/product/cafe-press-slim/
+    [10/39] https://fivefarms.in/product-category/deyu-artisanal-brew-bags/
+    [8/69] https://coffeeideas.in/product/our-coffees/marcs-signature-blends/dark-roast/malabar-blues/
+    listing page 4: https://www.cafehandcrafted.com/shop?page=4
+    [11/39] https://fivefarms.in/product-category/deyu-artisanal-brew-bags/cold-brew-pouches/
+    [11/14] https://curiouslifecoffee.com/product/aeropress-coffee-maker/
+    [12/39] https://fivefarms.in/product-category/deyu-artisanal-brew-bags/single-serve-drip-bags/
+    [13/39] https://fivefarms.in/product-category/gifting/gift-boxes/
+  Found 23 product URLs for Handcrafted
+    [1/23] https://www.cafehandcrafted.com/product-page/handcrafted-s-instant
+    [9/69] https://coffeeideas.in/product/our-coffees/marcs-signature-blends/dark-roast/buma-devi/
+    [14/39] https://fivefarms.in/product-category/spices/
+    [12/14] https://curiouslifecoffee.com/product/fine-porcelain-coffee-mug-250ml/
+    [2/23] https://www.cafehandcrafted.com/product-page/baarbara-frozen-cherry
+    [15/39] https://fivefarms.in/product/the-artists-blend-stream-glory-breakfast-robusta/
+    [10/69] https://coffeeideas.in/product/our-coffees/marcs-single-estate-origin/light-roast-marcs-single-estate-orgin/julien-peak/
+    [13/14] https://curiouslifecoffee.com/product/pair-of-coffee-mugs/
+    [3/23] https://www.cafehandcrafted.com/product-page/orchardale-estate
+    [11/69] https://coffeeideas.in/product/our-coffees/turkish-coffee/
+    [16/39] https://fivefarms.in/product/the-artists-blend-honey-wash/
+    [17/39] https://fivefarms.in/product/palangaala-wlid-forest-harvested-naturals/
+    [12/69] https://coffeeideas.in/product/our-coffees/limited-edition/ratna-raga-competition-lot/
+    [14/14] https://curiouslifecoffee.com/product/pair-of-espresso-cups/
+    [4/23] https://www.cafehandcrafted.com/product-page/salawara-frozen-cherry
+    [18/39] https://fivefarms.in/product/chaundikad-arabica-naturals/
+    [5/23] https://www.cafehandcrafted.com/product-page/ratnagiri-estate-yeast-natural
+    [19/39] https://fivefarms.in/product/crystal-valley-ot/
+  → 14 products scraped for Curious Life
+  ✅ Saved 14 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\curious_life_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\curious_life_clean_products.csv
+
+============================================================
+  Agasthya Coffee
+============================================================
+    listing page 1: https://www.agastyacoffee.com/shop
+    [13/69] https://coffeeideas.in/product-category/brewing-equipment/
+    listing page 2: https://www.agastyacoffee.com/shop?page=2
+    [6/23] https://www.cafehandcrafted.com/product-page/cold-brew-blend
+    listing page 3: https://www.agastyacoffee.com/shop?page=3
+    [7/23] https://www.cafehandcrafted.com/product-page/handcrafted-ceramic-cup-baby-pink
+    [20/39] https://fivefarms.in/product/crystal-valley-ceratto/
+    [8/23] https://www.cafehandcrafted.com/product-page/handcrafted-ceramic-cup
+    [14/69] https://coffeeideas.in/product-category/master-classes/
+  Found 16 product URLs for Agasthya Coffee
+    [1/16] https://www.agastyacoffee.com/product-page/excelsa-coffea-liberica
+    [21/39] https://fivefarms.in/product/crystal-valley-tangerine/
+    [22/39] https://fivefarms.in/product-category/specialty-coffee/page/2/
+    [15/69] https://coffeeideas.in/product-category/master-classes/coffee-courses/
+    [9/23] https://www.cafehandcrafted.com/product-page/aeropress
+    [2/16] https://www.agastyacoffee.com/product-page/peaberry-arabica
+    [23/39] https://fivefarms.in/product-category/specialty-coffee/page/3/
+    [24/39] https://fivefarms.in/product-category/gifting/
+    [25/39] https://fivefarms.in/product/eterna-premium-washed-naturals/
+    [16/69] https://coffeeideas.in/product-category/master-classes/fermentation-courses/
+    [3/16] https://www.agastyacoffee.com/product-page/sandalkad-estate
+    [10/23] https://www.cafehandcrafted.com/product-page/hario-v60-coffee-server-set-02
+    [26/39] https://fivefarms.in/product/omkara-organic-coffee-blend/
+    [17/69] https://coffeeideas.in/product-category/our-coffees/
+    [27/39] https://fivefarms.in/product/malakodu-by-karna-coffee-naturale/
+    [4/16] https://www.agastyacoffee.com/product-page/drip-filters-sandalkad-estate
+    [11/23] https://www.cafehandcrafted.com/product-page/liquid-luck
+    [28/39] https://fivefarms.in/product/malakodu-select-premium-espresso-blend/
+    [18/69] https://coffeeideas.in/product-category/our-coffees/marcs-signature-blends/
+    [5/16] https://www.agastyacoffee.com/product-page/drip-filters-kent-microlot
+    [29/39] https://fivefarms.in/product/malhar-robusta-royale-100-robusta-coffee/
+    [30/39] https://fivefarms.in/product/malhar-monsoon-malabar/
+    [12/23] https://www.cafehandcrafted.com/product-page/gemblary-estate
+    [19/69] https://coffeeideas.in/product-category/our-coffees/intl-select/
+    [6/16] https://www.agastyacoffee.com/product-page/drip-filters-palace-field-estate
+    [31/39] https://fivefarms.in/product/malhar-extra-bold-mysore-nuggets/
+    [13/23] https://www.cafehandcrafted.com/product-page/bison-valley-estate
+    [32/39] https://fivefarms.in/product/morning-mist-single-estate-arabica/
+    [20/69] https://coffeeideas.in/product-category/our-coffees/marcs-seasonal-blends/
+    [14/23] https://www.cafehandcrafted.com/product-page/stanmore-estate
+    [33/39] https://fivefarms.in/product-category/specialty-coffee/?page=2
+    [7/16] https://www.agastyacoffee.com/product-page/drip-filters-kogilahalla-estate
+    [21/69] https://coffeeideas.in/product-category/our-coffees/limited-edition/
+    [8/16] https://www.agastyacoffee.com/product-page/drip-filters-modur-estate
+    [15/23] https://www.cafehandcrafted.com/product-page/salawara-estate
+    [34/39] https://fivefarms.in/product-category/specialty-coffee/page/3/?page=2
+    [22/69] https://coffeeideas.in/product-category/our-coffees/marcs-single-estate-origin/
+    [9/16] https://www.agastyacoffee.com/product-page/palace-field-estate
+    [16/23] https://www.cafehandcrafted.com/product-page/mooley-maney
+    [23/69] https://coffeeideas.in/product-category/our-coffees/marcs-decaf-specials/
+    [35/39] https://fivefarms.in/product/malhar-mysore-filter-coffee/
+    [10/16] https://www.agastyacoffee.com/product-page/mysore-nuggets-extra-bold
+    [17/23] https://www.cafehandcrafted.com/product-page/handcrafted-flask
+    [24/69] https://coffeeideas.in/product/master-classes/coffee-courses/the-foundations-of-specialty-coffee/
+    [36/39] https://fivefarms.in/product/orange-teal-noir/
+    [11/16] https://www.agastyacoffee.com/product-page/espresso-blend
+    [25/69] https://coffeeideas.in/product/master-classes/coffee-courses/barista-enhancement-3-day-hands-on-training-program/
+    [18/23] https://www.cafehandcrafted.com/product-page/big-black-mug
+    [37/39] https://fivefarms.in/product/orange-teal-planters-blend-filter-coffee-powder/
+    [12/16] https://www.agastyacoffee.com/product-page/kent-microlot
+    [19/23] https://www.cafehandcrafted.com/product-page/hario-buono-drip-kettle
+    [26/69] https://coffeeideas.in/product/master-classes/coffee-courses/foundations-of-roasting/
+    [38/39] https://fivefarms.in/product-category/specialty-coffee/page/2/?page=3
+    [13/16] https://www.agastyacoffee.com/product-page/kogilahalla-estate-mysore-nuggets
+    [20/23] https://www.cafehandcrafted.com/product-page/small-tabletop-scale
+    [27/69] https://coffeeideas.in/product/master-classes/coffee-courses/molecular-coffee-a-master-class/
+    [39/39] https://fivefarms.in/product-category/specialty-coffee/?page=3
+    [14/16] https://www.agastyacoffee.com/product-page/south-indian-filter-kaapi
+    [21/23] https://www.cafehandcrafted.com/product-page/gowri
+    [28/69] https://coffeeideas.in/product/master-classes/coffee-courses/barista-essentials-workshop/
+    [22/23] https://www.cafehandcrafted.com/product-page/time-scale
+  → 39 products scraped for Five Farms
+  ✅ Saved 39 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\five_farms_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\five_farms_clean_products.csv
+
+============================================================
+  Beans of Bodhi
+============================================================
+    listing page 1: https://beansofbodhi.com/store
+    [29/69] https://coffeeideas.in/product/master-classes/coffee-courses/espresso-dynamics/
+    [15/16] https://www.agastyacoffee.com/product-page/modur-estate-mysore-nuggets
+    Stopping at page 1: 404 Client Error: Not Found for url: https://beansofbodhi.com/store
+  ⚠  No product links found for Beans of Bodhi
+  [!] No products for Beans of Bodhi - skipping CSV.
+
+============================================================
+  Dream Hill Coffee
+============================================================
+    listing page 1: https://dreamhillcoffee.com/shop/
+    listing page 2: https://dreamhillcoffee.com/shop/?page=2
+    [23/23] https://www.cafehandcrafted.com/product-page/french-press
+    [30/69] https://coffeeideas.in/product/master-classes/coffee-courses/latte-verse/
+    [16/16] https://www.agastyacoffee.com/product-page/bella-kaapi
+  → 23 products scraped for Handcrafted
+  ✅ Saved 23 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\handcrafted_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\handcrafted_clean_products.csv
+
+============================================================
+  El Bueno
+============================================================
+    listing page 1: https://elbuenocoffee.com/shop/
+    [31/69] https://coffeeideas.in/product/master-classes/coffee-courses/espresso-world/
+    listing page 2: https://elbuenocoffee.com/shop/?page=2
+  Found 5 product URLs for Dream Hill Coffee
+    [1/5] https://dreamhillcoffee.com/product/monsoon-mist-dark-roast-coffee/
+  → 16 products scraped for Agasthya Coffee
+  ✅ Saved 16 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\agasthya_coffee_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\agasthya_coffee_clean_products.csv
+
+============================================================
+  Nandan Coffee
+============================================================
+    listing page 1: https://www.nandancoffee.com/coffee/
+    listing page 2: https://www.nandancoffee.com/coffee/?page=2
+    [2/5] https://dreamhillcoffee.com/product/autumn-bright-medium-roast-coffee/
+    [3/5] https://dreamhillcoffee.com/product/spring-bloom-medium-dark-roast-coffee-2/
+    [32/69] https://coffeeideas.in/product/master-classes/coffee-courses/coffee-cupping-session/
+  Found 12 product URLs for Nandan Coffee
+    [1/12] https://www.nandancoffee.com/product-category/coffee/
+  Found 21 product URLs for El Bueno
+    [1/21] https://elbuenocoffee.com/product/el-perfecto/
+    [4/5] https://dreamhillcoffee.com/product/summer-breeze-light-roast-coffee/
+    [2/12] https://www.nandancoffee.com/product-category/single-serve/
+    [2/21] https://elbuenocoffee.com/product/choc-out-loud/
+    [5/5] https://dreamhillcoffee.com/product/summer-breeze-light-roast-wahsed-coffee/
+    [3/12] https://www.nandancoffee.com/product-category/equipments/
+    [3/21] https://elbuenocoffee.com/product/hello-monday/
+  → 5 products scraped for Dream Hill Coffee
+  ✅ Saved 5 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\dream_hill_coffee_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\dream_hill_coffee_clean_products.csv
+
+============================================================
+  7 Elements
+============================================================
+    listing page 1: https://7elementscoffee.com/single-origin/
+    [33/69] https://coffeeideas.in/product/master-classes/coffee-courses/introduction-to-indian-coffee-by-deepan/
+    [4/12] https://www.nandancoffee.com/product/coffee-subscription/
+    [4/21] https://elbuenocoffee.com/product/golden-glow/
+    [5/12] https://www.nandancoffee.com/product/serve-pour-over-bag-nandan-royale-dark-roast/
+    [5/21] https://elbuenocoffee.com/product/the-weekend/
+    [6/21] https://elbuenocoffee.com/product/pourin-plums/
+    [34/69] https://coffeeideas.in/product/master-classes/coffee-courses/manual-brewing/
+    [6/12] https://www.nandancoffee.com/product/serve-pour-over-bag-nandan-lil-more-light-roast/
+    [7/21] https://elbuenocoffee.com/product/whisk-it-up/
+    [7/12] https://www.nandancoffee.com/product/serve-pour-over-bag-nandan-royale-medium-roast/
+    [8/21] https://elbuenocoffee.com/product/sampler-pack/
+    [8/12] https://www.nandancoffee.com/product/royale/
+    [35/69] https://coffeeideas.in/product/master-classes/fermentation-courses/fermented-drinks-workshop/
+    [9/21] https://elbuenocoffee.com/product/cacao-me-crazy/
+    [9/12] https://www.nandancoffee.com/product/espresso/
+    [10/21] https://elbuenocoffee.com/product/bean-there/
+    [10/12] https://www.nandancoffee.com/product/llmore/
+  ⚠  No product links found for 7 Elements
+  [!] No products for 7 Elements - skipping CSV.
+
+============================================================
+  Anecdote Coffee Roasters
+============================================================
+    listing page 1: https://www.anecdoteroasters.com/category/all-products
+    [11/21] https://elbuenocoffee.com/product/spill-the-beans/
+    [11/12] https://www.nandancoffee.com/product/raw/
+    [36/69] https://coffeeideas.in/product/brewing-equipment/south-indian-filter-coffee/
+    [12/21] https://elbuenocoffee.com/product/jam-session/
+    [12/12] https://www.nandancoffee.com/product/south-special/
+    [13/21] https://elbuenocoffee.com/product-category/blends/
+    listing page 2: https://www.anecdoteroasters.com/category/all-products?page=2
+  → 12 products scraped for Nandan Coffee
+  ✅ Saved 12 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\nandan_coffee_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\nandan_coffee_clean_products.csv
+
+============================================================
+  Earth Coffee Roasters
+============================================================
+    listing page 1: https://in.earthroastery.com/
+    [14/21] https://elbuenocoffee.com/product-category/cafec-starter-kit-cup-1/
+  ⚠  No product links found for Earth Coffee Roasters
+  [!] No products for Earth Coffee Roasters - skipping CSV.
+    [37/69] https://coffeeideas.in/product/brewing-equipment/coffee-weighing-scale-is-the-first-choice-for-baristas-or-coffee-lovers/
+  Found 9 product URLs for Anecdote Coffee Roasters
+    [1/9] https://www.anecdoteroasters.com/product-page/anecdote-samplers
+    [15/21] https://elbuenocoffee.com/product-category/eb-bundles/
+    [2/9] https://www.anecdoteroasters.com/product-page/afterglow-at-ginimao
+    [16/21] https://elbuenocoffee.com/product-category/equipments-merchandise/
+    [3/9] https://www.anecdoteroasters.com/product-page/dawn-at-yashwanth
+    [38/69] https://coffeeideas.in/product/brewing-equipment/sofi/
+    [17/21] https://elbuenocoffee.com/product-category/matcha/
+    [4/9] https://www.anecdoteroasters.com/product-page/eventide-at-balur
+    [18/21] https://elbuenocoffee.com/product-category/new-in/
+    [19/21] https://elbuenocoffee.com/product-category/ready-to-brew/
+    [39/69] https://coffeeideas.in/product/brewing-equipment/the-chesnut-grinder/
+    [20/21] https://elbuenocoffee.com/product-category/single-estate/
+    [5/9] https://www.anecdoteroasters.com/product-page/single-pour-drip-bags
+    [21/21] https://elbuenocoffee.com/product/sampler-pack
+  → 21 products scraped for El Bueno
+  ✅ Saved 21 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\el_bueno_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\el_bueno_clean_products.csv
+    [40/69] https://coffeeideas.in/product/brewing-equipment/coffee-server/
+    [6/9] https://www.anecdoteroasters.com/product-page/echoes-of-ammikulavi-the-nanolot-series
+    [7/9] https://www.anecdoteroasters.com/product-page/whispers-of-g-madugula-the-nanolot-series
+    [41/69] https://coffeeideas.in/product/brewing-equipment/disc-63-sibarist-fast/
+    [8/9] https://www.anecdoteroasters.com/product-page/twilight-at-dumbriguda
+    [42/69] https://coffeeideas.in/product/brewing-equipment/disc-63-coffee-filters/
+    [9/9] https://www.anecdoteroasters.com/product-page/daybreak-at-greenland
+    [43/69] https://coffeeideas.in/product/brewing-equipment/b3-cone-sibarist-100/
+  → 9 products scraped for Anecdote Coffee Roasters
+  ✅ Saved 9 products → C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\parsed\anecdote_coffee_roasters_products_generic.csv
+✅ Cleaned dataset saved to C:\Users\vansh\Desktop\MIT\Sem8\coffee-project\results\cleaned\anecdote_coffee_roasters_clean_products.csv
+    [44/69] https://coffeeideas.in/product/brewing-equipment/premium-coffee-filter-papers-sibarist/
+    [45/69] https://coffeeideas.in/product/brewing-equipment/bialetti-moka-express-3-cup/
+    [46/69] https://coffeeideas.in/product/brewing-equipment/bialetti-moka-express-3-cup-90th-anniversary/
+    [47/69] https://coffeeideas.in/product/brewing-equipment/bialetti-moka-express-i-love-coffee-3-cups/
+    [48/69] https://coffeeideas.in/product/brewing-equipment/cold-brew-ice-dripper/
+    [49/69] https://coffeeideas.in/product/brewing-equipment/smart-electric-kettle/
+    [50/69] https://coffeeideas.in/product-category/our-coffees/marcs-signature-blends/dark-roast/
+    [51/69] https://coffeeideas.in/product-category/our-coffees/marcs-signature-blends/light-roast/
+    [52/69] https://coffeeideas.in/product-category/our-coffees/marcs-signature-blends/medium-roast/
+    [53/69] https://coffeeideas.in/product-category/our-coffees/marcs-single-estate-origin/light-roast-marcs-sing
