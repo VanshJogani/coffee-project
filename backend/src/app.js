@@ -3,19 +3,22 @@ const cors = require("cors");
 const helmet = require("helmet");
 const dotenv = require("dotenv");
 
-const { getDb, initSchema } = require("./db");
+const { getDb, initSchema, createIndexes, runMigrations } = require("./db");
 const productsRouter = require("./routes/products");
 const reviewsRouter = require("./routes/reviews");
 const recipesRouter = require("./routes/recipes");
 const inventoryRouter = require("./routes/inventory");
 const brewLogsRouter = require("./routes/brewLogs");
 const brewNotesRouter = require("./routes/brewNotes");
+const postsRouter = require("./routes/posts");
 
 dotenv.config();
 
 // Initialize DB and schema at startup
 const db = getDb();
 initSchema(db);
+createIndexes(db);
+runMigrations(db);
 
 const app = express();
 
@@ -40,6 +43,7 @@ app.use("/api/recipes", recipesRouter);
 app.use("/api/inventory", inventoryRouter);
 app.use("/api/brew-logs", brewLogsRouter);
 app.use("/api/brew-notes", brewNotesRouter);
+app.use("/api/posts", postsRouter);
 
 // Basic error handler
 // eslint-disable-next-line no-unused-vars

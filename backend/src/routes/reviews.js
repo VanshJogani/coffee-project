@@ -4,60 +4,29 @@ const { validateReviewPayload } = require("../validation");
 
 const router = express.Router();
 
-function dbGet(db, sql, params = {}) {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) return reject(err);
-      resolve(row);
-    });
-  });
-}
-
-function dbRun(db, sql, params = {}) {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function onRun(err) {
-      if (err) return reject(err);
-      resolve({ lastID: this.lastID, changes: this.changes });
-    });
-  });
-}
-
-router.post("/", async (req, res, next) => {
-  const db = getDb();
-  const { errors, value } = validateReviewPayload(req.body);
-  if (errors.length) {
-    return res.status(400).json({ errors });
-  }
-
+router.post("/", (req, res, next) => {
   try {
-    const product = await dbGet(db, "SELECT id FROM products WHERE id = @id", {
-      id: value.productId
-    });
+    const db = getDb();
+    const { errors, value } = validateReviewPayload(req.body);
+    if (errors.length) {
+      return res.status(400).json({ errors });
+    }
+
+    const product = db.prepare("SELECT id FROM products WHERE id = ?").get(value.productId);
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }
 
     const now = new Date().toISOString();
-    const info = await dbRun(
-      db,
+    const info = db.prepare(
       `INSERT INTO reviews (productId, reviewerName, rating, comment, createdAt, updatedAt)
-       VALUES (@productId, @reviewerName, @rating, @comment, @createdAt, @updatedAt)`,
-      {
-        productId: value.productId,
-        reviewerName: value.name,
-        rating: value.rating,
-        comment: value.comment,
-        createdAt: now,
-        updatedAt: now
-      }
-    );
+       VALUES (?, ?, ?, ?, ?, ?)`
+    ).run(value.productId, value.name, value.rating, value.comment, now, now);
 
-    const created = await dbGet(
-      db,
+    const created = db.prepare(
       `SELECT id, productId, reviewerName, rating, comment, createdAt, updatedAt
-       FROM reviews WHERE id = @id`,
-      { id: info.lastID }
-    );
+       FROM reviews WHERE id = ?`
+    ).get(info.lastInsertRowid);
 
     return res.status(201).json(created);
   } catch (err) {
@@ -65,20 +34,18 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.put("/:id", async (req, res, next) => {
-  const db = getDb();
-  const reviewId = parseInt(req.params.id, 10);
-  if (!Number.isInteger(reviewId)) {
-    return res.status(400).json({ error: "Invalid review id" });
-  }
-
+router.put("/:id", (req, res, next) => {
   try {
-    const existing = await dbGet(
-      db,
+    const db = getDb();
+    const reviewId = parseInt(req.params.id, 10);
+    if (!Number.isInteger(reviewId)) {
+      return res.status(400).json({ error: "Invalid review id" });
+    }
+
+    const existing = db.prepare(
       `SELECT id, productId, reviewerName, rating, comment, createdAt, updatedAt
-       FROM reviews WHERE id = @id`,
-      { id: reviewId }
-    );
+       FROM reviews WHERE id = ?`
+    ).get(reviewId);
     if (!existing) {
       return res.status(404).json({ error: "Review not found" });
     }
@@ -94,29 +61,14 @@ router.put("/:id", async (req, res, next) => {
     }
 
     const now = new Date().toISOString();
-    await dbRun(
-      db,
-      `UPDATE reviews
-       SET reviewerName = @reviewerName,
-           rating = @rating,
-           comment = @comment,
-           updatedAt = @updatedAt
-       WHERE id = @id`,
-      {
-        id: reviewId,
-        reviewerName: value.name,
-        rating: value.rating,
-        comment: value.comment,
-        updatedAt: now
-      }
-    );
+    db.prepare(
+      `UPDATE reviews SET reviewerName = ?, rating = ?, comment = ?, updatedAt = ? WHERE id = ?`
+    ).run(value.name, value.rating, value.comment, now, reviewId);
 
-    const updated = await dbGet(
-      db,
+    const updated = db.prepare(
       `SELECT id, productId, reviewerName, rating, comment, createdAt, updatedAt
-       FROM reviews WHERE id = @id`,
-      { id: reviewId }
-    );
+       FROM reviews WHERE id = ?`
+    ).get(reviewId);
 
     return res.json(updated);
   } catch (err) {
@@ -124,15 +76,15 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
-  const db = getDb();
-  const reviewId = parseInt(req.params.id, 10);
-  if (!Number.isInteger(reviewId)) {
-    return res.status(400).json({ error: "Invalid review id" });
-  }
-
+router.delete("/:id", (req, res, next) => {
   try {
-    const info = await dbRun(db, "DELETE FROM reviews WHERE id = @id", { id: reviewId });
+    const db = getDb();
+    const reviewId = parseInt(req.params.id, 10);
+    if (!Number.isInteger(reviewId)) {
+      return res.status(400).json({ error: "Invalid review id" });
+    }
+
+    const info = db.prepare("DELETE FROM reviews WHERE id = ?").run(reviewId);
     if (info.changes === 0) {
       return res.status(404).json({ error: "Review not found" });
     }

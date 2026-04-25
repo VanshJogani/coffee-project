@@ -1,18 +1,35 @@
 const fs = require("fs");
 const path = require("path");
-const { getDb, initSchema } = require("./src/db");
+const Database = require("better-sqlite3");
+
+// ── Roast type normalization ──────────────────────────────────────────────────
+function normalizeRoastType(raw) {
+  if (!raw) return "";
+  const r = String(raw).trim();
+  if (/^dark/i.test(r)) return "Dark Roast";
+  if (/^medium[\s-]dark/i.test(r)) return "Medium-Dark Roast";
+  if (/^medium/i.test(r)) return "Medium Roast";
+  if (/^light/i.test(r)) return "Light Roast";
+  return r;
+}
 
 function normalizeProduct(raw, index) {
+  const rawRoastType = raw.roastType || raw.Roast_Level || "";
   const product = {
     productId: String(raw.productId || raw.id || index + 1),
     name: raw.name || raw.Name || "Unknown Coffee",
     roaster: raw.roaster || raw.Roaster || "Unknown Roaster",
-    roastType: raw.roastType || raw.Roast_Level || "",
+    roastType: normalizeRoastType(rawRoastType),
     origin: raw.origin || raw.Origin || raw.Farm || "",
     process: raw.process || raw.Process || "",
     tastingNotes: raw.tastingNotes || raw.Tasting_Notes || "",
     score: raw.score != null ? Number(raw.score) : null,
-    price: raw.price != null ? String(raw.price).replace(/[^0-9.]/g, '') ? Number(String(raw.price).replace(/[^0-9.]/g, '')) : null : (raw.Price != null ? String(raw.Price).replace(/[^0-9.]/g, '') ? Number(String(raw.Price).replace(/[^0-9.]/g, '')) : null : null),
+    price: (() => {
+      const v = raw.price ?? raw.Price;
+      if (v == null) return null;
+      const n = Number(String(v).replace(/[^0-9.]/g, ""));
+      return isNaN(n) ? null : n;
+    })(),
     imageUrl: raw.imageUrl || raw.Image_URL || "",
     cuppingDate: raw.cuppingDate || null,
     description: raw.description || raw.Description || raw.Desc || "",
@@ -22,26 +39,17 @@ function normalizeProduct(raw, index) {
 
   const lowerName = product.name.toLowerCase();
   const lowerDesc = (product.description || "").toLowerCase();
-  const combined = lowerName + " " + lowerDesc;
-
-  // If the pipeline already assigned a category, use it as a strong hint
   const upstreamCategory = raw.category || raw.Category || "";
 
   let category = "Coffee";
 
-  // --- Subscription detection ---
   if (lowerName.includes("subscription") || lowerName.includes("subscribe")) {
     category = "Subscriptions";
-  }
-  // --- Events detection ---
-  else if (["tasting session", "cupping session", "latte art", "throwdown",
+  } else if (["tasting session", "cupping session", "latte art", "throwdown",
     "workshop", "masterclass", "master class", "coffee walk", "brew class",
     "competition", "championship", "meetup", "meet up"].some(k => lowerName.includes(k))) {
     category = "Events";
-  }
-  // --- Strong tea detection (checked before accessories) ---
-  else {
-    // Unambiguous tea product names — these override coffee keywords like "blend", "estate"
+  } else {
     const strongTeaKeywords = [
       "green tea", "black tea", "white tea", "oolong tea", "oolong",
       "rooibos", "herbal tea", "tisane", "earl grey", "matcha",
@@ -50,84 +58,50 @@ function normalizeProduct(raw, index) {
       "jasmine tea", "lemon tea", "mango tea", "vanilla tea",
       "apple tea", "flower tea", "blooming tea", "kombucha"
     ];
-    // Broader tea signals (with word boundary protection)
-    const teaKeywords = [
-      "tea ", " tea", "chai ", " chai"
-    ];
-
+    const teaKeywords = ["tea ", " tea", "chai ", " chai"];
     const hasStrongTeaKeyword = strongTeaKeywords.some(k => lowerName.includes(k));
     const hasTeaKeyword = hasStrongTeaKeyword || teaKeywords.some(k => lowerName.includes(k));
-
-    // Only a very specific set of coffee signals should override tea in the NAME
     const strongCoffeeInName = ["coffee bean", "coffee roast", "roasted coffee", "whole bean coffee"]
       .some(k => lowerName.includes(k));
 
     const accessoryKeywords = [
-      // Brewing Equipment
       "aeropress", "v60", "hario", "chemex", "french press", "moka pot",
       "dripper", "pour over", "pourover", "siphon", "percolator", "bialetti",
       "clever dripper", "kalita", "origami dripper", "cold brew maker",
       "brewer", "press filter", "brass filter", "prass filter",
-      // Grinders
       "grinder", "burr grinder", "hand grinder",
-      // Kettles & Servers
       "kettle", "gooseneck", "server", "carafe", "pitcher", "decanter",
-      // Drinkware
       "mug", "tumbler", "cup", "cups", "waycup", "glass ", "glasses",
       "sipper", "flask", "bottle", "reusable",
-      // Scales & Tools
       "scale ", "weighing", "thermometer", "timer", "tamper", "portafilter",
       "milk frother", "frother", "steam wand", "knock box", "distribution tool",
-      // Filters & Consumables
-      "filter paper", "paper filter", "metal filter", "mesh filter",
-      "wave filter",
-      // Merchandise & Apparel
+      "filter paper", "paper filter", "metal filter", "mesh filter", "wave filter",
       "t-shirt", "tshirt", "tee ", "hoodie", "cap ", "hat ", "tote bag", "tote",
       "sticker", "poster", "pin ", "badge", "merch", "merchandise",
       "bag tag", "coaster",
-      // Gift & Hamper
       "gift box", "gift set", "gift card", "hamper", "combo pack",
-      // Books & Decor
       "book ", "candle", "diffuser", "decor", "artwork",
-      // Food / Non-Coffee beverages
       "syrup", "chocolate bar", "brownie", "cookie", "biscuit", "cake",
       "trail mix", "granola",
-      // Machine parts
       "gasket", "group head", "drip tray",
-      // Appliances
-      "coffee maker", "coffee machine", "espresso machine",
-      // Saucer
-      "saucer"
+      "coffee maker", "coffee machine", "espresso machine", "saucer"
     ];
-
-    // Items that are clearly NOT coffee products (services, events, experiences, misc)
     const definitelyNotCoffee = [
-      "bike", "rental", "bicycle", "cycle",
-      "music", "live music", "concert", "gig",
-      "pottery", "ceramic", "workshop", "class ",
-      "tour ", "tours", "tasting session", "event",
-      "yoga", "meditation", "wellness",
-      "laundry", "cleaning", "ironing",
-      "brace", "bracelet", "jewel", "necklace", "ring ",
-      "tattoo", "piercing",
-      "surfboard", "surf ", "kayak", "paddle",
-      "accommodation", "stay ", "hostel", "room ",
-      "spa ", "massage", "facial",
-      "meal ", "breakfast", "lunch", "dinner", "brunch",
-      "parking", "locker", "storage",
-      "sim card", "wifi", "internet",
-      "voucher", "coupon",
-      "pen ", "notebook", "diary",
+      "bike", "rental", "bicycle", "cycle", "music", "live music", "concert", "gig",
+      "pottery", "ceramic", "workshop", "class ", "tour ", "tours", "tasting session", "event",
+      "yoga", "meditation", "wellness", "laundry", "cleaning", "ironing",
+      "brace", "bracelet", "jewel", "necklace", "ring ", "tattoo", "piercing",
+      "surfboard", "surf ", "kayak", "paddle", "accommodation", "stay ", "hostel", "room ",
+      "spa ", "massage", "facial", "meal ", "breakfast", "lunch", "dinner", "brunch",
+      "parking", "locker", "storage", "sim card", "wifi", "internet",
+      "voucher", "coupon", "pen ", "notebook", "diary",
       "planter", "plant ", "succulent", "seed kit",
       "perfume", "fragrance", "soap", "shampoo",
       "puzzle", "game ", "board game",
       "cushion", "pillow", "blanket", "towel",
-      "bag pack", "backpack", "luggage",
-      "umbrella", "raincoat",
-      "air freshener", "incense",
-      "keychain", "magnet"
+      "bag pack", "backpack", "luggage", "umbrella", "raincoat",
+      "air freshener", "incense", "keychain", "magnet"
     ];
-
     const coffeeKeywords = [
       "roast", "beans", "bean ", "blend", "estate", "coffee", "peaberry",
       "arabica", "robusta", "naturals", "microlot", "decaf", "espresso",
@@ -136,98 +110,47 @@ function normalizeProduct(raw, index) {
       "drip bag", "drip box", "brew bag"
     ];
 
-    const hasCoffeeAttributes = Boolean(
-      product.roastType || product.tastingNotes || product.origin ||
-      raw.Roast_Level || raw.Tasting_Notes
-    );
     const hasCoffeeKeyword = coffeeKeywords.some(k => lowerName.includes(k));
     const hasAccessoryKeyword = accessoryKeywords.some(k => lowerName.includes(k));
     const isDefinitelyNotCoffee = definitelyNotCoffee.some(k => lowerName.includes(k));
-    const hasStrongCoffeeAttr = Boolean(product.roastType || raw.Roast_Level);
+    const hasStrongCoffeeAttr = Boolean(product.roastType || rawRoastType);
 
-    // 1. Definitely-not-coffee items (bike rental, live music, etc.) — always Accessories
+    const strongAccessory = ["grinder", "kettle", "gooseneck", "scale ", "v60",
+      "chemex", "aeropress", "french press", "moka pot", "percolator",
+      "tumbler", "mug", "server", "pitcher", "frother", "tamper", "machine",
+      "cup", "cups", "saucer", "glass", "bialetti", "brewer", "press filter",
+      "brass filter", "prass filter", "pour over", "reusable"];
+
     if (isDefinitelyNotCoffee && !hasCoffeeKeyword) {
       category = "Accessories";
-    }
-    // 2. Strong tea name BUT also a strong accessory keyword — Accessories wins
-    //    (e.g., "Tea & Coffee Brewing Alarm Clock Coffee Machine")
-    else if (hasStrongTeaKeyword && !strongCoffeeInName && hasAccessoryKeyword) {
-      const strongAccessory = ["grinder", "kettle", "gooseneck", "scale ", "v60",
-        "chemex", "aeropress", "french press", "moka pot", "percolator",
-        "tumbler", "mug", "server", "pitcher", "frother", "tamper", "machine",
-        "cup", "cups", "saucer", "glass", "bialetti", "brewer", "press filter",
-        "brass filter", "prass filter", "pour over", "reusable"];
-      if (strongAccessory.some(k => lowerName.includes(k))) {
-        category = "Accessories";
-      } else {
-        category = "Tea";
-      }
-    }
-    // 3. Strong tea name — classify as Tea even if "blend"/"estate"/roastLevel present
-    //    (these are typically false positives from the cleaner or generic coffee words)
-    //    Only exception: name explicitly says "coffee bean/roast"
-    else if (hasStrongTeaKeyword && !strongCoffeeInName) {
+    } else if (hasStrongTeaKeyword && !strongCoffeeInName && hasAccessoryKeyword) {
+      category = strongAccessory.some(k => lowerName.includes(k)) ? "Accessories" : "Tea";
+    } else if (hasStrongTeaKeyword && !strongCoffeeInName) {
       category = "Tea";
-    }
-    // 3. Weaker tea signal (just " tea" / " chai") without coffee keywords
-    else if (hasTeaKeyword && !hasCoffeeKeyword && !strongCoffeeInName) {
+    } else if (hasTeaKeyword && !hasCoffeeKeyword && !strongCoffeeInName) {
       category = "Tea";
-    }
-    // 4. Tea signal + coffee keyword but NOT strong coffee in name — check upstream
-    //    But if it also has a strong accessory keyword, it's equipment not tea
-    else if (hasTeaKeyword && !strongCoffeeInName) {
-      const strongAccessory = ["grinder", "kettle", "gooseneck", "scale ", "v60",
-        "chemex", "aeropress", "french press", "moka pot", "percolator",
-        "tumbler", "mug", "server", "pitcher", "frother", "tamper", "machine",
-        "cup", "cups", "saucer", "glass", "bialetti", "brewer", "press filter",
-        "brass filter", "prass filter", "pour over", "reusable"];
-      if (hasAccessoryKeyword && strongAccessory.some(k => lowerName.includes(k))) {
-        category = "Accessories";
-      } else {
-        // Trust the pipeline category if available, otherwise default to Tea
-        // since most "blend"/"estate" matches on tea products are false positives
-        category = (upstreamCategory === "Tea" || !hasStrongCoffeeAttr) ? "Tea" : "Coffee";
-      }
-    }
-    // 5. Has accessory keyword AND coffee keyword — check deeper
-    else if (hasAccessoryKeyword && hasCoffeeKeyword) {
-      const strongAccessory = ["grinder", "kettle", "gooseneck", "scale ", "v60",
-        "chemex", "aeropress", "french press", "moka pot", "percolator",
-        "tumbler", "mug", "server", "pitcher", "frother", "tamper", "machine",
-        "cup", "cups", "saucer", "glass", "bialetti", "brewer", "press filter",
-        "brass filter", "prass filter", "pour over", "reusable"];
-      if (strongAccessory.some(k => lowerName.includes(k))) {
-        category = "Accessories";
-      }
-    }
-    // 6. Explicit accessory in name, no coffee keyword
-    else if (hasAccessoryKeyword && !hasCoffeeKeyword) {
+    } else if (hasTeaKeyword && !strongCoffeeInName) {
+      category = (hasAccessoryKeyword && strongAccessory.some(k => lowerName.includes(k)))
+        ? "Accessories"
+        : (upstreamCategory === "Tea" || !hasStrongCoffeeAttr) ? "Tea" : "Coffee";
+    } else if (hasAccessoryKeyword && hasCoffeeKeyword) {
+      if (strongAccessory.some(k => lowerName.includes(k))) category = "Accessories";
+    } else if (hasAccessoryKeyword && !hasCoffeeKeyword) {
       category = "Accessories";
-    }
-    // 7. No coffee keywords AND no coffee attributes — probably not coffee
-    else if (!hasCoffeeKeyword && !hasStrongCoffeeAttr) {
+    } else if (!hasCoffeeKeyword && !hasStrongCoffeeAttr) {
       const descCoffeeHits = coffeeKeywords.filter(k => lowerDesc.includes(k)).length;
       if (descCoffeeHits < 2) {
-        if (hasTeaKeyword) {
-          category = "Tea";
-        } else {
-          category = "Accessories";
-        }
+        category = hasTeaKeyword ? "Tea" : "Accessories";
       }
-    }
-    // 8. If upstream pipeline already classified and nothing above triggered a change
-    else if (upstreamCategory && upstreamCategory !== "Coffee" && !hasCoffeeKeyword) {
+    } else if (upstreamCategory && upstreamCategory !== "Coffee" && !hasCoffeeKeyword) {
       category = upstreamCategory;
     }
   }
 
   product.category = category;
 
-  // --- Post-processing for Tea ---
   if (category === "Tea") {
     const nameUpper = product.name.toUpperCase();
-
-    // Extract Origin if empty
     if (!product.origin) {
       if (nameUpper.includes("ASSAM")) product.origin = "Assam";
       else if (nameUpper.includes("DARJEELING")) product.origin = "Darjeeling";
@@ -236,15 +159,13 @@ function normalizeProduct(raw, index) {
       else if (nameUpper.includes("SOUTH AFRICAN")) product.origin = "South Africa";
       else if (nameUpper.includes("JAPANESE")) product.origin = "Japan";
     }
-
-    // Use roastType field for Tea Type since it's otherwise empty
     if (!product.roastType) {
       if (nameUpper.includes("GREEN")) product.roastType = "Green Tea";
       else if (nameUpper.includes("BLACK")) product.roastType = "Black Tea";
       else if (nameUpper.includes("WHITE")) product.roastType = "White Tea";
       else if (nameUpper.includes("MATCHA")) product.roastType = "Matcha";
       else if (nameUpper.includes("CHAI") || nameUpper.includes("MASALA")) product.roastType = "Chai / Masala";
-      else if (nameUpper.includes("HERBAL") || nameUpper.includes("TISANE") || nameUpper.includes("ROOIBOS") || nameUpper.includes("MINT") || nameUpper.includes("CHAMOMILE")) product.roastType = "Herbal / Tisane";
+      else if (["HERBAL", "TISANE", "ROOIBOS", "MINT", "CHAMOMILE"].some(k => nameUpper.includes(k))) product.roastType = "Herbal / Tisane";
       else if (nameUpper.includes("CASCARA")) product.roastType = "Cascara";
       else if (nameUpper.includes("EARL GREY")) product.roastType = "Earl Grey";
       else if (nameUpper.includes("JASMINE")) product.roastType = "Jasmine";
@@ -256,40 +177,7 @@ function normalizeProduct(raw, index) {
   return product;
 }
 
-function createSampleReviews(db, productRowId) {
-  const now = new Date().toISOString();
-
-  const samples = [
-    {
-      reviewerName: "Coffee Lover",
-      rating: 5,
-      comment: "Fantastic cup, really enjoyed the balance and sweetness."
-    },
-    {
-      reviewerName: "Taster Bot",
-      rating: 4,
-      comment: "Great clarity and acidity, would buy again."
-    }
-  ];
-
-  samples.forEach((s) => {
-    db.run(
-      `INSERT INTO reviews
-       (productId, reviewerName, rating, comment, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [
-        productRowId,
-        s.reviewerName,
-        s.rating,
-        s.comment,
-        now,
-        now
-      ]
-    );
-  });
-}
-
-async function main() {
+function main() {
   const args = process.argv.slice(2);
   const jsonPath = args[0] || "results/cleaned_coffee_products.json";
   const fullPath = path.resolve(process.cwd(), jsonPath);
@@ -299,11 +187,9 @@ async function main() {
     process.exit(1);
   }
 
-  const raw = fs.readFileSync(fullPath, "utf-8");
-
   let data;
   try {
-    data = JSON.parse(raw);
+    data = JSON.parse(fs.readFileSync(fullPath, "utf-8"));
   } catch (e) {
     console.error("Failed to parse JSON:", e.message);
     process.exit(1);
@@ -314,66 +200,216 @@ async function main() {
     process.exit(1);
   }
 
-  const db = getDb();
+  const dbPath = process.env.DATABASE_PATH || path.join(__dirname, "coffee.db");
+  const db = new Database(dbPath);
+  db.pragma("journal_mode = WAL");
+  db.pragma("foreign_keys = ON");
 
-  db.serialize(() => {
-    db.run("DROP TABLE IF EXISTS reviews");
-    db.run("DROP TABLE IF EXISTS products");
-    db.run("CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, productId TEXT UNIQUE, name TEXT NOT NULL, roaster TEXT, roastType TEXT, origin TEXT, process TEXT, tastingNotes TEXT, score REAL, price REAL, imageUrl TEXT, cuppingDate TEXT, description TEXT, url TEXT, quantity TEXT, category TEXT);");
-    db.run("CREATE TABLE IF NOT EXISTS reviews (id INTEGER PRIMARY KEY AUTOINCREMENT, productId INTEGER NOT NULL, reviewerName TEXT NOT NULL, rating INTEGER NOT NULL, comment TEXT, createdAt TEXT NOT NULL, updatedAt TEXT NOT NULL, FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE);");
+  // Drop and recreate tables
+  db.exec(`
+    DROP TABLE IF EXISTS brew_notes;
+    DROP TABLE IF EXISTS brew_logs;
+    DROP TABLE IF EXISTS bean_inventory;
+    DROP TABLE IF EXISTS recipes;
+    DROP TABLE IF EXISTS user_profile;
+    DROP TABLE IF EXISTS reviews;
+    DROP TABLE IF EXISTS product_variants;
+    DROP TABLE IF EXISTS products;
 
-    db.run("BEGIN TRANSACTION");
+    CREATE TABLE products (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      productId TEXT UNIQUE,
+      name TEXT NOT NULL,
+      roaster TEXT,
+      roastType TEXT,
+      origin TEXT,
+      process TEXT,
+      tastingNotes TEXT,
+      score REAL,
+      price REAL,
+      imageUrl TEXT,
+      cuppingDate TEXT,
+      description TEXT,
+      url TEXT,
+      quantity TEXT,
+      category TEXT
+    );
 
-    data.forEach((item, idx) => {
-      const p = normalizeProduct(item, idx);
+    CREATE TABLE product_variants (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      productId INTEGER NOT NULL,
+      quantity TEXT,
+      price REAL,
+      originalProductId TEXT,
+      FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
+    );
 
-      db.run(
-        `INSERT INTO products
-         (productId, name, roaster, roastType, origin, process, tastingNotes, score, price, imageUrl, cuppingDate, description, url, quantity, category)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          p.productId,
-          p.name,
-          p.roaster,
-          p.roastType,
-          p.origin,
-          p.process,
-          p.tastingNotes,
-          p.score,
-          p.price,
-          p.imageUrl,
-          p.cuppingDate,
-          p.description,
-          p.url,
-          p.quantity,
-          p.category
-        ],
-        function (err) {
-          if (err) {
-            console.error("Insert error:", err);
-            return;
-          }
+    CREATE TABLE reviews (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      productId INTEGER NOT NULL,
+      reviewerName TEXT NOT NULL,
+      rating INTEGER NOT NULL,
+      comment TEXT,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL,
+      FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
+    );
 
-          createSampleReviews(db, this.lastID);
-        }
+    CREATE TABLE user_profile (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      displayName TEXT DEFAULT 'Brewer',
+      defaultGrinder TEXT,
+      defaultBrewer TEXT,
+      createdAt TEXT NOT NULL
+    );
+
+    CREATE TABLE recipes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      brewerType TEXT NOT NULL,
+      grindSize TEXT,
+      coffeeGrams REAL,
+      waterGrams REAL,
+      waterTempC INTEGER,
+      bloomTimeSec INTEGER,
+      targetBrewTimeSec INTEGER,
+      steps TEXT,
+      isBuiltIn INTEGER DEFAULT 0,
+      sourceRecipe TEXT,
+      notes TEXT,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL
+    );
+
+    CREATE TABLE bean_inventory (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      productId INTEGER,
+      customName TEXT,
+      customRoaster TEXT,
+      gramsRemaining REAL DEFAULT 0,
+      purchaseDate TEXT,
+      openedDate TEXT,
+      notes TEXT,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL,
+      FOREIGN KEY (productId) REFERENCES products(id) ON DELETE SET NULL
+    );
+
+    CREATE TABLE brew_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      recipeId INTEGER,
+      beanInventoryId INTEGER,
+      brewerName TEXT,
+      grinderName TEXT,
+      grindSize TEXT,
+      coffeeGrams REAL,
+      waterGrams REAL,
+      waterTempC INTEGER,
+      brewTimeSec INTEGER,
+      rating INTEGER,
+      notes TEXT,
+      isPublic INTEGER DEFAULT 1,
+      createdAt TEXT NOT NULL,
+      FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE SET NULL,
+      FOREIGN KEY (beanInventoryId) REFERENCES bean_inventory(id) ON DELETE SET NULL
+    );
+
+    CREATE TABLE brew_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      productId INTEGER NOT NULL,
+      authorName TEXT NOT NULL,
+      body TEXT NOT NULL,
+      brewLogId INTEGER,
+      createdAt TEXT NOT NULL,
+      FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE,
+      FOREIGN KEY (brewLogId) REFERENCES brew_logs(id) ON DELETE SET NULL
+    );
+
+    CREATE INDEX idx_products_roaster ON products(roaster);
+    CREATE INDEX idx_products_roastType ON products(roastType);
+    CREATE INDEX idx_products_origin ON products(origin);
+    CREATE INDEX idx_products_category ON products(category);
+    CREATE INDEX idx_products_cuppingDate ON products(cuppingDate);
+    CREATE INDEX idx_products_price ON products(price);
+    CREATE INDEX idx_products_name ON products(name);
+    CREATE INDEX idx_product_variants_productId ON product_variants(productId);
+    CREATE INDEX idx_reviews_productId ON reviews(productId);
+    CREATE INDEX idx_brew_logs_beanInventoryId ON brew_logs(beanInventoryId);
+    CREATE INDEX idx_brew_logs_recipeId ON brew_logs(recipeId);
+    CREATE INDEX idx_brew_notes_productId ON brew_notes(productId);
+    CREATE INDEX idx_bean_inventory_productId ON bean_inventory(productId);
+  `);
+
+  // Normalize all products first
+  const normalized = data.map((item, idx) => normalizeProduct(item, idx));
+
+  // Group into canonical products + variants (dedup by name+roaster)
+  const canonicalMap = new Map();
+  for (const p of normalized) {
+    const key = `${p.name.toLowerCase()}::${p.roaster.toLowerCase()}`;
+    if (!canonicalMap.has(key)) {
+      canonicalMap.set(key, { canonical: p, variants: [] });
+    }
+    const entry = canonicalMap.get(key);
+    entry.variants.push({ quantity: p.quantity, price: p.price, originalProductId: p.productId });
+    // Keep the canonical record's price as the lowest non-null price
+    if (p.price != null && (entry.canonical.price == null || p.price < entry.canonical.price)) {
+      entry.canonical.price = p.price;
+    }
+  }
+
+  const insertProduct = db.prepare(
+    `INSERT INTO products (productId, name, roaster, roastType, origin, process, tastingNotes,
+      score, price, imageUrl, cuppingDate, description, url, quantity, category)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  );
+
+  const insertVariant = db.prepare(
+    `INSERT INTO product_variants (productId, quantity, price, originalProductId)
+     VALUES (?, ?, ?, ?)`
+  );
+
+  const insertReview = db.prepare(
+    `INSERT INTO reviews (productId, reviewerName, rating, comment, createdAt, updatedAt)
+     VALUES (?, ?, ?, ?, ?, ?)`
+  );
+
+  const sampleReviews = [
+    { reviewerName: "Coffee Lover", rating: 5, comment: "Fantastic cup, really enjoyed the balance and sweetness." },
+    { reviewerName: "Taster Bot", rating: 4, comment: "Great clarity and acidity, would buy again." }
+  ];
+
+  const seedAll = db.transaction(() => {
+    let productCount = 0;
+    const now = new Date().toISOString();
+
+    for (const { canonical: p, variants } of canonicalMap.values()) {
+      const info = insertProduct.run(
+        p.productId, p.name, p.roaster, p.roastType, p.origin, p.process,
+        p.tastingNotes, p.score, p.price, p.imageUrl, p.cuppingDate,
+        p.description, p.url, p.quantity, p.category
       );
-    });
+      const dbId = info.lastInsertRowid;
+      productCount++;
 
-    db.run("COMMIT", () => {
-      db.get("SELECT COUNT(*) as c FROM products", (err, row) => {
-        if (err) {
-          console.error(err);
-          process.exit(1);
+      // Insert variants (skip if only one variant with no distinct quantity)
+      if (variants.length > 1) {
+        for (const v of variants) {
+          insertVariant.run(dbId, v.quantity || null, v.price ?? null, v.originalProductId);
         }
+      }
 
-        console.log(`Seeded ${row.c} products into the database.`);
-        process.exit(0);
-      });
-    });
+      // Sample reviews
+      for (const r of sampleReviews) {
+        insertReview.run(dbId, r.reviewerName, r.rating, r.comment, now, now);
+      }
+    }
+
+    return productCount;
   });
+
+  const count = seedAll();
+  console.log(`Seeded ${count} products (from ${normalized.length} raw entries) into the database.`);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+main();
