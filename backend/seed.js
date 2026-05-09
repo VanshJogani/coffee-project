@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const Database = require("better-sqlite3");
+const { normalizeProcess } = require("./src/utils/processNormalizer");
 
 // ── Roast type normalization ──────────────────────────────────────────────────
 function normalizeRoastType(raw) {
@@ -15,13 +16,16 @@ function normalizeRoastType(raw) {
 
 function normalizeProduct(raw, index) {
   const rawRoastType = raw.roastType || raw.Roast_Level || "";
+  const rawProcess = raw.process || raw.Process || "";
+  const normalizedProcess = normalizeProcess(rawProcess) || rawProcess;
+  
   const product = {
     productId: String(raw.productId || raw.id || index + 1),
     name: raw.name || raw.Name || "Unknown Coffee",
     roaster: raw.roaster || raw.Roaster || "Unknown Roaster",
     roastType: normalizeRoastType(rawRoastType),
     origin: raw.origin || raw.Origin || raw.Farm || "",
-    process: raw.process || raw.Process || "",
+    process: normalizedProcess,
     tastingNotes: raw.tastingNotes || raw.Tasting_Notes || "",
     score: raw.score != null ? Number(raw.score) : null,
     price: (() => {

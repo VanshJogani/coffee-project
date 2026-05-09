@@ -148,6 +148,7 @@ function ExplorePage() {
               roastTypeOptions={filters.options.roastTypes}
               originOptions={filters.options.origins}
               processOptions={filters.options.processes}
+              groupedProcessOptions={filters.groupedProcessOptions}
               selectedRoasters={filters.selectedRoasters}
               selectedRoastTypes={filters.selectedRoastTypes}
               selectedOrigins={filters.selectedOrigins}

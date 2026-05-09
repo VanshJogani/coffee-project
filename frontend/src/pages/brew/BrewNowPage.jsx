@@ -1,12 +1,118 @@
 import React, { useEffect, useReducer, useRef, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { fetchRecipes, fetchCommunityRecipes, createBrewLog, createRecipe } from "../../api/client";
+import { fetchRecipes, fetchCommunityRecipes, createBrewLog, createRecipe, fetchProducts } from "../../api/client";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const POUROVER_METHODS = ["v60", "chemex", "kalita", "clever", "origami", "pourover", "pour over", "dripper"];
 const POUR_FLASH_SEC = 5;
 const ROAST_LEVELS = ["Light", "Medium-Light", "Medium", "Medium-Dark", "Dark"];
 const COFFEE_BRANDS = ["Blue Tokai", "Greysoul", "Fraction9", "Corridors of Power", "Bloom", "Savorworks", "Subko", "KC Roasters", "Curious Life", "Other"];
+
+// ── Coffee Search Picker ─────────────────────────────────────────────────────
+function CoffeeSearchPicker({ value, onChange }) {
+  const [query, setQuery] = useState(value ? `${value.name}` : "");
+  const [results, setResults] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const containerRef = useRef(null);
+  const debounceRef = useRef(null);
+
+  // Keep input in sync if value cleared externally
+  useEffect(() => { if (!value) setQuery(""); }, [value]);
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClick(e) {
+      if (containerRef.current && !containerRef.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  // Debounced search
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!query.trim() || value) { if (!value) { setResults([]); setOpen(false); } return; }
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const res = await fetchProducts({ search: query, limit: 8, category: "Coffee" });
+        setResults(res.data || []);
+        setOpen(true);
+      } catch { setResults([]); }
+      finally { setLoading(false); }
+    }, 300);
+    return () => clearTimeout(debounceRef.current);
+  }, [query, value]);
+
+  const handleSelect = (product) => {
+    onChange(product);
+    setQuery(product.name);
+    setOpen(false);
+    setResults([]);
+  };
+
+  const handleClear = () => {
+    onChange(null);
+    setQuery("");
+    setResults([]);
+    setOpen(false);
+  };
+
+  return (
+    <div ref={containerRef} className="relative">
+      <div className="relative">
+        <input
+          type="text"
+          value={query}
+          onChange={e => { setQuery(e.target.value); if (value) onChange(null); }}
+          placeholder="Search by name, roaster, origin..."
+          className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 pr-8 text-sm focus:outline-none focus:border-luxury-gold bg-white"
+        />
+        {loading && (
+          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-luxury-gold/40 border-t-luxury-gold rounded-full animate-spin" />
+        )}
+        {(value || query) && !loading && (
+          <button type="button" onClick={handleClear}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-luxury-clay/50 hover:text-luxury-clay text-lg leading-none">
+            ×
+          </button>
+        )}
+      </div>
+
+      {/* Dropdown results */}
+      {open && results.length > 0 && (
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-luxury-clay/20 rounded-xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">
+          {results.map(p => (
+            <button key={p.id} type="button"
+              onClick={() => handleSelect(p)}
+              className="w-full text-left px-3 py-2.5 hover:bg-luxury-gold/5 border-b border-luxury-clay/10 last:border-0 transition-colors">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-luxury-umber truncate">{p.name}</div>
+                  <div className="text-[10px] text-luxury-clay mt-0.5">
+                    {p.roaster}
+                    {p.roastType && <span className="ml-1.5">· {p.roastType}</span>}
+                    {p.origin && <span className="ml-1.5">· {p.origin}</span>}
+                  </div>
+                </div>
+                {p.price && <span className="shrink-0 text-[10px] font-bold text-luxury-gold">₹{p.price}</span>}
+              </div>
+              {p.tastingNotes && (
+                <div className="text-[10px] text-luxury-clay/60 mt-0.5 italic truncate">{p.tastingNotes}</div>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+      {open && results.length === 0 && !loading && query.trim() && (
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-luxury-clay/20 rounded-xl shadow-xl px-4 py-3 text-sm text-luxury-clay/60">
+          No coffees found
+        </div>
+      )}
+    </div>
+  );
+}
 
 // ── Pure helpers ─────────────────────────────────────────────────────────────
 function pad(n) { return String(n).padStart(2, "0"); }
@@ -199,6 +305,7 @@ function BrewNowPage() {
   // Setup form
   const [selectedRoastLevel, setSelectedRoastLevel] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedCoffee, setSelectedCoffee] = useState(null); // DB product picked from search
   const [selectedRecipeId, setSelectedRecipeId] = useState(navState?.recipeId ? String(navState.recipeId) : "");
   const [setup, setSetup] = useState({
     brewerName: "", grinderName: "", grindSize: "", coffeeGrams: "", waterGrams: "",
@@ -444,6 +551,17 @@ function BrewNowPage() {
     if (recipe.coffeeBrand) setSelectedBrand(recipe.coffeeBrand);
   };
 
+  // When a DB coffee is selected from search, sync roast level
+  const handleCoffeeSelect = (product) => {
+    setSelectedCoffee(product);
+    if (product?.roastType) {
+      // Map DB roastType to ROAST_LEVELS if possible
+      const match = ROAST_LEVELS.find(r => product.roastType.toLowerCase().includes(r.toLowerCase()));
+      if (match) setSelectedRoastLevel(match);
+    }
+    if (product?.roaster) setSelectedBrand(product.roaster);
+  };
+
   // Quick pour setup visibility
   const showQuickPourSetup = pouroverMode && (!brewSteps.length || !brewSteps.some(s => s.pourGrams > 0));
 
@@ -472,7 +590,16 @@ function BrewNowPage() {
         <div className="premium-card p-5 space-y-4">
           <div className="text-[11px] font-bold uppercase tracking-widest text-luxury-gold">Setup</div>
 
-          {/* Roast Level */}
+          {/* Coffee Name search — auto-fills Roast Level & Brand below */}
+          <div>
+            <label className="block text-[10px] uppercase tracking-widest text-luxury-clay font-bold mb-1">Coffee Name</label>
+            <CoffeeSearchPicker value={selectedCoffee} onChange={handleCoffeeSelect} />
+            {selectedCoffee && (
+              <p className="mt-1 text-[10px] text-luxury-clay/60">Roast level and brand auto-filled ↓</p>
+            )}
+          </div>
+
+          {/* Roast Level — auto-filled from coffee search, or pick manually */}
           <div>
             <label className="block text-[10px] uppercase tracking-widest text-luxury-clay font-bold mb-1">Roast Level</label>
             <select value={selectedRoastLevel} onChange={e => setSelectedRoastLevel(e.target.value)}
@@ -482,14 +609,16 @@ function BrewNowPage() {
             </select>
           </div>
 
-          {/* Brand */}
+          {/* Brand — auto-filled from coffee search, or pick manually */}
           <div>
             <label className="block text-[10px] uppercase tracking-widest text-luxury-clay font-bold mb-1">Brand</label>
-            <select value={selectedBrand} onChange={e => setSelectedBrand(e.target.value)}
-              className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold bg-white">
-              <option value="">-- Any brand --</option>
-              {COFFEE_BRANDS.map(b => <option key={b} value={b}>{b}</option>)}
-            </select>
+            <input
+              type="text"
+              value={selectedBrand}
+              onChange={e => setSelectedBrand(e.target.value)}
+              placeholder="e.g. Blue Tokai"
+              className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold bg-white"
+            />
           </div>
 
           {/* Recipe */}
@@ -873,7 +1002,7 @@ function BrewNowPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
             {[
-              ["Recipe", selectedRecipe?.name || "\u2014"],
+              ["Coffee", selectedCoffee?.name || selectedRecipe?.coffeeName || "\u2014"],
               ["Brewer", setup.brewerName || selectedRecipe?.brewerType || "\u2014"],
               ["Ratio", ratio ? `1 : ${ratio}` : "\u2014"],
               ["Time", fmtElapsed(timer.elapsed)],
@@ -957,8 +1086,8 @@ function BrewNowPage() {
                 {setup.waterGrams && `${setup.waterGrams}g water`}
                 {ratio && ` \u00B7 1:${ratio}`}
               </div>
-              {selectedRoastLevel && <div>Roast: {selectedRoastLevel}</div>}
-              {selectedBrand && <div>Brand: {selectedBrand}</div>}
+              {selectedCoffee && <div>Coffee: {selectedCoffee.name} — {selectedCoffee.roaster}</div>}
+              {selectedRoastLevel && !selectedCoffee && <div>Roast: {selectedRoastLevel}</div>}
               {pourSchedule && (
                 <div>{pourSchedule.pours.length} pours &middot; {fmtElapsed(pourSchedule.pours[pourSchedule.pours.length - 1]?.absoluteTimeSec || 0)} total</div>
               )}

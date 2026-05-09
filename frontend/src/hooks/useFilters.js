@@ -6,6 +6,7 @@ export function useFilters(selectedCategory) {
     roasters: [], roastTypes: [], origins: [], processes: [],
     priceMin: 0, priceMax: 10000
   });
+  const [groupedProcessOptions, setGroupedProcessOptions] = useState({});
 
   const [selectedRoasters, setSelectedRoasters] = useState([]);
   const [selectedRoastTypes, setSelectedRoastTypes] = useState([]);
@@ -21,6 +22,24 @@ export function useFilters(selectedCategory) {
         const d = r.data;
         setOptions(d);
         setPriceRange([d.priceMin, d.priceMax]);
+      })
+      .catch(() => {});
+  }, [selectedCategory]);
+
+  // Fetch grouped processes (only non-empty ones)
+  useEffect(() => {
+    const params = selectedCategory ? { category: selectedCategory } : {};
+    api.get("/products/grouped-processes", { params })
+      .then(r => {
+        if (r.data.grouped) {
+          // Transform the grouped data: {categoryName: {description, methods: [...]}} 
+          // into {categoryName: [...methods]}
+          const transformed = {};
+          Object.entries(r.data.grouped).forEach(([categoryName, categoryData]) => {
+            transformed[categoryName] = categoryData.methods || [];
+          });
+          setGroupedProcessOptions(transformed);
+        }
       })
       .catch(() => {});
   }, [selectedCategory]);
@@ -50,6 +69,7 @@ export function useFilters(selectedCategory) {
 
   return {
     options,
+    groupedProcessOptions,
     selectedRoasters, selectedRoastTypes, selectedOrigins,
     selectedProcesses, selectedFlavours, priceRange,
     setPriceRange,

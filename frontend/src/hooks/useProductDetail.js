@@ -9,7 +9,7 @@ export function useProductDetail() {
   const openDetail = async (product, isRandomizer = false) => {
     try {
       const full = await fetchProduct(product.id);
-      setSelectedProduct({ ...full, variants: product.variants || [] });
+      setSelectedProduct({ ...full, variants: full.variants || [] });
       setDetailOpen(true);
       setFromRandomizer(isRandomizer);
     } catch {

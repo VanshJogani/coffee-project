@@ -1,18 +1,25 @@
 roaster,name,price,currency,description,product_url,image_url,variant_prices,roast_type
 Quick Brown Fox,Cold Brew Blend,Rs. 625.00,INR,"Make your own smooth, less-acidic, and highly caffeinated cold brew at home.  
   Tasting notes: Milk chocolate, toffee, tropical fruit  
- Weight - 200gm/1kg",https://www.qbfcoffee.com/products/cold-brew-blend,https://cdn.shopify.com/s/files/1/1934/7705/files/Cold_Brew_Blend.jpg?v=1685174834,200gm:625.00; 1kg:2925.00,
+ Weight - 200gm/1kg
+[Meta Description]:   Make your own smooth, less-acidic, and highly caffeinated cold brew at home. Tasting notes: Milk chocolate, toffee, tropical fruit Weight - 200gm/1kg",https://www.qbfcoffee.com/products/cold-brew-blend,https://cdn.shopify.com/s/files/1/1934/7705/files/Cold_Brew_Blend.jpg?v=1685174834,200gm:625.00; 1kg:2925.00,
 Quick Brown Fox,Middle Ground [Espresso Blend],Rs. 625.00,INR,"Tasting notes: Ripe stone-fruit, Toffee, Bittersweet Chocolate 
  Varietal: SL795, Chandragiri Process: Washed, Natural 
  
    
- Weight - 200gm / 1kg",https://www.qbfcoffee.com/products/middle-ground-espresso-blend,https://cdn.shopify.com/s/files/1/1934/7705/files/Middle_Ground_Blend.jpg?v=1685094783,200gm:625.00; 1kg:2925.00,
+ Weight - 200gm / 1kg
+[Meta Description]: Tasting notes: Ripe stone-fruit, Toffee, Bittersweet Chocolate Varietal: SL795, ChandragiriProcess: Washed, Natural   Weight - 200gm / 1kg",https://www.qbfcoffee.com/products/middle-ground-espresso-blend,https://cdn.shopify.com/s/files/1/1934/7705/files/Middle_Ground_Blend.jpg?v=1685094783,200gm:625.00; 1kg:2925.00,
+Quick Brown Fox,Badnekhan Estate SLN 13 [Washed] [Espresso Roast],Rs. 775.00,INR,"Tasting notes: Toffee, Hazelnut, Milk Chocolate  
+  Roast Level: Espresso  Location - Chikmagalur, KN Altitude -   1400m Varietal - SLN 13 Process - Washed 
+ Weight - 200gm / 1kg
+[Meta Description]:   Tasting notes: Toffee, Hazelnut, Milk Chocolate Roast Level: EspressoLocation - Chikmagalur, KNAltitude - 1400mVarietal - SLN 13Process - Washed Weight - 200gm / 1kg",https://www.qbfcoffee.com/products/badnekhan-estate-sl13-washed-espresso-roast,https://cdn.shopify.com/s/files/1/1934/7705/files/Badnekhan_Estate_SLN13_2025.jpg?v=1776686115,200gm:775.00; 1kg:3500.00,
 Quick Brown Fox,Colombia Decaf [Espresso Roast],Rs. 1300.00,INR,"Tasting notes: Mandarin, Hazelnut, Chocolate Fudge  
  
  Roast: Espresso 
    
  
- Weight - 200gm / 1kg",https://www.qbfcoffee.com/products/colombia-decaf,https://cdn.shopify.com/s/files/1/1934/7705/files/Colombia_Decaf.jpg?v=1722505269,200gm:1300.00; 1kg:6000.00,
+ Weight - 200gm / 1kg
+[Meta Description]: Tasting notes: Mandarin, Hazelnut, Chocolate Fudge Roast: Espresso Weight - 200gm / 1kg",https://www.qbfcoffee.com/products/colombia-decaf,https://cdn.shopify.com/s/files/1/1934/7705/files/Colombia_Decaf.jpg?v=1722505269,200gm:1300.00; 1kg:6000.00,
 Quick Brown Fox,Salawara Estate [CM Intenso Naturals] [Filter Roast] [Microlot],Rs. 999.00,INR,"Tasting notes: Mulberry, Green Apple, Tamarind 
  Roast: Filter 
  
@@ -20,4 +27,42 @@ Quick Brown Fox,Salawara Estate [CM Intenso Naturals] [Filter Roast] [Microlot],
  
  
  Location - Hassan, KN Elevation - 3650ft Varietal - SLN 795 Process - Naturals Fermentation - 48 hours Carbonic Maceration with Intenso Yeast 
- Weight - 200gm",https://www.qbfcoffee.com/products/salawara-estate-cm-intenso-naturals-filter-roast-microlot,https://cdn.shopify.com/s/files/1/1934/7705/files/Salwara_Estate_Lot_1607.jpg?v=1759409546,200gm:999.00,
+ Weight - 200gm
+[Meta Description]: Tasting notes: Mulberry, Green Apple, Tamarind Roast: Filter Farmer: YDN Family Location - Hassan, KNElevation - 3650ftVarietal - SLN 795Process - NaturalsFermentation - 48 hours Carbonic Maceration with Intenso Yeast Weight - 200gm",https://www.qbfcoffee.com/products/salawara-estate-cm-intenso-naturals-filter-roast-microlot,https://cdn.shopify.com/s/files/1/1934/7705/files/Salwara_Estate_Lot_1607.jpg?v=1759409546,200gm:999.00,
+Quick Brown Fox,Attikan Estate [Wild Gooseberry Honey] [Filter Roast] [Microlot],Rs. 999.00,INR,"Tasting notes: Orange Blossom, Milk Chocolate, Lemon Candy  Roast Level: Filter  Location - Biligiri Hills, KN Elevation - 1650m Varietal - SLN 795 Process - Wild Gooseberry Honey Fermentation - 38 hours with wild gooseberries in air-tight barrels 
+ 
+   
+ Weight - 200gm
+[Meta Description]: Tasting notes: Orange Blossom, Milk Chocolate, Lemon CandyRoast Level: FilterLocation - Biligiri Hills, KNElevation - 1650mVarietal - SLN 795Process - Wild Gooseberry HoneyFermentation - 38 hours with wild gooseberries in air-tight barrels Weight - 200gm",https://www.qbfcoffee.com/products/attikan-estate-wild-gooseberry-honey-filter-roast-microlot,https://cdn.shopify.com/s/files/1/1934/7705/files/Attikan_Estate_Nellikai_Honey_2025.jpg?v=1776685370,:999.00,
+Quick Brown Fox,Ratnagiri Estate [Bioreactor Thermal Shock Naturals - Lab Inoculated Microbes] [Filter Roast] [Micro-Lot],Rs. 999.00,INR,"Tasting notes: Raspberry, Apricot, Plum 
+ Roast - Filter 
+ Farmer - Ashok Patre Location - Bababudan Giri, KN Elevation -  1250 - 1450m Varietal - SLN 9 Process - Thermal Shock Naturals Fermentation - Bioreactor with Lab-Inoculated Microbes 
+ 
+ 
+ Weight - 200gm
+[Meta Description]: Tasting notes: Raspberry, Apricot, Plum Roast - Filter Farmer - Ashok PatreLocation - Bababudan Giri, KNElevation - 1250 - 1450mVarietal - SLN 9Process - Thermal Shock NaturalsFermentation - Bioreactor with Lab-Inoculated Microbes Weight - 200gm",https://www.qbfcoffee.com/products/ratnagiri-estate-bioreactor-thermal-shock-naturals-lab-inoculated-microbes-filter-roast-micro-lot-1,https://cdn.shopify.com/s/files/1/1934/7705/files/Ratnagiri_Estate_Lot_IPL02_02_2025.jpg?v=1776685651,200gm:999.00,
+Quick Brown Fox,Salawara Estate [CM Naturals] [Filter Roast] [Microlot],Rs. 999.00,INR,"Tasting notes: Pear, Green Apple, Warm Spices 
+ Roast: Filter 
+ 
+ Farmer: YDN Family 
+ 
+ 
+ Location - Hassan, KN Elevation - 3650ft Varietal - SLN 795 / SLN 13 Process - Naturals Fermentation - 72 hours Carbonic Maceration 
+ Weight - 200gm
+[Meta Description]: Tasting notes: Pear, Green Apple, Warm Spices Roast: Filter Farmer: YDN Family Location - Hassan, KNElevation - 3650ftVarietal - SLN 795 / SLN 13Process - NaturalsFermentation - 72 hours Carbonic Maceration Weight - 200gm",https://www.qbfcoffee.com/products/salawara-estate-cm-naturals-filter-roast-microlot,https://cdn.shopify.com/s/files/1/1934/7705/files/Salawara_Estate_Lot_1769_2025.jpg?v=1776685947,200gm:999.00,
+Quick Brown Fox,Stanmore Estate [Naturals] [Filter Roast] [Microlot],Rs. 999.00,INR,"Tasting notes: Huckleberry, Honeysuckle, Lemon Verbena 
+ Roast: Filter 
+ 
+ Farmer: Rajes Family 
+ 
+ 
+ Location - Shevaroy Hills, TN Elevation - 1400m Varietal - SLN 9 Process - Naturals  
+ Weight - 200gm",https://www.qbfcoffee.com/products/stanmore-estate-naturals-filter-roast-microlot,https://cdn.shopify.com/s/files/1/1934/7705/files/Stanmore_Estate_Lot_56_2025.jpg?v=1776850135,200gm:999.00,
+Quick Brown Fox,Salawara Estate [Yeast Anaerobic Naturals] [Espresso Roast] [Microlot],Rs. 999.00,INR,"Tasting notes: Chocolate Fudge, Dried Fruit, Molasses 
+ Roast: Espresso 
+ 
+ Farmer: YDN Family 
+ 
+ 
+ Location - Hassan, KN Elevation - 3500ft Varietal - SLN 795 / Kent Process - Yeast Anaerobic Naturals Fermentation - 48 hours 
+ Weight - 200gm",https://www.qbfcoffee.com/products/salawara-estate-yeast-anaerobic-naturals-espresso-roast-microlot,https://cdn.shopify.com/s/files/1/1934/7705/files/Salawara_Estate_YAN_Espresso_2025.jpg?v=1776850672,200gm:999.00,

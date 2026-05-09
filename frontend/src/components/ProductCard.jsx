@@ -12,7 +12,8 @@ function ProductCard({ product, onClick }) {
     price,
     quantity,
     avgRating,
-    reviewCount
+    reviewCount,
+    variants
   } = product;
 
   return (
@@ -65,17 +66,30 @@ function ProductCard({ product, onClick }) {
 
         <div className="mt-auto pt-4 flex items-center justify-between border-t border-luxury-clay/10">
           <RatingStars value={avgRating} count={reviewCount} />
-          {price != null && (
+          {(variants && variants.length > 0) ? (
+            <div className="text-right">
+              <div className="text-xs text-luxury-umber/70 font-medium mb-1">Available options:</div>
+              <div className="flex flex-col gap-0.5">
+                {variants.map((v, i) => (
+                  <div key={i} className="text-sm font-bold text-luxury-umber">
+                    <span className="text-[10px] font-medium mr-0.5">₹</span>
+                    {Number(v.price).toLocaleString('en-IN')}
+                    {v.quantity && v.quantity !== "Standard" && (
+                      <span className="text-[11px] text-luxury-umber/50 font-medium ml-1">/ {v.quantity}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : price != null && (
             <div className="text-right">
               <div className="text-sm font-bold text-luxury-umber">
                 <span className="text-[10px] font-medium mr-0.5">₹</span>
                 {Number(price).toLocaleString('en-IN')}
+                {quantity && quantity !== "Standard" && (
+                  <span className="text-[11px] text-luxury-umber/50 font-medium ml-1">/ {quantity}</span>
+                )}
               </div>
-              {quantity && quantity !== "Standard" && (
-                <div className="text-[10px] text-luxury-umber/50 font-medium mt-0.5">
-                  {quantity}
-                </div>
-              )}
             </div>
           )}
         </div>

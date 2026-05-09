@@ -1,5 +1,6 @@
 const express = require("express");
 const { getDb } = require("../db");
+const { normalizeProcess, getStandardProcesses, COFFEE_PROCESSING_TAXONOMY } = require("../utils/processNormalizer");
 
 const router = express.Router();
 
@@ -27,6 +28,9 @@ router.get("/filter-options", (req, res, next) => {
     const processes = db.prepare(`SELECT DISTINCT p.process FROM products p ${catFilter} WHERE p.process IS NOT NULL AND p.process != '' ORDER BY p.process`
       .replace("WHERE p.process", catFilter ? "AND p.process" : "WHERE p.process")).all(...params).map(r => r.process);
 
+    const fermentations = db.prepare(`SELECT DISTINCT p.fermentation FROM products p ${catFilter} WHERE p.fermentation IS NOT NULL AND p.fermentation != '' ORDER BY p.fermentation`
+      .replace("WHERE p.fermentation", catFilter ? "AND p.fermentation" : "WHERE p.fermentation")).all(...params).map(r => r.fermentation);
+
     const priceRow = db.prepare(`SELECT MIN(p.price) as minPrice, MAX(p.price) as maxPrice FROM products p ${catFilter} WHERE p.price IS NOT NULL AND p.price > 0`
       .replace("WHERE p.price", catFilter ? "AND p.price" : "WHERE p.price")).get(...params);
 
@@ -35,11 +39,77 @@ router.get("/filter-options", (req, res, next) => {
       roastTypes,
       origins,
       processes,
+      fermentations,
       priceMin: priceRow ? Math.floor(priceRow.minPrice || 0) : 0,
       priceMax: priceRow ? Math.ceil(priceRow.maxPrice || 10000) : 10000
     });
   } catch (err) {
     next(err);
+  }
+});
+
+/**
+ * GET /api/products/grouped-processes
+ * Get processes grouped by taxonomy category (only non-empty)
+ */
+router.get("/grouped-processes", (req, res, next) => {
+  try {
+    const db = getDb();
+    const { category } = req.query;
+
+    let catFilter = "";
+    const params = [];
+    if (category) {
+      catFilter = "WHERE p.category = ?";
+      params.push(category);
+    }
+
+    // Get all distinct processes from products
+    const productProcesses = db.prepare(`
+      SELECT DISTINCT p.process FROM products p 
+      WHERE p.process IS NOT NULL AND p.process != '' ${catFilter ? "AND p.category = ?" : ""}
+      ORDER BY p.process
+    `).all(...params).map(r => r.process);
+
+    // Group by taxonomy
+    const grouped = {};
+    
+    for (const categoryName in COFFEE_PROCESSING_TAXONOMY) {
+      const methods = COFFEE_PROCESSING_TAXONOMY[categoryName].methods;
+      
+      // Build a map of all methods in this category
+      const categoryMethods = [];
+      for (const methodName in methods) {
+        if (productProcesses.includes(methodName)) {
+          categoryMethods.push(methodName);
+        }
+      }
+      
+      // Only include category if it has processes
+      if (categoryMethods.length > 0) {
+        grouped[categoryName] = {
+          description: COFFEE_PROCESSING_TAXONOMY[categoryName].description,
+          methods: categoryMethods
+        };
+      }
+    }
+
+    res.json({ grouped });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * GET /api/products/standard-processes
+ * Get list of standard/valid coffee processes for reference
+ */
+router.get("/standard-processes", (req, res) => {
+  try {
+    const standardProcesses = getStandardProcesses();
+    res.json({ processes: standardProcesses });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch standard processes" });
   }
 });
 
@@ -51,6 +121,7 @@ router.get("/", (req, res, next) => {
       roastType,
       origin,
       process: processFilter,
+      fermentation,
       category,
       search,
       flavour,
@@ -98,6 +169,14 @@ router.get("/", (req, res, next) => {
       const list = processFilter.split(",").map(r => r.trim()).filter(Boolean);
       if (list.length) {
         whereClauses.push(`p.process IN (${list.map(() => "?").join(",")})`);
+        params.push(...list);
+      }
+    }
+
+    if (fermentation) {
+      const list = fermentation.split(",").map(r => r.trim()).filter(Boolean);
+      if (list.length) {
+        whereClauses.push(`p.fermentation IN (${list.map(() => "?").join(",")})`);
         params.push(...list);
       }
     }

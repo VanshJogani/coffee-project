@@ -36,6 +36,7 @@ function initSchema(db) {
       roastType TEXT,
       origin TEXT,
       process TEXT,
+      fermentation TEXT,
       tastingNotes TEXT,
       score REAL,
       price REAL,
@@ -150,6 +151,62 @@ function initSchema(db) {
       createdAt TEXT NOT NULL,
       FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE SET NULL
     );
+
+    CREATE TABLE IF NOT EXISTS roasters (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE,
+      websiteUrl TEXT,
+      establishedYear INTEGER,
+      description TEXT,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS roaster_ratings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      roasterId INTEGER NOT NULL UNIQUE,
+      overallRating REAL DEFAULT 0,
+      consistencyRating REAL DEFAULT 0,
+      experimentationRating REAL DEFAULT 0,
+      totalReviews INTEGER DEFAULT 0,
+      updatedAt TEXT NOT NULL,
+      FOREIGN KEY (roasterId) REFERENCES roasters(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS roaster_locations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      roasterId INTEGER NOT NULL,
+      city TEXT NOT NULL,
+      state TEXT,
+      country TEXT NOT NULL,
+      address TEXT,
+      latitude REAL,
+      longitude REAL,
+      phoneNumber TEXT,
+      menuUrl TEXT,
+      operatingHours TEXT,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL,
+      FOREIGN KEY (roasterId) REFERENCES roasters(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS process_categories (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE,
+      description TEXT,
+      createdAt TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS process_methods (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      categoryId INTEGER NOT NULL,
+      name TEXT NOT NULL UNIQUE,
+      aliases TEXT,
+      parentMethodId INTEGER,
+      createdAt TEXT NOT NULL,
+      FOREIGN KEY (categoryId) REFERENCES process_categories(id) ON DELETE CASCADE,
+      FOREIGN KEY (parentMethodId) REFERENCES process_methods(id) ON DELETE SET NULL
+    );
   `);
 }
 
@@ -158,6 +215,7 @@ function createIndexes(db) {
     CREATE INDEX IF NOT EXISTS idx_products_roaster ON products(roaster);
     CREATE INDEX IF NOT EXISTS idx_products_roastType ON products(roastType);
     CREATE INDEX IF NOT EXISTS idx_products_origin ON products(origin);
+    CREATE INDEX IF NOT EXISTS idx_products_process ON products(process);
     CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
     CREATE INDEX IF NOT EXISTS idx_products_cuppingDate ON products(cuppingDate);
     CREATE INDEX IF NOT EXISTS idx_products_price ON products(price);
@@ -168,29 +226,146 @@ function createIndexes(db) {
     CREATE INDEX IF NOT EXISTS idx_brew_logs_recipeId ON brew_logs(recipeId);
     CREATE INDEX IF NOT EXISTS idx_brew_notes_productId ON brew_notes(productId);
     CREATE INDEX IF NOT EXISTS idx_bean_inventory_productId ON bean_inventory(productId);
+    CREATE INDEX IF NOT EXISTS idx_roasters_name ON roasters(name);
+    CREATE INDEX IF NOT EXISTS idx_roaster_ratings_roasterId ON roaster_ratings(roasterId);
+    CREATE INDEX IF NOT EXISTS idx_roaster_locations_roasterId ON roaster_locations(roasterId);
+    CREATE INDEX IF NOT EXISTS idx_roaster_locations_city ON roaster_locations(city);
+    CREATE INDEX IF NOT EXISTS idx_roaster_locations_country ON roaster_locations(country);
+    CREATE INDEX IF NOT EXISTS idx_process_categories_name ON process_categories(name);
+    CREATE INDEX IF NOT EXISTS idx_process_methods_name ON process_methods(name);
+    CREATE INDEX IF NOT EXISTS idx_process_methods_categoryId ON process_methods(categoryId);
+    CREATE INDEX IF NOT EXISTS idx_process_methods_parentMethodId ON process_methods(parentMethodId);
   `);
 }
 
 function runMigrations(db) {
+  const { normalizeProcess } = require("./utils/processNormalizer");
+
   // Add columns introduced after initial schema (safe to run repeatedly)
-  const existingCols = db.prepare("PRAGMA table_info(recipes)").all().map(c => c.name);
-  if (!existingCols.includes("isPublic")) {
+  const productsCols = db.prepare("PRAGMA table_info(products)").all().map(c => c.name);
+  if (!productsCols.includes("fermentation")) {
+    db.exec("ALTER TABLE products ADD COLUMN fermentation TEXT");
+    // Create index for newly added column
+    db.exec("CREATE INDEX IF NOT EXISTS idx_products_fermentation ON products(fermentation)");
+  }
+
+  // Normalize existing processes (idempotent - safe to run repeatedly)
+  try {
+    const unormalizedProcesses = db.prepare(`
+      SELECT DISTINCT process FROM products WHERE process IS NOT NULL
+    `).all();
+
+    for (const row of unormalizedProcesses) {
+      if (row.process) {
+        const normalized = normalizeProcess(row.process);
+        if (normalized && normalized !== row.process) {
+          db.prepare("UPDATE products SET process = ? WHERE process = ?").run(
+            normalized,
+            row.process
+          );
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Process normalization migration skipped:", err.message);
+  }
+
+  const recipesCols = db.prepare("PRAGMA table_info(recipes)").all().map(c => c.name);
+  if (!recipesCols.includes("isPublic")) {
     db.exec("ALTER TABLE recipes ADD COLUMN isPublic INTEGER DEFAULT 0");
   }
-  if (!existingCols.includes("authorName")) {
+  if (!recipesCols.includes("authorName")) {
     db.exec("ALTER TABLE recipes ADD COLUMN authorName TEXT");
   }
-  if (!existingCols.includes("authorSetup")) {
+  if (!recipesCols.includes("authorSetup")) {
     db.exec("ALTER TABLE recipes ADD COLUMN authorSetup TEXT");
   }
-  if (!existingCols.includes("roastLevel")) {
+  if (!recipesCols.includes("roastLevel")) {
     db.exec("ALTER TABLE recipes ADD COLUMN roastLevel TEXT");
   }
-  if (!existingCols.includes("coffeeBrand")) {
+  if (!recipesCols.includes("coffeeBrand")) {
     db.exec("ALTER TABLE recipes ADD COLUMN coffeeBrand TEXT");
   }
-  if (!existingCols.includes("coffeeName")) {
+  if (!recipesCols.includes("coffeeName")) {
     db.exec("ALTER TABLE recipes ADD COLUMN coffeeName TEXT");
+  }
+
+  // Populate process taxonomy (idempotent - safe to run repeatedly)
+  try {
+    const { COFFEE_PROCESSING_TAXONOMY } = require("./utils/processNormalizer");
+    
+    // Check if taxonomy is already populated
+    const categoryCount = db.prepare("SELECT COUNT(*) as count FROM process_categories").get().count;
+    
+    if (categoryCount === 0) {
+      const now = new Date().toISOString();
+      
+      // Create a map of category names to IDs for foreign key references
+      const categoryIdMap = {};
+      const methodIdMap = {}; // For parent-child relationships
+      
+      // First pass: Insert categories and root methods
+      for (const categoryName in COFFEE_PROCESSING_TAXONOMY) {
+        const category = COFFEE_PROCESSING_TAXONOMY[categoryName];
+        
+        // Insert category
+        const catResult = db.prepare(
+          "INSERT INTO process_categories (name, description, createdAt) VALUES (?, ?, ?)"
+        ).run(categoryName, category.description, now);
+        categoryIdMap[categoryName] = catResult.lastInsertRowid;
+        
+        // Insert methods for this category
+        const methods = category.methods;
+        for (const methodName in methods) {
+          const method = methods[methodName];
+          
+          // Only insert if parent is null (will handle children in second pass)
+          if (!method.parent) {
+            const methodResult = db.prepare(
+              "INSERT INTO process_methods (categoryId, name, aliases, parentMethodId, createdAt) VALUES (?, ?, ?, ?, ?)"
+            ).run(
+              categoryIdMap[categoryName],
+              methodName,
+              JSON.stringify(method.aliases),
+              null,
+              now
+            );
+            methodIdMap[methodName] = methodResult.lastInsertRowid;
+          }
+        }
+      }
+      
+      // Second pass: Insert child methods with parent references
+      for (const categoryName in COFFEE_PROCESSING_TAXONOMY) {
+        const category = COFFEE_PROCESSING_TAXONOMY[categoryName];
+        const methods = category.methods;
+        
+        for (const methodName in methods) {
+          const method = methods[methodName];
+          
+          // Insert if parent is not null
+          if (method.parent) {
+            const parentId = methodIdMap[method.parent];
+            if (parentId) {
+              const methodResult = db.prepare(
+                "INSERT INTO process_methods (categoryId, name, aliases, parentMethodId, createdAt) VALUES (?, ?, ?, ?, ?)"
+              ).run(
+                categoryIdMap[categoryName],
+                methodName,
+                JSON.stringify(method.aliases),
+                parentId,
+                now
+              );
+              methodIdMap[methodName] = methodResult.lastInsertRowid;
+            }
+          }
+        }
+      }
+      
+      console.log("✓ Process taxonomy populated successfully");
+    }
+  } catch (err) {
+    console.warn("Process taxonomy population skipped:", err.message);
   }
 }
 

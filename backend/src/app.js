@@ -11,6 +11,8 @@ const inventoryRouter = require("./routes/inventory");
 const brewLogsRouter = require("./routes/brewLogs");
 const brewNotesRouter = require("./routes/brewNotes");
 const postsRouter = require("./routes/posts");
+const roastersRouter = require("./routes/roasters");
+const processesRouter = require("./routes/processes");
 
 dotenv.config();
 
@@ -44,6 +46,8 @@ app.use("/api/inventory", inventoryRouter);
 app.use("/api/brew-logs", brewLogsRouter);
 app.use("/api/brew-notes", brewNotesRouter);
 app.use("/api/posts", postsRouter);
+app.use("/api/roasters", roastersRouter);
+app.use("/api/processes", processesRouter);
 
 // Basic error handler
 // eslint-disable-next-line no-unused-vars

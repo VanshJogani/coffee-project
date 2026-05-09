@@ -26,6 +26,8 @@ We store these as:
 The cleaner reads variant_prices to fan out one DB row per weight.
 """
 from __future__ import annotations
+from bs4 import BeautifulSoup
+
 
 import re
 from abc import ABC
@@ -34,6 +36,7 @@ from typing import Optional
 import requests
 
 from scrapers.base.product import Product
+
 
 
 class ShopifyScraper(ABC):
@@ -48,6 +51,30 @@ class ShopifyScraper(ABC):
     PRICE_STRATEGY : str — "min" (lowest variant) | "first" (first variant).
     FILTER_COFFEE : bool — If True, run `is_coffee()` on each product.
     """
+
+    def _fetch_product_page_details(self, handle: str) -> dict:
+        """
+        Fetch extra details from the product HTML page (if needed).
+        Returns a dict of extra details.
+        """
+        url = f"{self.BASE_URL}/products/{handle}"
+        try:
+            resp = requests.get(url, timeout=15)
+            if resp.status_code != 200:
+                print(f"    [!] Failed to fetch product page {handle}: {resp.status_code}")
+                return {}
+            soup = BeautifulSoup(resp.text, "html.parser")
+            # Example: Extract meta description
+            meta_desc = soup.find("meta", {"name": "description"})
+            description = meta_desc["content"] if meta_desc else None
+            # Add more parsing as needed
+            return {
+                "meta_description": description,
+                # Add more fields here as needed
+            }
+        except Exception as e:
+            print(f"    [!] Exception fetching product page {handle}: {e}")
+            return {}
 
     ROASTER_NAME: str = ""
     BASE_URL: str = ""
@@ -197,7 +224,7 @@ class ShopifyScraper(ABC):
         return price_str, variant_prices_str
 
     def _to_product(self, p: dict) -> Product:
-        """Convert a raw Shopify product dict → Product."""
+        """Convert a raw Shopify product dict → Product, with extra details from HTML page."""
         title    = p.get("title", "").strip()
         variants = p.get("variants", [])
         images   = p.get("images", [])
@@ -205,12 +232,20 @@ class ShopifyScraper(ABC):
 
         price_str, variant_prices_str = self._format_variant_prices(variants)
 
+        # Fetch extra details from product page
+        extra_details = self._fetch_product_page_details(handle) if handle else {}
+
+        # Merge extra details into description (or add as needed)
+        description = self._strip_html(p.get("body_html", ""))
+        if extra_details.get("meta_description"):
+            description += f"\n[Meta Description]: {extra_details['meta_description']}"
+
         return Product(
             roaster        = self.ROASTER_NAME,
             name           = title,
             price          = price_str,
             currency       = "INR",
-            description    = self._strip_html(p.get("body_html", "")),
+            description    = description,
             product_url    = f"{self.BASE_URL}/products/{handle}",
             image_url      = images[0]["src"] if images else "",
             variant_prices = variant_prices_str,
