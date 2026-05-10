@@ -1,6 +1,7 @@
 const express = require("express");
 const { getDb } = require("../db");
 const { normalizeProcess, getStandardProcesses, COFFEE_PROCESSING_TAXONOMY } = require("../utils/processNormalizer");
+const { normalizeOrigin, isValidOrigin } = require("../utils/originNormalizer");
 
 const router = express.Router();
 
@@ -22,8 +23,17 @@ router.get("/filter-options", (req, res, next) => {
     const roastTypes = db.prepare(`SELECT DISTINCT p.roastType FROM products p ${catFilter} WHERE p.roastType IS NOT NULL AND p.roastType != '' ORDER BY p.roastType`
       .replace("WHERE p.roastType", catFilter ? "AND p.roastType" : "WHERE p.roastType")).all(...params).map(r => r.roastType);
 
-    const origins = db.prepare(`SELECT DISTINCT p.origin FROM products p ${catFilter} WHERE p.origin IS NOT NULL AND p.origin != '' ORDER BY p.origin`
+    const originsRaw = db.prepare(`SELECT DISTINCT p.origin FROM products p ${catFilter} WHERE p.origin IS NOT NULL AND p.origin != '' ORDER BY p.origin`
       .replace("WHERE p.origin", catFilter ? "AND p.origin" : "WHERE p.origin")).all(...params).map(r => r.origin);
+    // Normalize and filter to only valid geographic origins
+    const seenOrigins = new Map();
+    for (const o of originsRaw) {
+      const normalized = normalizeOrigin(o);
+      if (normalized && !seenOrigins.has(normalized.toLowerCase())) {
+        seenOrigins.set(normalized.toLowerCase(), normalized);
+      }
+    }
+    const origins = [...seenOrigins.values()].sort((a, b) => a.localeCompare(b));
 
     const processes = db.prepare(`SELECT DISTINCT p.process FROM products p ${catFilter} WHERE p.process IS NOT NULL AND p.process != '' ORDER BY p.process`
       .replace("WHERE p.process", catFilter ? "AND p.process" : "WHERE p.process")).all(...params).map(r => r.process);
@@ -161,8 +171,20 @@ router.get("/", (req, res, next) => {
     }
 
     if (origin) {
-      whereClauses.push("p.origin = ?");
-      params.push(origin);
+      const originList = origin.split(",").map(r => r.trim()).filter(Boolean);
+      // Match all raw origin values that normalize to any of the selected canonical origins
+      const allOrigins = db.prepare(`SELECT DISTINCT origin FROM products WHERE origin IS NOT NULL AND origin != ''`).all().map(r => r.origin);
+      const matchingRaw = allOrigins.filter(o => {
+        const n = normalizeOrigin(o);
+        return n && originList.some(sel => sel.toLowerCase() === n.toLowerCase());
+      });
+      if (matchingRaw.length) {
+        whereClauses.push(`p.origin IN (${matchingRaw.map(() => "?").join(",")})`);
+        params.push(...matchingRaw);
+      } else {
+        whereClauses.push(`p.origin IN (${originList.map(() => "?").join(",")})`);
+        params.push(...originList);
+      }
     }
 
     if (processFilter) {

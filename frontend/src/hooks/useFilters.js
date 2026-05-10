@@ -59,7 +59,7 @@ export function useFilters(selectedCategory) {
   const activeFilters = useMemo(() => ({
     roaster: selectedRoasters.join(",") || undefined,
     roastType: selectedRoastTypes.join(",") || undefined,
-    origin: selectedOrigins.length === 1 ? selectedOrigins[0] : undefined,
+    origin: selectedOrigins.join(",") || undefined,
     process: selectedProcesses.join(",") || undefined,
     flavour: selectedFlavours.join(",") || undefined,
     priceMin: priceRange[0] > options.priceMin ? priceRange[0] : undefined,
