@@ -52,10 +52,32 @@ class ShopifyScraper(ABC):
     FILTER_COFFEE : bool — If True, run `is_coffee()` on each product.
     """
 
+    # Labels we care about (used in both strong-tag and text-scan extraction)
+    _PRODUCT_FIELD_LABELS = re.compile(
+        r"^(Cupper[‘’]?s\s+Notes?|Tasting\s+Notes?|Flavou?r\s+Notes?|Tastes?\s+Like"
+        r"|Producer|Farmer|Farm|Estate|Process(?:ing)?|Fermentation"
+        r"|Roast\s+(?:Profile|Level|Type)|Roast"
+        r"|Altitude|Elevation|Region|Origin|Location|Varietal|Variety|SCA(?:\s+Cup)?\s+Score)\s*[:\-–]",
+        re.IGNORECASE,
+    )
+
+    # Text-scan fallback: label then value ending before the next label or noise
+    _FIELD_TEXT_PATTERN = re.compile(
+        r"(Cupper[‘’]?s\s+Notes?|Tasting\s+Notes?|Flavou?r\s+Notes?|Tastes?\s+Like"
+        r"|Producer|Farmer|Farm|Estate|Process(?:ing)?|Fermentation"
+        r"|Roast\s+(?:Profile|Level|Type)|Roast"
+        r"|Altitude|Elevation|Region|Origin|Location|Varietal|Variety|SCA(?:\s+Cup)?\s+Score)"
+        r"\s*[:\-–]\s*([^:\n\r]{3,100}?)(?=\s+(?:"
+        r"Cupper|Tasting|Flavou?r|Tastes?|Producer|Farmer|Farm|Estate|Process|Fermentation"
+        r"|Roast|Altitude|Elevation|Region|Origin|Location|Varietal|Variety|SCA|$))",
+        re.IGNORECASE,
+    )
+
     def _fetch_product_page_details(self, handle: str) -> dict:
         """
-        Fetch extra details from the product HTML page (if needed).
-        Returns a dict of extra details.
+        Fetch extra details from the product HTML page.
+        Extracts structured product fields (tasting notes, process, altitude, etc.)
+        that live outside body_html (rendered from Shopify metafields/Liquid).
         """
         url = f"{self.BASE_URL}/products/{handle}"
         try:
@@ -64,13 +86,51 @@ class ShopifyScraper(ABC):
                 print(f"    [!] Failed to fetch product page {handle}: {resp.status_code}")
                 return {}
             soup = BeautifulSoup(resp.text, "html.parser")
-            # Example: Extract meta description
+
             meta_desc = soup.find("meta", {"name": "description"})
             description = meta_desc["content"] if meta_desc else None
-            # Add more parsing as needed
+
+            # Remove clutter before parsing
+            for tag in soup(["script", "style", "noscript", "nav", "footer", "header"]):
+                tag.decompose()
+
+            fields: dict[str, str] = {}
+
+            # ── Strategy 1: <strong> / <b> tag labels ─────────────────────
+            # Covers: <strong>Cupper’s Notes:</strong> Caramel...
+            for bold in soup.find_all(["strong", "b"]):
+                label_text = bold.get_text(strip=True)
+                if not self._PRODUCT_FIELD_LABELS.match(label_text):
+                    continue
+                label = re.sub(r"\s*[:\-–]\s*$", "", label_text).strip()
+                # Value is the text that immediately follows the bold tag
+                value_parts = []
+                for sibling in bold.next_siblings:
+                    if hasattr(sibling, "name") and sibling.name in ("strong", "b", "br", "p", "div", "li"):
+                        break
+                    text = sibling.get_text(strip=True) if hasattr(sibling, "get_text") else str(sibling).strip()
+                    if text:
+                        value_parts.append(text)
+                    if len(" ".join(value_parts)) > 120:
+                        break
+                value = re.sub(r"\s+", " ", " ".join(value_parts)).strip(" \t,;.-")
+                key = label.lower().replace("’", "’").replace("’", "’")
+                if key not in fields and len(value) >= 3:
+                    fields[key] = f"{label}: {value}"
+
+            # ── Strategy 2: text scan fallback (for dt/dd, plain-text pages) ─
+            if not fields:
+                page_text = re.sub(r"\s+", " ", soup.get_text(separator=" "))
+                for m in self._FIELD_TEXT_PATTERN.finditer(page_text):
+                    label = re.sub(r"\s+", " ", m.group(1)).strip()
+                    value = m.group(2).strip(" \t,;.-")
+                    key = label.lower().replace("’", "’")
+                    if key not in fields and len(value) >= 3:
+                        fields[key] = f"{label}: {value}"
+
             return {
                 "meta_description": description,
-                # Add more fields here as needed
+                "product_fields": "\n".join(fields.values()),
             }
         except Exception as e:
             print(f"    [!] Exception fetching product page {handle}: {e}")
@@ -235,8 +295,10 @@ class ShopifyScraper(ABC):
         # Fetch extra details from product page
         extra_details = self._fetch_product_page_details(handle) if handle else {}
 
-        # Merge extra details into description (or add as needed)
+        # Merge extra details into description
         description = self._strip_html(p.get("body_html", ""))
+        if extra_details.get("product_fields"):
+            description = f"{description}\n{extra_details['product_fields']}".strip()
         if extra_details.get("meta_description"):
             description += f"\n[Meta Description]: {extra_details['meta_description']}"
 

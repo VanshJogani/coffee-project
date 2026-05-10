@@ -4,6 +4,8 @@ from typing import List
 
 import pandas as pd
 
+from pipeline.origin_registry import extract_origin as _extract_origin
+
 
 TARGET_COLUMNS = [
     "Name",
@@ -68,13 +70,15 @@ class GenericRoastersCleaner:
             return False
 
         # ── Equipment / merch guard ─────────────────────────────────────────
+        # Check against name only — short keywords like "hat", "cap", "pin" are
+        # too common as substrings in description text ("what", "capsule", "pineapple").
         non_coffee_keywords = [
             "v60 dripper", "gooseneck kettle", "ceramic mug", "coffee cup", "tumbler",
             "filter paper", "paper filter", "burr grinder", "hand grinder",
             "electric grinder", "portafilter", "tamper", "milk pitcher",
             "knock box", "dosing cup", "weighing scale",
             "t-shirt", "tshirt", "tee shirt", "hoodie", "sweatshirt", "apron",
-            "merch", "tote bag", "sticker", "pin", "gift card", "subscription box",
+            "merch", "tote bag", "sticker", "gift card", "subscription box",
             "poster", "book", "cap", "hat", "socks", "jacket",
             "almond butter", "peanut butter", "granola", "energy bar",
             "protein bar", "bread", "brioche", "burger bun", "banana bread",
@@ -82,7 +86,7 @@ class GenericRoastersCleaner:
             "croissant", "muffin", "sandwich", "pizza", "pasta",
             "candle", "soap", "air freshener", "rice husk", "vacuum tumbler",
         ]
-        if any(kw in text for kw in non_coffee_keywords):
+        if any(kw in name_lower for kw in non_coffee_keywords):
             return False
 
         equipment_names = ["kettle", "dripper", "grinder", "machine", "press", "scale"]
@@ -180,88 +184,130 @@ class GenericRoastersCleaner:
         if not desc or not isinstance(desc, str):
             return ""
 
-        text = " ".join(desc.split())
+        import html
 
-        # Shared stop pattern: anything that signals the notes section ended.
-        # Matches labeled fields and brewing method copy.
-        STOP = (
-            r"(?=\s*(?:"
-            r"Roast(?:\s+Level)?|Process(?:ing)?|Varietal|Altitude|Origin|Producer"
-            r"|Region|Elevation|Location|Variety|Recommended\s+[Bb]rewing"
-            r"|Brewing\s+[Mm]ethod|Pour\s+Over|French\s+Press|Aeropress"
-            r"|Moka\s+[Pp]ot|Espresso\s+Machine|Cold\s+Brew|Drip|Grind"
-            r"|\Z"
-            r"))"
-        )
+        text = html.unescape(desc)
+        text = " ".join(text.split())
 
-        def _trim(s: str, max_len: int = 120) -> str:
-            """Trim trailing brewing-method noise and cap length."""
-            # Cut at "Recommended brewing" if it slipped through
-            s = re.split(r"\s*Recommended\s+[Bb]rewing", s)[0]
+        # Strip [Meta Description]: ... and everything after it
+        text = re.split(r"\[Meta\s+Description\]", text, flags=re.IGNORECASE)[0].strip()
+
+        def _clean(s: str, max_len: int = 120) -> str:
+            s = html.unescape(s)
+            for pat in [
+                r"\s*\[Meta\s+Description\].*",
+                r"\s*Recommended\s+[Bb]rewing.*",
+                r"\s*Best\s+Brewed\s+With.*",
+                r"\s*Brewing\s+Style[s]?.*",
+                r"\s*Roast\s*(?:Profile|Level|Type)?\s*[:\-–].*",
+                r"\s*Varietal\s*[:\-–].*",
+                r"\s*SCA\s+Cup\s+Score.*",
+            ]:
+                s = re.split(pat, s, flags=re.IGNORECASE)[0]
+            s = re.sub(r"\s*[·|]\s*", ", ", s)
             s = s.strip(" -:;.,")
             if len(s) <= max_len:
                 return s
-            # Trim at last comma or space within limit
             cut = s[:max_len]
             comma = cut.rfind(",")
             space = cut.rfind(" ")
             idx = comma if comma > max_len * 0.6 else space
             return cut[:idx].strip(" ,") if idx > 0 else cut.rstrip()
 
-        # ── 1. Explicit labeled sections ─────────────────────────────────────
+        # ── 1. Explicit labeled sections — checked BEFORE any noise stripping ─
+        # "Cupper's Notes:", "Tasting Notes:", "Flavour Notes:", "Tastes Like:" etc.
+        # Also catches the scraped product_fields block appended by the scraper.
+        STOP = (
+            r"(?=\s*(?:"
+            r"Roast(?:\s+Level)?|Process(?:ing)?|Varietal|Altitude|Origin|Producer"
+            r"|Region|Elevation|Location|Variety|SCA|Recommended\s+[Bb]rewing"
+            r"|Brewing\s+[Mm]ethod|Brewing\s+Style|Pour\s+Over|French\s+Press|Aeropress"
+            r"|Moka\s+[Pp]ot|Espresso\s+Machine|Cold\s+Brew|Drip|Grind"
+            r"|\Z"
+            r"))"
+        )
         m = re.search(
-            r"(?:Tasting\s+Notes?|Flavour\s+Notes?|Flavor\s+Notes?|Tastes?\s+Like|Tastes?:)\s*[-:]?\s*(.+?)" + STOP,
+            r"(?:Cupper['']?s\s+Notes?|Tasting\s+Notes?|Flavou?r\s+Notes?|Flavor\s+Notes?|Tastes?\s+Like|Tastes?:)\s*[-:]?\s*(.+?)" + STOP,
             text, re.IGNORECASE | re.DOTALL
         )
         if m:
             candidate = m.group(1).strip(" -:;.,")
             candidate = re.split(r"\.\s+[A-Z]", candidate)[0]
-            candidate = _trim(candidate)
+            candidate = _clean(candidate)
             if 5 < len(candidate) < 220:
                 return candidate
+
+        # ── Pre-process further for remaining strategies ──────────────────────
+        # Now safe to strip trailing metadata (only needed when no labeled section found)
+        TRAILING_NOISE = (
+            r"\s*(?:Varietal|Variety|SCA\s+Cup\s+Score|Cup\s+Score|Roast\s*(?:Profile|Level|Type)?|"
+            r"Process(?:ing)?|Origin|Region|Location|Elevation|Altitude|Producer|Farm|Estate|"
+            r"Brewing\s+Style[s]?|Best\s+Brewed\s+With|Recommended\s+Brewing|"
+            r"Brew\s+Methods?|Brew\s+Guide|Grind\s+Size|Brewing\s+Methods?|"
+            r"M\.?R\.?P|MRP|Rs\.|₹)\s*[:\-–]?.*$"
+        )
+        text = re.sub(TRAILING_NOISE, "", text, flags=re.IGNORECASE).strip()
+
+        # Strip note prefixes
+        text = re.sub(
+            r"^(?:Coffee\s+Notes?\s*(?:\([^)]*\))?\s*[:\-–]|Taste\s+Profile\s*[:\-–]?)\s*",
+            "", text, flags=re.IGNORECASE
+        ).strip()
+
+        if not text:
+            return ""
 
         # ── 2. "Notes of X, Y" / "Hints of..." / "Flavours of..." ────────────
         m = re.search(r"(?:Notes|Hints|Flavours|Flavors)\s+of\s+([^.!?\n]{5,120})", text, re.IGNORECASE)
         if m:
-            return _trim(m.group(1))
+            return _clean(m.group(1))
 
-        # ── 3. "you'll taste / notice / find X, Y, Z" (Blue Tokai prose) ────
+        # ── 3. "you'll taste / notice / find X, Y, Z" ────────────────────────
         m = re.search(
             r"(?:you.ll\s+(?:be able to\s+)?(?:taste|notice|find)|taste[sd]?\s+of|reminds?(?:\s+you)?\s+of)"
             r"\s+([^.!?\n]{5,180})",
             text, re.IGNORECASE
         )
         if m:
-            return _trim(m.group(1))
+            return _clean(m.group(1))
 
         # ── 4. Bullet / separator lists: "Hazelnut • Grape • Cocoa" ──────────
         m = re.search(
-            r"([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s*[•|/]\s*[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s*[•|/]\s*[A-Z][a-z]+[^.\n]{0,100})",
+            r"([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s*[•·|/]\s*[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s*[•·|/]\s*[A-Z][a-z]+[^.\n]{0,100})",
             text
         )
         if m:
-            return _trim(m.group(1))
+            return _clean(m.group(1))
 
         # ── 5. Best-scoring sentence fallback ────────────────────────────────
         FLAVORS = {
             "chocolate", "caramel", "berry", "berries", "citrus", "fruity", "nutty",
             "honey", "floral", "vanilla", "orange", "lemon", "lime", "currant", "apple",
             "cocoa", "toffee", "molasses", "jasmine", "peach", "plum", "cherry",
-            "jaggery", "mango", "cardamom", "cinnamon", "clove", "rose", "hazelnut",
-            "cashew", "walnut", "almond", "coconut", "guava", "pineapple", "malt",
-            "blackberry", "raspberry", "blueberry", "strawberry", "raisin", "prune",
-            "pomegranate", "grape", "pear", "grapefruit", "dark chocolate", "brown sugar",
-            "black tea", "chamomile", "fig", "apricot", "tamarind", "sugarcane",
-            "spice", "tobacco", "pepper", "anise", "butter", "cream", "toffee",
+            "jaggery", "mango", "banana", "cardamom", "cinnamon", "clove", "rose",
+            "hazelnut", "cashew", "walnut", "almond", "coconut", "guava", "pineapple",
+            "malt", "blackberry", "raspberry", "blueberry", "strawberry", "raisin",
+            "prune", "pomegranate", "grape", "pear", "grapefruit", "dark chocolate",
+            "brown sugar", "black tea", "chamomile", "fig", "apricot", "tamarind",
+            "sugarcane", "spice", "tobacco", "pepper", "anise", "butter", "cream",
         }
         TASTE_TRIGGERS = {
             "notes", "flavor", "flavour", "tasting", "taste", "aroma",
             "finish", "aftertaste", "palate", "cup", "acidity", "body",
         }
+
+        # Short clean result with no residual metadata noise → return directly
+        if len(text) <= 80 and not re.search(
+            r"\b(?:origin|process|varietal|elevation|altitude|roast|brewing)\b",
+            text, re.IGNORECASE
+        ):
+            candidate = _clean(text)
+            if 5 < len(candidate):
+                return candidate
+
         best_sent, best_score = "", 0
         for sent in re.split(r"(?<=[.!?])\s+", text):
             sl = sent.lower()
-            # Skip sentences that are clearly brewing method copy
             if re.search(r"recommended\s+brewing|pour\s+over|french\s+press|brewing\s+method", sl):
                 continue
             flavor_count = sum(1 for f in FLAVORS if f in sl)
@@ -270,7 +316,7 @@ class GenericRoastersCleaner:
             if score > best_score and 10 < len(sent) < 300:
                 best_score, best_sent = score, sent
 
-        return _trim(best_sent) if best_score >= 3 else ""
+        return _clean(best_sent) if best_score >= 3 else ""
 
 
     @staticmethod
@@ -343,34 +389,7 @@ class GenericRoastersCleaner:
 
     @staticmethod
     def parse_origin(name: str, desc: str) -> str:
-        text = " ".join(desc.split()) if desc else ""
-
-        # 1. Explicit labeled field: Location / Origin / Estate
-        m = re.search(
-            r"(?:Location|Origin|Estate|Farm|Region|Grown\s+at|Sourced\s+from)\s*[:\-]?\s*"
-            r"([A-Za-z][A-Za-z,\s\-]{2,60}?)(?=\s*(?:\n|$|\.|,\s*[A-Z][a-z]|Processed|Roast|Elevation|Altitude|Variety))",
-            text, re.IGNORECASE
-        )
-        if m:
-            raw = m.group(1).strip(" ,.-")
-            # Drop generic filler phrases
-            if not re.search(r"\b(the|this|our|from|in)\b", raw, re.IGNORECASE) or len(raw) < 30:
-                return raw
-
-        # 2. Known Indian coffee regions in the product name or description
-        REGIONS = [
-            "Coorg", "Kodagu", "Chikmagalur", "Wayanad", "Nilgiris", "Araku",
-            "Bababudangiris", "Shevaroy", "Anamalais", "Pulneys", "Biligiris",
-            "Assam", "Meghalaya", "Nagaland", "Tripura", "Mizoram", "Arunachal",
-            "Darjeeling", "Munnar", "Yercaud", "Ooty", "Manali", "Manjarabad",
-            "Sakleshpur", "Madikeri", "Virajpet",
-        ]
-        combined = f"{name} {text}"
-        for region in REGIONS:
-            if re.search(rf"\b{region}\b", combined, re.IGNORECASE):
-                return region
-
-        return ""
+        return _extract_origin(name, desc)
 
     @staticmethod
     def parse_process(desc: str) -> str:
