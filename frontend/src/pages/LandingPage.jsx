@@ -43,6 +43,17 @@ function LandingPage() {
               Journal &amp; recipes
             </span>
           </button>
+
+          <button
+            onClick={() => navigate("/map")}
+            className="group flex flex-col items-center gap-3 px-10 py-6 rounded-2xl bg-[#1A1410] text-luxury-light shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-luxury-gold/20 hover:border-luxury-gold/50 min-w-[180px]"
+          >
+            <span className="text-3xl">🗺️</span>
+            <span className="text-lg font-bold tracking-wide">Coffee Map</span>
+            <span className="text-[11px] text-luxury-clay/60 uppercase tracking-widest text-center">
+              India's growing regions
+            </span>
+          </button>
         </div>
       </div>
     </div>

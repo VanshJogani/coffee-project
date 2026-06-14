@@ -428,9 +428,10 @@ class GenericRoastersCleaner:
     def classify_product(name: str, desc: str) -> str:
         """Classify a product as Coffee, Tea, Accessories, Events, or Subscriptions."""
         name_lower = name.lower()
+        desc_lower = desc.lower() if desc else ""
 
         # Subscription
-        if "subscription" in name_lower or "subscribe" in name_lower:
+        if "subscription" in name_lower or "subscribe" in name_lower or "membership" in name_lower:
             return "Subscriptions"
 
         # Events — tasting sessions, workshops, throwdowns, etc.
@@ -438,7 +439,8 @@ class GenericRoastersCleaner:
             "tasting session", "cupping session", "latte art",
             "throwdown", "workshop", "masterclass", "master class",
             "event", "meetup", "meet up", "coffee walk", "brew class",
-            "competition", "championship",
+            "competition", "championship", "gully tour", "coffee tour",
+            "coffee chronicles",
         ]
         if any(kw in name_lower for kw in event_keywords):
             return "Events"
@@ -473,6 +475,8 @@ class GenericRoastersCleaner:
             "knock box", "cup", "cups", "glass ", "sipper", "flask",
             "hoodie", "cap ", "tote", "merch", "badge",
             "espresso machine", "coffee machine", "coffee maker",
+            "semi automatic machine", "weighing scale",
+            "totebag", "tote bag", "drip kit",
         ]
         definitely_not_coffee = [
             "bike", "rental", "yoga", "meditation", "pottery", "workshop",
@@ -494,9 +498,17 @@ class GenericRoastersCleaner:
                 "grinder", "kettle", "v60", "chemex", "aeropress", "french press",
                 "moka pot", "tumbler", "mug", "machine", "saucer", "server",
                 "pitcher", "frother", "tamper", "brewer", "pour over",
+                "semi automatic", "weighing scale", "tote bag", "totebag",
             ]
             if any(kw in name_lower for kw in strong_acc):
                 return "Accessories"
+
+        # High-price equipment detection — coffee machines, commercial gear
+        # (things priced way above any coffee bag, usually >Rs.10000 with equipment keywords in desc)
+        try:
+            from pipeline.cleaner import GenericRoastersCleaner
+        except ImportError:
+            pass
 
         return "Coffee"
 
@@ -527,9 +539,19 @@ class GenericRoastersCleaner:
             else:
                 roast_level = ""
 
-            tasting_notes = self.parse_tasting_notes(desc)
-            origin = self.parse_origin(name_raw, desc)
-            process = self.parse_process(desc)
+            # Prefer scraper-extracted fields; fall back to description parsing
+            raw_tasting = row.get("tasting_notes", "")
+            raw_tasting = "" if pd.isna(raw_tasting) else str(raw_tasting).strip()
+            tasting_notes = raw_tasting if raw_tasting else self.parse_tasting_notes(desc)
+
+            raw_origin = row.get("origin", "")
+            raw_origin = "" if pd.isna(raw_origin) else str(raw_origin).strip()
+            origin = raw_origin if raw_origin else self.parse_origin(name_raw, desc)
+
+            raw_process = row.get("process", "")
+            raw_process = "" if pd.isna(raw_process) else str(raw_process).strip()
+            process = raw_process if raw_process else self.parse_process(desc)
+
             category = self.classify_product(name_raw, desc)
 
             # Fan out one cleaned row per (weight, price) pair

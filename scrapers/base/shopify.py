@@ -54,24 +54,42 @@ class ShopifyScraper(ABC):
 
     # Labels we care about (used in both strong-tag and text-scan extraction)
     _PRODUCT_FIELD_LABELS = re.compile(
-        r"^(Cupper[‘’]?s\s+Notes?|Tasting\s+Notes?|Flavou?r\s+Notes?|Tastes?\s+Like"
+        r"^(Cupper[''’]?s\s+Notes?|Tasting\s+Notes?|Flavou?r\s+Notes?|Tastes?\s+Like"
         r"|Producer|Farmer|Farm|Estate|Process(?:ing)?|Fermentation"
         r"|Roast\s+(?:Profile|Level|Type)|Roast"
-        r"|Altitude|Elevation|Region|Origin|Location|Varietal|Variety|SCA(?:\s+Cup)?\s+Score)\s*[:\-–]",
+        r"|Altitude|Elevation|Region|Origin|Location|Varietal|Variety|SCA(?:\s+Cup)?\s+Score)\s*[:\-–—]",
         re.IGNORECASE,
     )
 
     # Text-scan fallback: label then value ending before the next label or noise
     _FIELD_TEXT_PATTERN = re.compile(
-        r"(Cupper[‘’]?s\s+Notes?|Tasting\s+Notes?|Flavou?r\s+Notes?|Tastes?\s+Like"
+        r"(Cupper[''’]?s\s+Notes?|Tasting\s+Notes?|Flavou?r\s+Notes?|Tastes?\s+Like"
         r"|Producer|Farmer|Farm|Estate|Process(?:ing)?|Fermentation"
         r"|Roast\s+(?:Profile|Level|Type)|Roast"
         r"|Altitude|Elevation|Region|Origin|Location|Varietal|Variety|SCA(?:\s+Cup)?\s+Score)"
-        r"\s*[:\-–]\s*([^:\n\r]{3,100}?)(?=\s+(?:"
+        r"\s*[:\-–—]\s*([^:\n\r]{3,120}?)(?=\s+(?:"
         r"Cupper|Tasting|Flavou?r|Tastes?|Producer|Farmer|Farm|Estate|Process|Fermentation"
         r"|Roast|Altitude|Elevation|Region|Origin|Location|Varietal|Variety|SCA|$))",
         re.IGNORECASE,
     )
+
+    # Roast level keywords to detect from tags/product_type
+    _ROAST_PATTERNS = [
+        (re.compile(r"medium[\s-]light", re.IGNORECASE), "Medium-Light Roast"),
+        (re.compile(r"light[\s-]medium", re.IGNORECASE), "Medium-Light Roast"),
+        (re.compile(r"medium[\s-]dark", re.IGNORECASE), "Medium-Dark Roast"),
+        (re.compile(r"dark[\s-]medium", re.IGNORECASE), "Medium-Dark Roast"),
+        (re.compile(r"\blight\s+roast\b", re.IGNORECASE), "Light Roast"),
+        (re.compile(r"\bmedium\s+roast\b", re.IGNORECASE), "Medium Roast"),
+        (re.compile(r"\bdark\s+roast\b", re.IGNORECASE), "Dark Roast"),
+        (re.compile(r"\bomni[\s-]?roast\b", re.IGNORECASE), "Omni-Roast"),
+        (re.compile(r"\bfilter\s+roast\b", re.IGNORECASE), "Filter Roast"),
+        (re.compile(r"\bespresso\s+roast\b", re.IGNORECASE), "Espresso Roast"),
+        # Bare keywords (lower confidence, used in tags/product_type context)
+        (re.compile(r"^light$", re.IGNORECASE), "Light Roast"),
+        (re.compile(r"^medium$", re.IGNORECASE), "Medium Roast"),
+        (re.compile(r"^dark$", re.IGNORECASE), "Dark Roast"),
+    ]
 
     def _fetch_product_page_details(self, handle: str) -> dict:
         """
@@ -96,13 +114,26 @@ class ShopifyScraper(ABC):
 
             fields: dict[str, str] = {}
 
+            # ── Strategy 0: <dt>/<dd> definition lists ────────────────────
+            for dt in soup.find_all("dt"):
+                label_text = dt.get_text(strip=True)
+                if not self._PRODUCT_FIELD_LABELS.match(label_text):
+                    continue
+                label = re.sub(r"\s*[:\-–—]\s*$", "", label_text).strip()
+                dd = dt.find_next_sibling("dd")
+                if dd:
+                    value = dd.get_text(strip=True)
+                    key = label.lower().replace("’", "'").replace("‘", "'")
+                    if key not in fields and len(value) >= 3:
+                        fields[key] = f"{label}: {value}"
+
             # ── Strategy 1: <strong> / <b> tag labels ─────────────────────
-            # Covers: <strong>Cupper’s Notes:</strong> Caramel...
+            # Covers: <strong>Cupper's Notes:</strong> Caramel...
             for bold in soup.find_all(["strong", "b"]):
                 label_text = bold.get_text(strip=True)
                 if not self._PRODUCT_FIELD_LABELS.match(label_text):
                     continue
-                label = re.sub(r"\s*[:\-–]\s*$", "", label_text).strip()
+                label = re.sub(r"\s*[:\-–—]\s*$", "", label_text).strip()
                 # Value is the text that immediately follows the bold tag
                 value_parts = []
                 for sibling in bold.next_siblings:
@@ -114,23 +145,44 @@ class ShopifyScraper(ABC):
                     if len(" ".join(value_parts)) > 120:
                         break
                 value = re.sub(r"\s+", " ", " ".join(value_parts)).strip(" \t,;.-")
-                key = label.lower().replace("’", "’").replace("’", "’")
+                key = label.lower().replace("’", "'").replace("‘", "'")
                 if key not in fields and len(value) >= 3:
                     fields[key] = f"{label}: {value}"
 
-            # ── Strategy 2: text scan fallback (for dt/dd, plain-text pages) ─
-            if not fields:
+            # ── Strategy 2: <table> attribute tables ──────────────────────
+            for row in soup.select("table tr"):
+                th = row.select_one("th, td:first-child")
+                td = row.select_one("td:last-child")
+                if not th or not td or th == td:
+                    continue
+                label_text = th.get_text(strip=True)
+                if not self._PRODUCT_FIELD_LABELS.match(label_text + ":"):
+                    # Try matching without the colon (tables often have no colon)
+                    if not re.match(
+                        r"(Tasting|Flavou?r|Process|Roast|Origin|Location|Region|Altitude|Elevation|Varietal|Variety)",
+                        label_text, re.IGNORECASE
+                    ):
+                        continue
+                label = re.sub(r"\s*[:\-–—]\s*$", "", label_text).strip()
+                value = td.get_text(strip=True)
+                key = label.lower().replace("’", "'").replace("‘", "'")
+                if key not in fields and len(value) >= 3:
+                    fields[key] = f"{label}: {value}"
+
+            # ── Strategy 3: text scan fallback (for plain-text pages) ─────
+            if len(fields) < 2:
                 page_text = re.sub(r"\s+", " ", soup.get_text(separator=" "))
                 for m in self._FIELD_TEXT_PATTERN.finditer(page_text):
                     label = re.sub(r"\s+", " ", m.group(1)).strip()
                     value = m.group(2).strip(" \t,;.-")
-                    key = label.lower().replace("’", "’")
+                    key = label.lower().replace("’", "'")
                     if key not in fields and len(value) >= 3:
                         fields[key] = f"{label}: {value}"
 
             return {
                 "meta_description": description,
                 "product_fields": "\n".join(fields.values()),
+                "fields": fields,
             }
         except Exception as e:
             print(f"    [!] Exception fetching product page {handle}: {e}")
@@ -221,12 +273,6 @@ class ShopifyScraper(ABC):
         """
         Build an ordered mapping of weight_label → price for all variants
         that have a weight-like option (contains a digit).
-
-        e.g. [{option1: '250g', price: '450.00'}, {option1: '500g', price: '800.00'}]
-             → {'250g': 450.0, '500g': 800.0}
-
-        Variants whose option1 is generic (e.g. 'Default Title', 'One Size')
-        are captured under the key '' so callers can still access the price.
         """
         result: dict[str, float] = {}
         for v in variants:
@@ -235,8 +281,6 @@ class ShopifyScraper(ABC):
             except (ValueError, TypeError):
                 price_val = 0.0
 
-            # Find the option that looks like a weight (contains a digit)
-            # Some sites put package type (Pouch/Tin) in Opt1 and weight in Opt2
             weight_opt = ""
             for opt_key in ["option1", "option2", "option3"]:
                 val = (v.get(opt_key) or "").strip()
@@ -247,8 +291,6 @@ class ShopifyScraper(ABC):
             if weight_opt:
                 result[weight_opt] = price_val
             else:
-                # Fallback: store cheapest price under blank key for any non-weight variant
-                # (e.g. "Medium / Coarse", "Medium / Whole Bean" grind-size combinations)
                 if price_val > 0:
                     existing = result.get("", 0.0)
                     result[""] = min(existing, price_val) if existing > 0 else price_val
@@ -268,20 +310,75 @@ class ShopifyScraper(ABC):
         cheapest = min(p for p in prices if p > 0) if any(p > 0 for p in prices) else 0.0
         price_str = f"Rs. {cheapest:.2f}" if cheapest else ""
 
-        # Build the semicolon-separated weight:price string
-        # Skip the blank key if there are real weight entries
         real_entries = {k: v for k, v in vmap.items() if k}
         if real_entries:
             variant_prices_str = "; ".join(
                 f"{k}:{v:.2f}" for k, v in real_entries.items()
             )
         elif "" in vmap:
-            # Only a single default variant with no weight label
             variant_prices_str = f":{vmap['']:.2f}"
         else:
             variant_prices_str = ""
 
         return price_str, variant_prices_str
+
+    def _extract_roast_from_signals(self, p: dict, raw_fields: dict) -> str:
+        """
+        Extract roast level from all available signals, in priority order:
+        1. Structured fields (most reliable — from the product page HTML)
+        2. Product tags
+        3. product_type field
+        """
+        # 1. From structured fields on the page
+        for key in ("roast", "roast level", "roast profile", "roast type"):
+            if key in raw_fields:
+                val = re.sub(r"^[^:]+:\s*", "", raw_fields[key]).strip()
+                if val and len(val) >= 3:
+                    return val
+
+        # 2. From tags
+        tags = p.get("tags", [])
+        if isinstance(tags, str):
+            tags = [t.strip() for t in tags.split(",")]
+        for tag in tags:
+            for pattern, label in self._ROAST_PATTERNS:
+                if pattern.search(tag):
+                    return label
+
+        # 3. From product_type
+        product_type = p.get("product_type", "")
+        if product_type:
+            for pattern, label in self._ROAST_PATTERNS:
+                if pattern.search(product_type):
+                    return label
+
+        # 4. Fallback to subclass override
+        return self._extract_roast(p)
+
+    def _extract_process_from_fields(self, raw_fields: dict) -> str:
+        """Extract processing method from structured fields."""
+        for key in ("processing", "process", "fermentation"):
+            if key in raw_fields:
+                val = re.sub(r"^[^:]+:\s*", "", raw_fields[key]).strip()
+                if val and len(val) >= 3:
+                    return val
+        return ""
+
+    def _clean_description(self, text: str) -> str:
+        """
+        Strip metadata noise from description text.
+        Removes [Meta Description] block and trailing duplicate spec fields.
+        """
+        if not text:
+            return ""
+        # Strip [Meta Description] and everything after it
+        text = re.split(r"\[Meta\s+Description\]", text, flags=re.IGNORECASE)[0]
+        # Strip trailing repeat of structured fields (scrapers append these as plain text)
+        text = re.split(
+            r"\n(?:Variety|Varietal|Roast\s*Level|Elevation|Location|Origin|Flavou?r\s+Notes?):",
+            text
+        )[0]
+        return text.strip()
 
     def _to_product(self, p: dict) -> Product:
         """Convert a raw Shopify product dict → Product, with extra details from HTML page."""
@@ -295,12 +392,33 @@ class ShopifyScraper(ABC):
         # Fetch extra details from product page
         extra_details = self._fetch_product_page_details(handle) if handle else {}
 
-        # Merge extra details into description
-        description = self._strip_html(p.get("body_html", ""))
-        if extra_details.get("product_fields"):
-            description = f"{description}\n{extra_details['product_fields']}".strip()
-        if extra_details.get("meta_description"):
-            description += f"\n[Meta Description]: {extra_details['meta_description']}"
+        # Extract structured fields
+        raw_fields = extra_details.get("fields", {})
+
+        # Origin
+        origin = ""
+        for key in ("origin", "location", "region"):
+            if key in raw_fields:
+                origin = re.sub(r"^[^:]+:\s*", "", raw_fields[key]).strip()
+                break
+
+        # Tasting notes
+        tasting_notes = ""
+        for key in ("tasting notes", "cupper's notes", "cuppers notes",
+                    "flavour notes", "flavor notes", "flavour note",
+                    "tastes like", "tasting note"):
+            if key in raw_fields:
+                tasting_notes = re.sub(r"^[^:]+:\s*", "", raw_fields[key]).strip()
+                break
+
+        # Process
+        process = self._extract_process_from_fields(raw_fields)
+
+        # Roast type — from all signals
+        roast_type = self._extract_roast_from_signals(p, raw_fields)
+
+        # Description — JUST the body_html, cleaned (no meta description, no field duplication)
+        description = self._clean_description(self._strip_html(p.get("body_html", "")))
 
         return Product(
             roaster        = self.ROASTER_NAME,
@@ -311,7 +429,10 @@ class ShopifyScraper(ABC):
             product_url    = f"{self.BASE_URL}/products/{handle}",
             image_url      = images[0]["src"] if images else "",
             variant_prices = variant_prices_str,
-            roast_type     = self._extract_roast(p),
+            roast_type     = roast_type,
+            origin         = origin,
+            tasting_notes  = tasting_notes,
+            process        = process,
         )
 
     # Override in subclasses that encode roast info differently (e.g. Tulum)

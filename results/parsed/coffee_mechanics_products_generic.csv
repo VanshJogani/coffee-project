@@ -1,11 +1,11 @@
-roaster,name,price,currency,description,product_url,image_url,variant_prices,roast_type
+roaster,name,price,currency,description,product_url,image_url,variant_prices,roast_type,origin,tasting_notes,process
 Coffee Mechanics,Barrel Aged Coffee,Rs. 800.00,INR,"A Rare Selection!   
   Process: The finest of Indian Arabicas aged in Single Malt Barrels, and meticulously roasted to bring out the delicate notes.  
   High Quality Indian Specialty Arabica aged in a ex-bourbon barrel. The process let the beans soak into the earthiness of the American Oak, fruitiness from the lingering ferment.   
   We roast this delicate selection to preserve the natural notes and highlight inherent character of the beans.   
   Enjoy the deep flavour notes on a pour over or brew it cold.   
   Roast Type:   Light-Medium Roast  
-    Tasting Notes:   Caramalized Pears, Bourbon &amp; Toast",https://www.coffeemechanics.co.in/products/whiskey-barrel-aged-coffee,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/ComingSoon_4.png?v=1594910301,250 gms:800.00,
+    Tasting Notes:   Caramalized Pears, Bourbon &amp; Toast",https://www.coffeemechanics.co.in/products/whiskey-barrel-aged-coffee,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/ComingSoon_4.png?v=1594910301,250 gms:800.00,Light-Medium Roast,,"Caramalized Pears, Bourbon & Toast",
 Coffee Mechanics,Barrel Aged Coffee - Gift Box,Rs. 3000.00,INR,"This Festive Season,   fuel your dear ones with a whole lot of energy! What better way to energise than gifting them a fine collection of coffees  
   We have curated boxes to suit your preference!  
   Contains:  
@@ -26,12 +26,12 @@ Coffee Mechanics,Barrel Aged Coffee - Gift Box,Rs. 3000.00,INR,"This Festive Sea
  Easy to Brew single serve coffee packs 
   Drip To-Go  is a solution to make superior quality coffee effortless and accessible for those with busy schedules yet appreciate the finer nuances in coffee. Ideal for coffee at work or while on your travel or trek. All you need is a mug &amp; hot water and you are ready To-Go! 
   Makes 10 Single Serve Coffees  
- All of these 3 Barrel Aged Variations are placed in a gift box.",https://www.coffeemechanics.co.in/products/assorted-coffee-kit,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/Facebook_Product_600x600_8.png?v=1595076404,:3000.00,
+ All of these 3 Barrel Aged Variations are placed in a gift box.",https://www.coffeemechanics.co.in/products/assorted-coffee-kit,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/Facebook_Product_600x600_8.png?v=1595076404,:3000.00,Light-Medium Roast,,"Caramelized Pears, Bourbon & Toast","The finest of Indian Arabicas aged in Single Malt Barrels, and meticulously roasted to bring out the delicate notes"
 Coffee Mechanics,Bhadrapura Estate,Rs. 550.00,INR,"Region:   Chikkamagaluru  
   Elevation:   3500 ft asl  
   Roast Type:   Cinnamon Roast  
-  Tasting Notes:   Green Apple &amp; Jaggery",https://www.coffeemechanics.co.in/products/bhadrapura-estate,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/2.png?v=1586605975,250 gms:550.00; 1 Kg:2000.00,
-Coffee Mechanics,Cinnabon - Set of 2,Rs. 180.00,INR,,https://www.coffeemechanics.co.in/products/cinnabon-set-of-2,https://cdn.shopify.com/s/files/1/0368/6740/8003/files/10.png?v=1757734310,:180.00,
+  Tasting Notes:   Green Apple &amp; Jaggery",https://www.coffeemechanics.co.in/products/bhadrapura-estate,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/2.png?v=1586605975,250 gms:550.00; 1 Kg:2000.00,Cinnamon Roast,Chikkamagaluru,Green Apple & Jaggery,
+Coffee Mechanics,Cinnabon - Set of 2,Rs. 180.00,INR,,https://www.coffeemechanics.co.in/products/cinnabon-set-of-2,https://cdn.shopify.com/s/files/1/0368/6740/8003/files/10.png?v=1757734310,:180.00,,,,
 Coffee Mechanics,Cold Brew Bags - Barrel Aged Coffee,Rs. 800.00,INR,"Barrel Aged Coffee  
    Micro-Lot    
   A Rare Selection!   
@@ -44,7 +44,7 @@ Coffee Mechanics,Cold Brew Bags - Barrel Aged Coffee,Rs. 800.00,INR,"Barrel Aged
  Set of 5 brew bags. Each Brew Bag makes 3-5 cups of coffee concentrate 
  No mess cold brew!  
  Dread the mess and the inconsistency caused by filtration? Here is our fool proof solution for 100% Delicious Cold Brew! 
- Watch video below to know how you can brew with the  Cold Brew Bags",https://www.coffeemechanics.co.in/products/cold-brew-bags-whisky-barrel-aged,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/18.png?v=1594910304,Micro-Lot- Set of 5:800.00,
+ Watch video below to know how you can brew with the  Cold Brew Bags",https://www.coffeemechanics.co.in/products/cold-brew-bags-whisky-barrel-aged,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/18.png?v=1594910304,Micro-Lot- Set of 5:800.00,,,,"The finest of Indian Arabicas aged in Single Malt Barrels, and meticulously"
 Coffee Mechanics,Cold Brew Bags - Cherry Pick,Rs. 500.00,INR,"Cherry Pick  
   This selection was indeed cherry picked for the fruity note lover! It's a delicious combination of refreshing notes of fruits and full bodied coffee with a bite to it.  
   Our top recommendation is to have on Ice with a dash of water to open up the flavours. The rest we leave it to your  adventurous palate to explore!   
@@ -55,7 +55,7 @@ Coffee Mechanics,Cold Brew Bags - Cherry Pick,Rs. 500.00,INR,"Cherry Pick
  Each Brew Bag makes 3-5 cups of coffee concentrate 
  No mess cold brew!  
  Dread the mess and the inconsistency caused by filtration? Here is our fool proof solution for 100% Delicious Cold Brew! 
- Watch video below to know how you can brew with the  Cold Brew Bags",https://www.coffeemechanics.co.in/products/cold-brew-bags-cherry-pick,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/16_f03b80c6-f557-4a3d-8bcb-44228d9b3802.png?v=1594910303,Fruity - Set of 5:500.00,
+ Watch video below to know how you can brew with the  Cold Brew Bags",https://www.coffeemechanics.co.in/products/cold-brew-bags-cherry-pick,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/16_f03b80c6-f557-4a3d-8bcb-44228d9b3802.png?v=1594910303,Fruity - Set of 5:500.00,,,,
 Coffee Mechanics,Cold Brew Bags - Inch Perfect,Rs. 500.00,INR,"Inch Perfect  
   Our classic variation of medium roast coffee with notes of creamy butterscotch and toasty almonds!   Smooth and flavourful coffee to be enjoyed on Ice or with a dash of milk.  
    Classic   
@@ -65,7 +65,7 @@ Coffee Mechanics,Cold Brew Bags - Inch Perfect,Rs. 500.00,INR,"Inch Perfect
  Each Brew Bag makes 3-5 cups of coffee concentrate 
  No mess cold brew!  
  Dread the mess and the inconsistency caused by filtration? Here is our fool proof solution for 100% Delicious Cold Brew! 
- Watch video below to know how you can brew with the  Cold Brew Bags",https://www.coffeemechanics.co.in/products/cold-brew-bags-pack-of-5,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/17.png?v=1594910297,Classic - Set of 5:500.00,
+ Watch video below to know how you can brew with the  Cold Brew Bags",https://www.coffeemechanics.co.in/products/cold-brew-bags-pack-of-5,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/17.png?v=1594910297,Classic - Set of 5:500.00,,,,
 Coffee Mechanics,Cold Brew Bags - Left Hook,Rs. 500.00,INR,"Left Hook  
   An absolute punch for the dark roast lover! Darkest roast amoung our selection. A rich roast of high grown coffee  
    Strong   
@@ -75,38 +75,38 @@ Coffee Mechanics,Cold Brew Bags - Left Hook,Rs. 500.00,INR,"Left Hook
  Each Brew Bag makes 3-5 cups of coffee concentrate 
  No mess cold brew!  
  Dread the mess and the inconsistency caused by filtration? Here is our fool proof solution for 100% Delicious Cold Brew! 
- Watch video below to know how you can brew with the  Cold Brew Bags",https://www.coffeemechanics.co.in/products/cold-brew-bags-left-hook,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/LeftHook_ColdBrew.png?v=1594910305,Strong - Set of 5:500.00,
+ Watch video below to know how you can brew with the  Cold Brew Bags",https://www.coffeemechanics.co.in/products/cold-brew-bags-left-hook,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/LeftHook_ColdBrew.png?v=1594910305,Strong - Set of 5:500.00,,,,
 Coffee Mechanics,Dark Knight,Rs. 550.00,INR,"Region:   Chikkamagaluru  
   Elevation:   3500 ft asl  
   Roast Type:   Vienna Roast  
-  Tasting Notes:   Cocoa Nibs, Caramel Sauce with Hints of Floral",https://www.coffeemechanics.co.in/products/dark-knight,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/ComingSoon_3.png?v=1594910300,250 gms:550.00; 1 Kg:2000.00,
+  Tasting Notes:   Cocoa Nibs, Caramel Sauce with Hints of Floral",https://www.coffeemechanics.co.in/products/dark-knight,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/ComingSoon_3.png?v=1594910300,250 gms:550.00; 1 Kg:2000.00,Vienna Roast,Chikkamagaluru,"Cocoa Nibs, Caramel Sauce with Hints of Floral",
 Coffee Mechanics,Drip To-Go - Cherry Pick,Rs. 550.00,INR,"Easy to Brew single serve coffee packs 
   Available in   
   Set of 10 Drip Bags/Set of 30 Drip Bags  
- Drip To-Go is a solution to make superior quality coffee effortless and accessible for those with busy schedules but appreciate the finer nuances in coffee. Ideal for coffee at work or while on your travel or trek. All you need is a mug &amp; hot water and you are ready To-Go!",https://www.coffeemechanics.co.in/products/copy-of-drip-to-go-cherry-pick,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/Facebook_Product_600x600_2.png?v=1594910307,Fruity -Set of 10:550.00; Fruity Set of 30:1500.00,
+ Drip To-Go is a solution to make superior quality coffee effortless and accessible for those with busy schedules but appreciate the finer nuances in coffee. Ideal for coffee at work or while on your travel or trek. All you need is a mug &amp; hot water and you are ready To-Go!",https://www.coffeemechanics.co.in/products/copy-of-drip-to-go-cherry-pick,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/Facebook_Product_600x600_2.png?v=1594910307,Fruity -Set of 10:550.00; Fruity Set of 30:1500.00,,,,
 Coffee Mechanics,Drip To-Go - Inch Perfect,Rs. 550.00,INR,"Easy to Brew single serve coffee packs 
   Available in   
   Set of 10 Drip Bags/  Set of 30 Drip Bags  
- Drip To-Go is a solution to make superior quality coffee effortless and accessible for those with busy schedules yet appreciate the finer nuances in coffee. Ideal for coffee at work or while on your travel or trek. All you need is a mug &amp; hot water and you are ready To-Go!",https://www.coffeemechanics.co.in/products/drip-to-go,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/Facebook_Product_600x600_1.png?v=1594910296,Classic - Set of 10:550.00; Classic - Set of 30:1500.00,
+ Drip To-Go is a solution to make superior quality coffee effortless and accessible for those with busy schedules yet appreciate the finer nuances in coffee. Ideal for coffee at work or while on your travel or trek. All you need is a mug &amp; hot water and you are ready To-Go!",https://www.coffeemechanics.co.in/products/drip-to-go,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/Facebook_Product_600x600_1.png?v=1594910296,Classic - Set of 10:550.00; Classic - Set of 30:1500.00,,,,
 Coffee Mechanics,Drip To-Go-Left Hook,Rs. 550.00,INR,"Easy to Brew single serve coffee packs 
   Available in   
   Set of 10 Drip Bags/Set of 30 Drip Bags  
- Drip To-Go is a solution to make superior quality coffee effortless and accessible for those with busy schedules but appreciate the finer nuances in coffee. Ideal for coffee at work or while on your travel or trek. All you need is a mug &amp; hot water and you are ready To-Go!",https://www.coffeemechanics.co.in/products/drip-to-go-left-hook,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/Facebook_Product_600x600_1_bd9207ba-07a9-4417-aead-9193e6329911.png?v=1594910308,Strong-Set of 10:550.00; Strong-Set of 30:1500.00,
-Coffee Mechanics,Foccacia - Pack of 2 (300g),Rs. 180.00,INR,"Olive oil-rich, airy, and herb-studded. A classic Italian bake, great as is or dipped.",https://www.coffeemechanics.co.in/products/foccacia,https://cdn.shopify.com/s/files/1/0368/6740/8003/files/1_e9acd98b-d8e1-4472-ba80-69a7d1d0af90.png?v=1757660381,:180.00,
+ Drip To-Go is a solution to make superior quality coffee effortless and accessible for those with busy schedules but appreciate the finer nuances in coffee. Ideal for coffee at work or while on your travel or trek. All you need is a mug &amp; hot water and you are ready To-Go!",https://www.coffeemechanics.co.in/products/drip-to-go-left-hook,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/Facebook_Product_600x600_1_bd9207ba-07a9-4417-aead-9193e6329911.png?v=1594910308,Strong-Set of 10:550.00; Strong-Set of 30:1500.00,,,,
+Coffee Mechanics,Foccacia - Pack of 2 (300g),Rs. 180.00,INR,"Olive oil-rich, airy, and herb-studded. A classic Italian bake, great as is or dipped.",https://www.coffeemechanics.co.in/products/foccacia,https://cdn.shopify.com/s/files/1/0368/6740/8003/files/1_e9acd98b-d8e1-4472-ba80-69a7d1d0af90.png?v=1757660381,:180.00,,,,
 Coffee Mechanics,House Blend,Rs. 550.00,INR,"It was a battle between, the Sweet and the Bold. We couldn't settle for less of either. So, we had to strike a balance! 
  This one is a winner! Sweet as caramel but bold yet beautiful. 
  You drink your coffee black or prefer with milk once in a while, this one is versatile! 
   Roast Type:   American Roast  
-  Tasting Notes:   Bitter Chocolate, Sweet Cinnamon with Hints of Vanilla",https://www.coffeemechanics.co.in/products/house-blend,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/1.png?v=1594910292,250 gms:550.00; 1 Kg:2000.00,
+  Tasting Notes:   Bitter Chocolate, Sweet Cinnamon with Hints of Vanilla",https://www.coffeemechanics.co.in/products/house-blend,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/1.png?v=1594910292,250 gms:550.00; 1 Kg:2000.00,American Roast,,"Bitter Chocolate, Sweet Cinnamon with Hints of Vanilla",
 Coffee Mechanics,Left Hook,Rs. 550.00,INR,"Left Hook  
   For the one who loves the coffee with a ""punch"",. The darkest roast on our selection! A high grown coffee roasted for rich caramel extract.   
   Region:   Chikkamagaluru  
   Elevation:   3800 ft - 4200 ft asl  
   Roast Type:   French Roast  
-  Tasting Notes:  Burnt Caramel &amp; Vanilla",https://www.coffeemechanics.co.in/products/left-hook,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/Untitleddesign_5.png?v=1594910306,250 gms:550.00; 1 Kg:2000.00,
-Coffee Mechanics,Seeds Bagels - Pack of 3,Rs. 150.00,INR,"Boiled and baked the traditional way: Chewy, Dense, and Perfect with cream cheese.",https://www.coffeemechanics.co.in/products/seeds-bagels,https://cdn.shopify.com/s/files/1/0368/6740/8003/files/2_df74948b-789c-4018-a30c-257e7183ab24.png?v=1757660348,:150.00,
+  Tasting Notes:  Burnt Caramel &amp; Vanilla",https://www.coffeemechanics.co.in/products/left-hook,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/Untitleddesign_5.png?v=1594910306,250 gms:550.00; 1 Kg:2000.00,French Roast,Chikkamagaluru,Burnt Caramel & Vanilla,
+Coffee Mechanics,Seeds Bagels - Pack of 3,Rs. 150.00,INR,"Boiled and baked the traditional way: Chewy, Dense, and Perfect with cream cheese.",https://www.coffeemechanics.co.in/products/seeds-bagels,https://cdn.shopify.com/s/files/1/0368/6740/8003/files/2_df74948b-789c-4018-a30c-257e7183ab24.png?v=1757660348,:150.00,,,,
 Coffee Mechanics,Srilakshmi Estate,Rs. 600.00,INR,"Region:   Chikkamagaluru  
   Altitude:   4000 ft asl  
   Charactersitics of coffee:   Highly Aromatic, Lingering after taste, Light Body  
   Roast Type:   American Roast  
-  Tasting Notes:   Goose Berries, Dark Chocolate, Caramel",https://www.coffeemechanics.co.in/products/srilakshmi-estate,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/3.png?v=1594910293,250 gms:600.00; 1 Kg:2200.00,
+  Tasting Notes:   Goose Berries, Dark Chocolate, Caramel",https://www.coffeemechanics.co.in/products/srilakshmi-estate,https://cdn.shopify.com/s/files/1/0368/6740/8003/products/3.png?v=1594910293,250 gms:600.00; 1 Kg:2200.00,American Roast,Chikkamagaluru,"Goose Berries, Dark Chocolate, Caramel",

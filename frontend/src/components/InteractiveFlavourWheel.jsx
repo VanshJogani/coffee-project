@@ -2,14 +2,14 @@ import { useEffect, useRef } from "react";
 
 const DATA = [
   {
-    name: "Floral", color: "#D88BA2",
+    name: "Floral", color: "#E56FA8",
     subs: [
       { name: "Black Tea", subs: [""] },
       { name: "Floral", subs: ["Honeysuckle","Saffron","Greeny","Rose","Jasmine","Chamomile"] }
     ]
   },
   {
-    name: "Fruity", color: "#E25B3A",
+    name: "Fruity", color: "#F04420",
     subs: [
       { name: "Berry", subs: ["Strawberry","Raspberry","Mulberry","Blueberry","Raisin","Plum","Dates","Fig"] },
       { name: "Dried Fruit", subs: ["Apricot","Coconut","Tender Banana","Cherry","Pomegranate","Mango","Pineapple","Passionfruit"] },
@@ -18,14 +18,14 @@ const DATA = [
     ]
   },
   {
-    name: "Sour / Fermented", color: "#8DBF4A",
+    name: "Sour / Fermented", color: "#7ED42B",
     subs: [
       { name: "Sour Aromatics", subs: ["Acetic Acid","Butyric Acid","Citric Acid","Isovaleric Acid","Malic Acid"] },
       { name: "Alcohol / Fermented", subs: ["Wine","Whiskey","Fermented","Overripe"] }
     ]
   },
   {
-    name: "Green / Vegetative", color: "#3E8F54",
+    name: "Green / Vegetative", color: "#2BA84A",
     subs: [
       { name: "Olive Oil", subs: [] },
       { name: "Raw", subs: [] },
@@ -36,14 +36,14 @@ const DATA = [
     ]
   },
   {
-    name: "Others", color: "#7E8D96",
+    name: "Others", color: "#6B8A9E",
     subs: [
-      { name: "Papery / Musty", color: "#8E9BA5", subs: ["Mouldy/Damp","Woody","Papery","Cardboard","Stale"] },
-      { name: "Chemical", color: "#6B7F8E", subs: ["Musty/Earthy","Animalic","Meaty/Brothy","Phenolic","Bitter","Salty","Medicinal","Petroleum","Skunky","Rubber"] }
+      { name: "Papery / Musty", color: "#7FA3B8", subs: ["Mouldy/Damp","Woody","Papery","Cardboard","Stale"] },
+      { name: "Chemical", color: "#4E7A94", subs: ["Musty/Earthy","Animalic","Meaty/Brothy","Phenolic","Bitter","Salty","Medicinal","Petroleum","Skunky","Rubber"] }
     ]
   },
   {
-    name: "Roasted", color: "#7C5233",
+    name: "Roasted", color: "#8B4513",
     subs: [
       { name: "Pipe Tobacco", subs: [] },
       { name: "Acrid", subs: [] },
@@ -54,21 +54,21 @@ const DATA = [
     ]
   },
   {
-    name: "Spices", color: "#C23B3B",
+    name: "Spices", color: "#D92626",
     subs: [
       { name: "Pungent", subs: ["Pepper","Anise","Fennel"] },
       { name: "Brown Spice", subs: ["Cardamom","Nutmeg","Cinnamon","Clove"] }
     ]
   },
   {
-    name: "Nutty / Cocoa", color: "#6B3A22",
+    name: "Nutty / Cocoa", color: "#7A3B10",
     subs: [
       { name: "Nutty", subs: ["Almond","Hazelnut","Cashewnut","Peanut","Walnut"] },
       { name: "Cocoa", subs: ["Chocolate","Dark Chocolate","Cocoa Nibs","Honey","Caramelised"] }
     ]
   },
   {
-    name: "Sweet", color: "#D4A33C",
+    name: "Sweet", color: "#E8A817",
     subs: [
       { name: "Brown Sugar", subs: ["Jaggery","Molasses"] },
       { name: "Sugar / Candy", subs: ["Sugarcane","Vanilla"] }
@@ -82,7 +82,7 @@ function lighten(hex,amt) { const[r,g,b]=hexToRGB(hex); return rgbToHex(r+(255-r
 function darken(hex,amt) { const[r,g,b]=hexToRGB(hex); return rgbToHex(r*(1-amt),g*(1-amt),b*(1-amt)); }
 function alpha(hex,a) { const[r,g,b]=hexToRGB(hex); return `rgba(${r},${g},${b},${a})`; }
 
-export default function InteractiveFlavourWheel() {
+export default function InteractiveFlavourWheel({ onFlavourSelect }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const tooltipRef = useRef(null);
@@ -93,6 +93,8 @@ export default function InteractiveFlavourWheel() {
   const detailLabelRef = useRef(null);
   const detailPathRef = useRef(null);
   const legendRef = useRef(null);
+  const onFlavourSelectRef = useRef(onFlavourSelect);
+  onFlavourSelectRef.current = onFlavourSelect;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -198,15 +200,25 @@ export default function InteractiveFlavourWheel() {
         const isSameCat = hovCat && s.cat === hovCat;
         const isDimmed = hovCat !== null && !isSameCat;
 
+        ctx.save();
+
+        // Dramatic 8px expansion + glow on hover
+        const expand = isHovered ? 8 : 0;
+        if (isHovered) {
+          ctx.shadowColor = alpha(s.color, 0.55);
+          ctx.shadowBlur = 18;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+        }
+
         ctx.beginPath();
-        const expand = isHovered ? 4 : 0;
         ctx.arc(cx, cy, s.r1 + expand, s.a0, s.a1);
-        ctx.arc(cx, cy, s.r0 - (isHovered ? 1 : 0), s.a1, s.a0, true);
+        ctx.arc(cx, cy, s.r0 - (isHovered ? 2 : 0), s.a1, s.a0, true);
         ctx.closePath();
 
         let fillColor = s.color;
         if (isDimmed) fillColor = lighten(s.color, 0.4);
-        if (isHovered) fillColor = darken(s.color, 0.1);
+        if (isHovered) fillColor = darken(s.color, 0.08);
 
         const midA = (s.a0 + s.a1) / 2;
         const gx = cx + Math.cos(midA) * s.r0;
@@ -215,13 +227,18 @@ export default function InteractiveFlavourWheel() {
         const gy2 = cy + Math.sin(midA) * s.r1;
         const segGrd = ctx.createLinearGradient(gx, gy, gx2, gy2);
         segGrd.addColorStop(0, fillColor);
-        segGrd.addColorStop(1, isHovered ? lighten(fillColor, 0.06) : darken(fillColor, 0.04));
+        segGrd.addColorStop(1, isHovered ? lighten(fillColor, 0.1) : darken(fillColor, 0.04));
         ctx.fillStyle = segGrd;
         ctx.fill();
 
-        ctx.strokeStyle = alpha('#FBF7F1', isDimmed ? 0.5 : 0.75);
-        ctx.lineWidth = 1.6;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+
+        ctx.strokeStyle = alpha('#FBF7F1', isDimmed ? 0.5 : 0.8);
+        ctx.lineWidth = isHovered ? 2.2 : 1.6;
         ctx.stroke();
+
+        ctx.restore();
 
         drawSegmentText(s, isDimmed, isHovered);
       });
@@ -375,7 +392,7 @@ export default function InteractiveFlavourWheel() {
         tooltip.style.transform = 'translateY(0)';
         tooltip.style.left = (e.clientX + 16) + 'px';
         tooltip.style.top = (e.clientY - 40) + 'px';
-        canvas.style.cursor = 'pointer';
+        canvas.style.cursor = s.level === 2 ? 'pointer' : 'default';
         detailLabel.textContent = s.label;
         detailLabel.style.color = darken(s.color, 0.15);
         detailPath.textContent = s.level > 0 ? s.path : '';
@@ -395,6 +412,19 @@ export default function InteractiveFlavourWheel() {
       render();
     }
 
+    function onClick(e) {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      const idx = hitTest(mx, my);
+      if (idx !== null) {
+        const s = segments[idx];
+        // Only outermost ring (level 2) is clickable for filtering
+        if (s.level === 2 && s.label && onFlavourSelectRef.current) {
+          onFlavourSelectRef.current(s.label);
+        }
+      }
+    }
+
     function onTouchStart(e) {
       e.preventDefault();
       const t = e.touches[0], rect = canvas.getBoundingClientRect();
@@ -406,6 +436,10 @@ export default function InteractiveFlavourWheel() {
         detailLabel.style.color = darken(s.color, 0.15);
         detailPath.textContent = s.level > 0 ? s.path : '';
         detail.style.opacity = '1';
+        // Tap on outer ring triggers filter
+        if (s.level === 2 && s.label && onFlavourSelectRef.current) {
+          setTimeout(() => onFlavourSelectRef.current(s.label), 200);
+        }
       }
     }
 
@@ -415,6 +449,7 @@ export default function InteractiveFlavourWheel() {
 
     canvas.addEventListener('mousemove', onMouseMove);
     canvas.addEventListener('mouseleave', onMouseLeave);
+    canvas.addEventListener('click', onClick);
     canvas.addEventListener('touchstart', onTouchStart, { passive: false });
     canvas.addEventListener('touchend', onTouchEnd);
     window.addEventListener('resize', resize);
@@ -423,6 +458,7 @@ export default function InteractiveFlavourWheel() {
     return () => {
       canvas.removeEventListener('mousemove', onMouseMove);
       canvas.removeEventListener('mouseleave', onMouseLeave);
+      canvas.removeEventListener('click', onClick);
       canvas.removeEventListener('touchstart', onTouchStart);
       canvas.removeEventListener('touchend', onTouchEnd);
       window.removeEventListener('resize', resize);

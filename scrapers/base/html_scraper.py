@@ -221,6 +221,132 @@ class HtmlScraper(ABC):
     #  Product page parsing                                                #
     # ------------------------------------------------------------------ #
 
+    def _extract_product_attributes(self, soup: BeautifulSoup) -> dict[str, str]:
+        """
+        Extract origin, tasting notes, process, and roast type from product page HTML.
+        Uses attribute tables, bold-tag labels, and regex fallback.
+        """
+        origin = ""
+        tasting_notes = ""
+        process = ""
+        roast_type = ""
+
+        # Strategy 1: Attribute tables (WooCommerce, Magento)
+        for row in soup.select(
+            "table.shop_attributes tr, "
+            "table.woocommerce-product-attributes tr, "
+            "table.product-attributes tr, "
+            "table tr"
+        ):
+            th = row.select_one("th")
+            td = row.select_one("td:last-child")
+            if not th or not td:
+                continue
+            key = th.get_text(strip=True).lower()
+            val = td.get_text(strip=True)
+            if not val:
+                continue
+            if not origin and ("origin" in key or "region" in key or "location" in key or "estate" in key or "farm" in key):
+                origin = val
+            if not tasting_notes and ("tasting" in key or "flavour" in key or "flavor" in key or "cupper" in key or "taste" in key or "notes" in key):
+                tasting_notes = val
+            if not process and ("process" in key or "ferment" in key):
+                process = val
+            if not roast_type and ("roast" in key):
+                roast_type = val
+
+        # Strategy 2: <dt>/<dd> definition lists
+        if not origin or not tasting_notes or not process:
+            for dt in soup.find_all("dt"):
+                label = dt.get_text(strip=True).lower().rstrip(":- ")
+                dd = dt.find_next_sibling("dd")
+                if not dd:
+                    continue
+                val = dd.get_text(strip=True)
+                if not val:
+                    continue
+                if not origin and ("origin" in label or "region" in label or "location" in label or "country" in label):
+                    origin = val
+                if not tasting_notes and ("tasting" in label or "flavour" in label or "flavor" in label or "cupper" in label or "notes" in label):
+                    tasting_notes = val
+                if not process and ("process" in label or "ferment" in label):
+                    process = val
+                if not roast_type and ("roast" in label):
+                    roast_type = val
+
+        # Strategy 3: Bold-tag labels in page content
+        if not origin or not tasting_notes or not process:
+            for bold in soup.find_all(["strong", "b"]):
+                label = bold.get_text(strip=True).lower().rstrip(":- –—")
+                # Collect value from siblings
+                def _sibling_value(tag):
+                    parts = []
+                    for sib in tag.next_siblings:
+                        if hasattr(sib, "name") and sib.name in ("strong", "b", "br", "p", "div", "li"):
+                            break
+                        text = sib.get_text(strip=True) if hasattr(sib, "get_text") else str(sib).strip()
+                        if text:
+                            parts.append(text)
+                        if len(" ".join(parts)) > 120:
+                            break
+                    return " ".join(parts).strip(" \t,;.-:–—")
+
+                if not origin and ("origin" in label or "region" in label or "location" in label):
+                    val = _sibling_value(bold)
+                    if val and len(val) >= 3:
+                        origin = val
+                if not tasting_notes and ("tasting" in label or "flavour" in label or "flavor" in label or "cupper" in label or "tastes like" in label):
+                    val = _sibling_value(bold)
+                    if val and len(val) >= 3:
+                        tasting_notes = val
+                if not process and ("process" in label or "ferment" in label):
+                    val = _sibling_value(bold)
+                    if val and len(val) >= 3:
+                        process = val
+                if not roast_type and ("roast" in label):
+                    val = _sibling_value(bold)
+                    if val and len(val) >= 3:
+                        roast_type = val
+
+        # Strategy 4: Regex fallback in full text
+        if not origin or not tasting_notes or not process:
+            full_text = soup.get_text(" ", strip=True)
+            if not origin:
+                m = re.search(
+                    r"(?:Origin|Region|Location|Estate|Farm)\s*[:\-–—]\s*([^,•\n\r]{3,60})",
+                    full_text, re.IGNORECASE,
+                )
+                if m:
+                    origin = m.group(1).strip()
+            if not tasting_notes:
+                m = re.search(
+                    r"(?:Tasting\s+Notes?|Flavou?r\s+Notes?|Cupper[''']?s\s+Notes?|Tastes?\s+Like)\s*[:\-–—]\s*([^\n\r]{5,150})",
+                    full_text, re.IGNORECASE,
+                )
+                if m:
+                    tasting_notes = m.group(1).strip()
+            if not process:
+                m = re.search(
+                    r"(?:Process(?:ing)?|Fermentation)\s*[:\-–—]\s*([^\n\r,]{3,60})",
+                    full_text, re.IGNORECASE,
+                )
+                if m:
+                    process = m.group(1).strip()
+            if not roast_type:
+                m = re.search(
+                    r"(?:Roast\s*(?:Level|Profile|Type)?)\s*[:\-–—]\s*([^\n\r,]{3,40})",
+                    full_text, re.IGNORECASE,
+                )
+                if m:
+                    roast_type = m.group(1).strip()
+
+        return {
+            "origin": origin,
+            "tasting_notes": tasting_notes,
+            "process": process,
+            "roast_type": roast_type,
+        }
+
     def _parse_product_page(
         self, html: str, product_url: str, fallback_image: Optional[str] = None
     ) -> Product:
@@ -231,6 +357,7 @@ class HtmlScraper(ABC):
         description = self._extract_description(soup)
         image_url = self._extract_image(soup, fallback_image)
         variant_prices = self._extract_variants(soup)
+        attrs = self._extract_product_attributes(soup)
 
         return Product(
             roaster=self.ROASTER_NAME,
@@ -241,6 +368,10 @@ class HtmlScraper(ABC):
             product_url=product_url,
             image_url=image_url,
             variant_prices=variant_prices,
+            origin=attrs.get("origin", ""),
+            tasting_notes=attrs.get("tasting_notes", ""),
+            process=attrs.get("process", ""),
+            roast_type=attrs.get("roast_type", ""),
         )
 
     def _extract_price(self, soup: BeautifulSoup) -> tuple[str, str]:

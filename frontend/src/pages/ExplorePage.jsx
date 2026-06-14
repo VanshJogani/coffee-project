@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useFilters } from "../hooks/useFilters";
 import { useProducts } from "../hooks/useProducts";
 import { useProductDetail } from "../hooks/useProductDetail";
-import { fetchProduct } from "../api/client";
+import { fetchProduct, fetchProducts } from "../api/client";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import SearchBar from "../components/SearchBar";
 import SortSelect from "../components/SortSelect";
@@ -19,13 +20,27 @@ import SwipeView from "../components/SwipeView";
 const CATEGORIES = ["Coffee", "Tea", "Accessories", "Events", "Subscriptions"];
 
 function ExplorePage() {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState("Coffee");
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [sort, setSort] = useState("discover");
   const [viewMode, setViewMode] = useState("grid");
   const [wheelOpen, setWheelOpen] = useState(false);
+  const [atlasOrigin, setAtlasOrigin] = useState(null);
   const debounceRef = useRef(null);
+
+  // Read origin from URL params (from Coffee Atlas navigation)
+  const urlOrigin = searchParams.get("origin");
+  const initialOrigins = urlOrigin ? [urlOrigin] : [];
+
+  // Track atlas origin for the banner
+  useEffect(() => {
+    if (urlOrigin) {
+      setAtlasOrigin(urlOrigin);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Debounce search input by 350ms
   useEffect(() => {
@@ -34,7 +49,7 @@ function ExplorePage() {
     return () => clearTimeout(debounceRef.current);
   }, [searchInput]);
 
-  const filters = useFilters(selectedCategory);
+  const filters = useFilters(selectedCategory, { initialOrigins });
   const { products, page, setPage, totalPages, loading, error } = useProducts({
     category: selectedCategory,
     search: debouncedSearch,
@@ -49,6 +64,14 @@ function ExplorePage() {
     setSearchInput("");
     setDebouncedSearch("");
     setPage(1);
+    setAtlasOrigin(null);
+    setSearchParams({});
+  };
+
+  const handleClearAtlasFilter = () => {
+    setAtlasOrigin(null);
+    filters.setSelectedOrigins([]);
+    setSearchParams({});
   };
 
   const handleRandomCoffee = async (product) => {
@@ -56,10 +79,12 @@ function ExplorePage() {
   };
 
   const handleTryAnother = async () => {
-    if (!products.length) return;
-    const random = products[Math.floor(Math.random() * products.length)];
+    const data = await fetchProducts({ category: "Coffee", sort: "discover", limit: 200, page: 1, _bust: Date.now() });
+    const pool = data.data || [];
+    if (!pool.length) return;
+    const random = pool[Math.floor(Math.random() * pool.length)];
     const full = await fetchProduct(random.id);
-    detail.openDetail({ ...full, variants: random.variants || [] }, true);
+    detail.openDetail({ ...full, variants: full.variants || [] }, true);
   };
 
   return (
@@ -79,6 +104,7 @@ function ExplorePage() {
                 <div>
                   <div className="flex items-center gap-3">
                     <h1 className="text-xl font-bold tracking-tight text-luxury-light">Caffè Elegante</h1>
+                    <div className="flex items-center gap-2">
                     <button
                       onClick={() => setWheelOpen(true)}
                       className="flex items-center gap-1.5 px-3 py-1 bg-luxury-gold/20 text-luxury-gold hover:bg-luxury-gold/30 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border border-luxury-gold/30"
@@ -89,6 +115,16 @@ function ExplorePage() {
                       </svg>
                       Flavour Wheel
                     </button>
+                    <button
+                      onClick={() => navigate("/map")}
+                      className="flex items-center gap-1.5 px-3 py-1 bg-luxury-gold/10 text-luxury-gold hover:bg-luxury-gold/25 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border border-luxury-gold/20"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-10l6-3m0 13l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 4V7" />
+                      </svg>
+                      Coffee Map
+                    </button>
+                    </div>
                   </div>
                   <p className="text-xs text-luxury-clay opacity-80 font-medium uppercase tracking-[0.2em] mt-0.5">
                     Curated Indian Specialty Coffee
@@ -140,8 +176,32 @@ function ExplorePage() {
           </div>
         </header>
 
-        <main className="container-page py-12 flex flex-col md:flex-row gap-8">
-          {viewMode === "grid" && (
+        <main className="container-page py-12 flex flex-col gap-6">
+          {/* Atlas origin banner */}
+          {atlasOrigin && (
+            <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-luxury-gold/10 border border-luxury-gold/25 backdrop-blur-sm -mb-2">
+              <span className="text-base">🗺️</span>
+              <span className="text-xs font-medium text-luxury-umber">
+                Showing coffees from <strong className="text-luxury-gold">{atlasOrigin}</strong>
+              </span>
+              <div className="flex items-center gap-2 ml-auto">
+                <button
+                  onClick={handleClearAtlasFilter}
+                  className="text-[10px] font-bold uppercase tracking-widest text-luxury-clay hover:text-luxury-gold transition-colors"
+                >
+                  View All
+                </button>
+                <span className="text-luxury-clay/30">|</span>
+                <button
+                  onClick={() => navigate("/map")}
+                  className="text-[10px] font-bold uppercase tracking-widest text-luxury-clay hover:text-luxury-gold transition-colors"
+                >
+                  Back to Atlas
+                </button>
+              </div>
+            </div>
+          )}
+          <div className="flex flex-col md:flex-row gap-8">          {viewMode === "grid" && (
             <FiltersPanel
               selectedCategory={selectedCategory}
               roasterOptions={filters.options.roasters}
@@ -164,6 +224,7 @@ function ExplorePage() {
               onToggleFlavour={filters.onToggleFlavour}
               onPriceRangeChange={filters.setPriceRange}
               onClear={filters.clearFilters}
+              expandOrigin={!!atlasOrigin}
             />
           )}
           <section className="flex-1 flex flex-col">
@@ -196,6 +257,7 @@ function ExplorePage() {
               <SwipeView products={products} onProductClick={p => detail.openDetail(p)} />
             )}
           </section>
+          </div>
         </main>
 
         <ProductDetailModal
@@ -207,8 +269,12 @@ function ExplorePage() {
           fromRandomizer={detail.fromRandomizer}
           onTryAnother={handleTryAnother}
         />
-        <FlavourWheelModal isOpen={wheelOpen} onClose={() => setWheelOpen(false)} />
-        <CoffeeRandomizer allProducts={products} onSelectCoffee={handleRandomCoffee} />
+        <FlavourWheelModal
+          isOpen={wheelOpen}
+          onClose={() => setWheelOpen(false)}
+          onFlavourSelect={(flavour) => filters.setSelectedFlavours([flavour])}
+        />
+        <CoffeeRandomizer onSelectCoffee={handleRandomCoffee} />
       </div>
     </>
   );

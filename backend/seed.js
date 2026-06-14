@@ -51,7 +51,9 @@ function normalizeProduct(raw, index) {
     category = "Subscriptions";
   } else if (["tasting session", "cupping session", "latte art", "throwdown",
     "workshop", "masterclass", "master class", "coffee walk", "brew class",
-    "competition", "championship", "meetup", "meet up"].some(k => lowerName.includes(k))) {
+    "competition", "championship", "meetup", "meet up",
+    "gully tour", "coffee tour", "coffee chronicles",
+    "sca course", "sca brewing", "sca barista"].some(k => lowerName.includes(k))) {
     category = "Events";
   } else {
     const strongTeaKeywords = [
@@ -73,7 +75,7 @@ function normalizeProduct(raw, index) {
       "dripper", "pour over", "pourover", "siphon", "percolator", "bialetti",
       "clever dripper", "kalita", "origami dripper", "cold brew maker",
       "brewer", "press filter", "brass filter", "prass filter",
-      "grinder", "burr grinder", "hand grinder",
+      "grinder", "burr grinder", "hand grinder", "coffee mill",
       "kettle", "gooseneck", "server", "carafe", "pitcher", "decanter",
       "mug", "tumbler", "cup", "cups", "waycup", "glass ", "glasses",
       "sipper", "flask", "bottle", "reusable",
@@ -81,14 +83,22 @@ function normalizeProduct(raw, index) {
       "milk frother", "frother", "steam wand", "knock box", "distribution tool",
       "filter paper", "paper filter", "metal filter", "mesh filter", "wave filter",
       "t-shirt", "tshirt", "tee ", "hoodie", "cap ", "hat ", "tote bag", "tote",
-      "sticker", "poster", "pin ", "badge", "merch", "merchandise",
+      "totebag", "sticker", "poster", "pin ", "badge", "merch", "merchandise",
       "bag tag", "coaster",
       "gift box", "gift set", "gift card", "hamper", "combo pack",
       "book ", "candle", "diffuser", "decor", "artwork",
       "syrup", "chocolate bar", "brownie", "cookie", "biscuit", "cake",
       "trail mix", "granola",
       "gasket", "group head", "drip tray",
-      "coffee maker", "coffee machine", "espresso machine", "saucer"
+      "coffee maker", "coffee machine", "espresso machine", "saucer",
+      "drip kit", "starter kit", "work-from-home kit", "flair neo",
+      "semi automatic", "holder",
+      "canister", "airscape", "nanofoamer", "foamer",
+      "alarm clock", "cool control", "mixology",
+      "paper filters", "ceramic mill", "mini-slim",
+      "refractometer", "apron", "cleaning tablet",
+      "saeco", "slingshot", "jura ", "barisieur",
+      "decoding coffee", "everyday tools"
     ];
     const definitelyNotCoffee = [
       "bike", "rental", "bicycle", "cycle", "music", "live music", "concert", "gig",
@@ -123,7 +133,14 @@ function normalizeProduct(raw, index) {
       "chemex", "aeropress", "french press", "moka pot", "percolator",
       "tumbler", "mug", "server", "pitcher", "frother", "tamper", "machine",
       "cup", "cups", "saucer", "glass", "bialetti", "brewer", "press filter",
-      "brass filter", "prass filter", "pour over", "reusable"];
+      "brass filter", "prass filter", "pour over", "reusable",
+      "flair", "dripper", "tote", "totebag", "hamper", "gift box", "gift set",
+      "weighing", "starter kit", "work-from-home kit", "holder", "drip kit",
+      "coffee mill", "canister", "airscape", "nanofoamer", "foamer",
+      "paper filters", "hario", "decanter", "alarm clock", "cool control",
+      "mixology", "mini-slim", "ceramic mill",
+      "saeco", "slingshot", "jura ", "barisieur",
+      "decoding coffee", "everyday tools"];
 
     if (isDefinitelyNotCoffee && !hasCoffeeKeyword) {
       category = "Accessories";
@@ -357,8 +374,10 @@ function main() {
     const entry = canonicalMap.get(key);
     entry.variants.push({ quantity: p.quantity, price: p.price, originalProductId: p.productId });
     // Keep the canonical record's price as the lowest non-null price
+    // and update quantity to match so the card shows the correct weight for that price
     if (p.price != null && (entry.canonical.price == null || p.price < entry.canonical.price)) {
       entry.canonical.price = p.price;
+      entry.canonical.quantity = p.quantity;
     }
   }
 

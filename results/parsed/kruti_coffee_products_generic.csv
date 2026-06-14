@@ -1,4 +1,4 @@
-roaster,name,price,currency,description,product_url,image_url,variant_prices,roast_type
+roaster,name,price,currency,description,product_url,image_url,variant_prices,roast_type,origin,tasting_notes,process
 Kruti Coffee,Assorted Drip Bags | Pack of 5,Rs. 350.00,INR,"100% ARABICA | PACK OF 5 ASSORTED DRIP BAGS    
   VARIETIES:    2 BLENDS &amp; 3 SINGLE ORIGINS   
   ROAST:   3 RANGES           
@@ -14,9 +14,7 @@ Kruti Coffee,Assorted Drip Bags | Pack of 5,Rs. 350.00,INR,"100% ARABICA | PACK 
   4. Deomali Special (Medium Roast,  Cupping Notes- Honey &amp; Caramel)  
    5. Paraja Strong ( Medium Dark Roast,  Cupping Notes- Cherries &amp; Chocolate)  
   About Kruti Coffee:  
-   Kruti Coffee is one of India's fastest growing specialty coffee entity and cafe chain. Specialty coffee standards are followed across the value chain. Kruti Coffee started it's specialty coffee journey by transforming farm management practices of Kindiriguda tribal coffee farms in the Eastern Indian State of Odisha. Kruti Coffee has instituted strict specialty standards in processing, roasting and brewing. Currently Kruti Coffee roasts it's entire coffee inventory by following standards set by SCA
-[Meta Description]: Assorted Drip Bag Box (Box Of 5) Discover A Variety Of Flavors In One Box Of Brew Bags. Perfect For Exploring—Order Your Assorted Box Today!
-",https://kruticoffee.com/products/assorted-drip-bags-pack-of-5,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0505_19.jpg?v=1777975826,:350.00,
+   Kruti Coffee is one of India's fastest growing specialty coffee entity and cafe chain. Specialty coffee standards are followed across the value chain. Kruti Coffee started it's specialty coffee journey by transforming farm management practices of Kindiriguda tribal coffee farms in the Eastern Indian State of Odisha. Kruti Coffee has instituted strict specialty standards in processing, roasting and brewing. Currently Kruti Coffee roasts it's entire coffee inventory by following standards set by SCA",https://kruticoffee.com/products/assorted-drip-bags-pack-of-5,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Assorted_Drip_Bag_KC_A.jpg?v=1779269943,:350.00,3 RANGES,,,
 Kruti Coffee,Bhubaneswar Blend | Signature Blend | 250 G,Rs. 700.00,INR,"100% ARABICA | SIGNATURE BLEND OF COFFEE     FROM KORAPUT   
   PROCESS:    WASHED    FLAVOUR:    DARK CHOCOLATE &amp; HAZELNUT   
   ROAST:    DARK      ALTITUDE:     2854-2952 FT MSL    
@@ -25,13 +23,7 @@ Kruti Coffee,Bhubaneswar Blend | Signature Blend | 250 G,Rs. 700.00,INR,"100% AR
  Please select the grind preference based on the equipment you will be using to brew your coffee. We will grind as per your preference, before shipping the Arabica coffee to you (with best compliments from us). 
  The coffee in this packet is a blend of two washed coffees from  farms under in Koraput. Both the coffees have been carefully roasted and blended in the right proportion to get a magical brew. This signature blend of ours is a tribute to the rich history and legacy of City of Temples Bhubaneswar in the beautiful state of Odisha. 
   About Bhubaneswar Blend:  
- Bhubaneswar Blend is the darkest blend developed by Kruti Coffee ever. This blend has been developed for coffee connoisseurs who like their coffee really strong yet tasteful. This goes nicely as a black coffee brewed in espresso style and blends beautifully with milk.
-[Meta Description]: Bhubaneswar Blend 250G Savor The Signature Dark Roast Koraput Blend. A Local Favorite That’S Hard To Resist—Shop Now!
-",https://kruticoffee.com/products/bhubaneswar-blend-100-arabica-signature-blend-dark-roasted-250-gm-kruti-coffee-freshly-roasted-specialty-coffee-blend,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0504_6.jpg?v=1777878899,:700.00,
-Kruti Coffee,Choco Chip Cookies,Rs. 195.00,INR,"Kruti Choco Chip cookies are our tribute to the rich legacy of these cookies which were an accidental discovery by Ruth Graves in the nineteen thirties when he added chopped Nestle chocolate to cookie recipe and it has stayed evergreen since.  Handmade in small batches, our choco-chip cookies are gooey on the inside and equally crunchy on the outside.  
- Packed perfectly to ensure longevity. 
- Make it your snack of choice at home and while travelling.
-[Meta Description]: Kruti Choco Chip cookies are our tribute to the rich legacy of these cookies which were an accidental discovery by Ruth Graves in the nineteen thirties when he added chopped Nestle chocolate to cookie recipe and it has stayed evergreen since.Handmade in small batches, our choco-chip cookies are gooey on the inside and equally crunchy on the outside. Packed perfectly to ensure longevity.Make it your snack of choice at home and while travelling. Kruti Coffee",https://kruticoffee.com/products/kruti-choco-chip-cookies,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Render_Mockup_4000_4000_2025-10-28_3.png?v=1761631396,:195.00,
+ Bhubaneswar Blend is the darkest blend developed by Kruti Coffee ever. This blend has been developed for coffee connoisseurs who like their coffee really strong yet tasteful. This goes nicely as a black coffee brewed in espresso style and blends beautifully with milk.",https://kruticoffee.com/products/bhubaneswar-blend-100-arabica-signature-blend-dark-roasted-250-gm-kruti-coffee-freshly-roasted-specialty-coffee-blend,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Bhubaneswar_Blend_KC_F.jpg?v=1779273768,:700.00,DARK,,,WASHED
 Kruti Coffee,Deomali Special Drip Bags | Pack Of 5,Rs. 350.00,INR,"100% ARABICA | SINGLE ORIGIN       
   PROCESS:    WASHED      
   CUPPING NOTES:    HONEY &amp; CARAMEL   
@@ -42,8 +34,7 @@ Kruti Coffee,Deomali Special Drip Bags | Pack Of 5,Rs. 350.00,INR,"100% ARABICA 
   QUANTITY:   5 DRIP BAGS (EACH 12 GRAM)    
  These drip bags have been specially designed to make brewing easy for you at home or as you travel. Please refer packaging for brewing instruction. 
  This specialty washed coffee from Kindiriguda- “ Deomali Special ” has been roasted medium for those who like the nuanced taste notes characteristic of the coffee from Kindiriguda in Koraput. This roast profile is our tribute to the beautiful Deomali Hills in Koraput.  
-   About Kindiriguda : A small tribal village of 40 families in Koraput, Odisha. Kruti Coffee supports Kindiriguda tribal coffee farmers   across the value chain to ensure specialty standards are maintained throughout. The coffee in this packet is from the 2021-2022 batch of washed coffee from Koraput which was carefully dried on raised beds to maintain consistency.
-[Meta Description]: 100% ARABICA | SINGLE ORIGIN  PROCESS: WASHED CUPPING NOTES: HONEY & CARAMELROAST: MEDIUM   ALTITUDE:  2854-2952 FT MSLORIGIN: KINDIRIGUDA, KORAPUTUSP: FOREST GROWN, SHADE GROWN , TRIBAL GROWNQUANTITY: 5 DRIP BAGS (EACH 12 GRAM)These drip bags have been specially designed to make brewing easy for you at home or as you travel. Please refer packaging for brewing instruction.This specialty washed coffee from Kindiriguda- “Deomali Special” has been roasted medium for those who like the nuanced taste notes characteristic of the coffee from Kindiriguda in Koraput. This roast profile is our tribute to the beautiful Deomali Hills in Koraput. About Kindiriguda: A small tribal village of 40 families in Koraput, Odisha. Kruti Coffee supports Kindiriguda tribal coffee farmers across the value chain to ensure specialty standards are maintained throughout. The coffee in this packet is from the 2021-2022 batch of washed coffee from Koraput which was carefully dried on raised beds to maintain consistency.  Kruti Coffee",https://kruticoffee.com/products/kruti-deomali-special-drip-bag-medium-roast,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0506.jpg?v=1778065997,:350.00,
+   About Kindiriguda : A small tribal village of 40 families in Koraput, Odisha. Kruti Coffee supports Kindiriguda tribal coffee farmers   across the value chain to ensure specialty standards are maintained throughout. The coffee in this packet is from the 2021-2022 batch of washed coffee from Koraput which was carefully dried on raised beds to maintain consistency.",https://kruticoffee.com/products/kruti-deomali-special-drip-bag-medium-roast,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Deomali_KC_F.jpg?v=1779270667,:350.00,MEDIUM,,,
 Kruti Coffee,Deomali Special | Single Origin | 250 G,Rs. 700.00,INR,"100% ARABICA | SINGLE ORIGIN      
   PROCESS:    WASHED      
   CUPPING NOTES  :  HONEY &amp; CARAMEL   
@@ -54,13 +45,7 @@ Kruti Coffee,Deomali Special | Single Origin | 250 G,Rs. 700.00,INR,"100% ARABIC
   QUANTITY  :  250 GRAMS   
  This washed specialty coffee from Kindiriguda, Koraput- “ Deomali Special ” has been roasted medium for those who like the nuanced taste notes characteristic of the coffee from Kindiriguda in Koraput. This roast profile is our tribute to the beautiful Deomali Hills in Koraput.  
  Please select the grind preference based on the equipment you will be using to brew your coffee. We will grind as per your preference, before shipping the coffee to you (with best compliments from us). 
-   About Kindiriguda : A small tribal village of 40 families in Koraput, Odisha. Kruti Coffee supports Kindiriguda tribal coffee farmers across the value chain to ensure specialty standards are maintained throughout.
-[Meta Description]: Deomali Special 250G Savor The Exquisite Taste Of Premium Washed Koraput Coffee. Perfect For Connoisseurs—Get Yours Today!
-",https://kruticoffee.com/products/deomali-special,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0504_16.jpg?v=1777885058,Pour Over (V60):700.00,
-Kruti Coffee,Honey & Oatmeal Cookies,Rs. 195.00,INR,"Kruti Honey &amp; Oatmeal Cookies crispy and tasty. The honey used is pure and premium in house raw honey with high pollen count.  
- Packed perfectly to ensure longevity. 
- Make it your snack of choice at home and while travelling.
-[Meta Description]: Kruti Honey & Oatmeal Cookies crispy and tasty. The honey used is pure and premium in house raw honey with high pollen count. Packed perfectly to ensure longevity.Make it your snack of choice at home and while travelling. Kruti Coffee",https://kruticoffee.com/products/kruti-honey-oat-cookies,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Render_Mockup_4000_4000_2025-10-28_2.png?v=1761631373,:195.00,
+   About Kindiriguda : A small tribal village of 40 families in Koraput, Odisha. Kruti Coffee supports Kindiriguda tribal coffee farmers across the value chain to ensure specialty standards are maintained throughout.",https://kruticoffee.com/products/deomali-special,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Deomali_KC_F_eac19e3f-5c09-42cc-b487-9f72bbb6d021.jpg?v=1779273938,Pour Over (V60):700.00,MEDIUM,,,
 Kruti Coffee,Kalinga Gold Drip Bags | Pack of 5,Rs. 350.00,INR,"100% ARABICA | BLEND OF KORAPUT COFFEE       
   PROCESS:    WASHED      
   CUPPING NOTES:     HAZELNUT, ORANGE PEEL &amp; DARK CHOCOLATE   
@@ -70,9 +55,7 @@ Kruti Coffee,Kalinga Gold Drip Bags | Pack of 5,Rs. 350.00,INR,"100% ARABICA | B
  These drip bags have been specially designed to make brewing easy for you at home or as you travel. Please refer packaging for brewing instruction. 
  The coffee in this packet is from two farms under our fold in Koraput. Both the coffees have been carefully roasted and blended in the right proportion to get a magical brew.  
   About Kalinga Gold:  
- This signature blend of our's is a tribute to the rich culture, civilization and history of Kalinga, the beautiful state of Odisha. This blend has been developed by combining only the AA Washed Green beans from Kindiriguda and another farm under our panel in Koraput.
-[Meta Description]: Kalinga Gold Drip Bag (Box Of 5) Premium Convenience With Kalinga Gold Drip Bags. Enjoy Specialty Coffee Anywhere—Shop Now!
-",https://kruticoffee.com/products/kalinga-gold-drip-bags-pack-of-5,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0505_8.jpg?v=1777974981,:350.00,
+ This signature blend of our's is a tribute to the rich culture, civilization and history of Kalinga, the beautiful state of Odisha. This blend has been developed by combining only the AA Washed Green beans from Kindiriguda and another farm under our panel in Koraput.",https://kruticoffee.com/products/kalinga-gold-drip-bags-pack-of-5,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Kalinga_Gold_Drip_Bag_KC_A.jpg?v=1779268946,:350.00,MEDIUM DARK,,,
 Kruti Coffee,Kalinga Gold | Signature Blend | 250 G,Rs. 900.00,INR,"100% ARABICA | BLEND OF COFFEE     FROM KORAPUT   
   PROCESS:    WASHED      
   CUPPING NOTES:    HAZELNUT, ORANGE PEEL &amp; DARK CHOCOLATE   
@@ -82,9 +65,7 @@ Kruti Coffee,Kalinga Gold | Signature Blend | 250 G,Rs. 900.00,INR,"100% ARABICA
  Please select the grind preference based on the equipment you will be using to brew your coffee. We will grind as per your preference, before shipping the coffee to you (with best compliments from us). 
  The coffee in this packet is a blend of AA washed coffee from two farms under our fold in Koraput. Both the coffees have been carefully roasted and blended in the right proportion to get a magical brew.  
   About Kalinga Gold:  
- Kalinga Gold is the most premium blend developed by Kruti Coffee ever. This blend has been developed by combining only the AA Washed Green beans from Kindiriguda and another farm under our panel in Koraput.  This signature blend of ours is a tribute to the rich culture, civilization and history of Kalinga, the beautiful state of Odisha.
-[Meta Description]: Kalinga Gold 250G Discover Our Signature Medium Dark Roast Koraput Blend. A Coffee Lover'S Delight—Taste The Magic Today!
-",https://kruticoffee.com/products/kruti-coffee-kalinga-gold-100-arabica-coffee-beans-medium-dark-roast-250-gm,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/KG-1.jpg?v=1778048044,Pour Over (V60):900.00,
+ Kalinga Gold is the most premium blend developed by Kruti Coffee ever. This blend has been developed by combining only the AA Washed Green beans from Kindiriguda and another farm under our panel in Koraput.  This signature blend of ours is a tribute to the rich culture, civilization and history of Kalinga, the beautiful state of Odisha.",https://kruticoffee.com/products/kruti-coffee-kalinga-gold-100-arabica-coffee-beans-medium-dark-roast-250-gm,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/KG-3F.jpg?v=1779272888,Pour Over (V60):900.00,MEDIUM DARK,,,
 Kruti Coffee,Kindiriguda Naturals Drip Bags | Pack of 5,Rs. 350.00,INR,"100% ARABICA | SINGLE ORIGIN       
   PROCESS:   NATURAL       
   CUPPING NOTES:   
@@ -96,8 +77,7 @@ Kruti Coffee,Kindiriguda Naturals Drip Bags | Pack of 5,Rs. 350.00,INR,"100% ARA
   QUANTITY:   5 DRIP BAGS (EACH 12 GRAM)    
  These drip bags have been specially designed to make brewing easy for you at home or as you travel. Please refer packaging for brewing instruction. 
  This specialty naturals coffee from Kindiriguda- “ Kindiriguda Naturals ” has been roasted medium for those who like the nuanced taste notes characteristic of the coffee from Kindiriguda in Koraput.  
-   About Kindiriguda : A small tribal village of 40 families in Koraput, Odisha. Kruti Coffee supports Kindiriguda tribal coffee farmers   across the value chain to ensure specialty standards are maintained throughout. Kindiriguda Naturals was awarded India's No1 Arabica Naturals at Fine Cup Award during 5th World Coffee Conference
-[Meta Description]: Kindriguda Naturals Drip Bag (Box Of 5) Brew Specialty Coffee Effortlessly With Our Convenient Drip Bags. Taste The Difference—Order Now!",https://kruticoffee.com/products/kindiriguda-naturals-drip-bags-pack-of-5-copy,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0505_16.jpg?v=1777975537,:350.00,
+   About Kindiriguda : A small tribal village of 40 families in Koraput, Odisha. Kruti Coffee supports Kindiriguda tribal coffee farmers   across the value chain to ensure specialty standards are maintained throughout. Kindiriguda Naturals was awarded India's No1 Arabica Naturals at Fine Cup Award during 5th World Coffee Conference",https://kruticoffee.com/products/kindiriguda-naturals-drip-bags-pack-of-5-copy,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Kindiriguda_Drip_Bag_KC_F.jpg?v=1779270160,:350.00,MEDIUM,,,
 Kruti Coffee,Kindiriguda Naturals | Single Origin | 250 G,Rs. 950.00,INR,"100% Arabica | Single Origin   
   Process : Naturals 
   Cupping Notes:  Red Apple, Plum, Prune, Roasted Nuts With A Touch Of Almonds 
@@ -105,9 +85,7 @@ Kruti Coffee,Kindiriguda Naturals | Single Origin | 250 G,Rs. 950.00,INR,"100% A
   Altitude:  2854-2952 Ft Msl 
   Origin:  Kindiriguda, Koraput 
   Usp:  Forest Grown, Shade Grown, Tribal Grown 
-  Quantity:  250 Grams
-[Meta Description]: Kindriguda Naturals 250G Experience The Rich Flavors Of Premium Koraput Naturals Specialty Coffee. Elevate Your Coffee Game—Order Now!
-",https://kruticoffee.com/products/kindiriguda-naturals,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0505_7.jpg?v=1777972722,Pour Over (V60):950.00,
+  Quantity:  250 Grams",https://kruticoffee.com/products/kindiriguda-naturals,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/KGC_F.jpg?v=1779272711,Pour Over (V60):950.00,Medium,"Kindiriguda, Koraput",,
 Kruti Coffee,Koraput Arabica Blend Drip Bags | Pack Of 5,Rs. 350.00,INR,"Kruti Coffee - Koraput Arabica Blend Drip Bags | Medium Roast - Pack of 5   
   100% ARABICA | BLEND OF COFFEE FROM KORAPUT  
   PROCESS:    WASHED     
@@ -120,8 +98,7 @@ Kruti Coffee,Koraput Arabica Blend Drip Bags | Pack Of 5,Rs. 350.00,INR,"Kruti C
    About Koraput Arabica Blend  :    
   The coffee in these drip bags is from two farms under our fold in Koraput.  Both the coffees have been carefully roasted and blended in the right proportion to get a magical brew.   
   About Kruti Coffee:  
-  Kruti Coffee is one of India's fastest growing specialty coffee entity and cafe chain. Specialty coffee standards are followed across the value chain. Kruti Coffee started it's specialty coffee journey by transforming farm management practices of Kindiriguda tribal coffee farms in the Eastern Indian State of Odisha. Kruti Coffee has instituted strict specialty standards in processing, roasting and brewing. Currently Kruti Coffee roasts it's entire coffee inventory by following standards set by SCA
-[Meta Description]: Kruti Coffee - Koraput Arabica Blend Drip Bags | Medium Roast - Pack of 5100% ARABICA | BLEND OF COFFEE FROM KORAPUTPROCESS: WASHED  CUPPING NOTES: ROASTED ALMONDS AND CHOCOLATEROAST: MEDIUM   ALTITUDE:  2854-2952 FT MSLORIGIN: KORAPUT, ODISHA, INDIAQUANTITY: 5 DRIP BAGS (EACH 12 GRAM)These drip bags have been specially designed to make brewing easy for you at home or as you travel. Please refer packaging for brewing instruction.About Koraput Arabica Blend:  The coffee in these drip bags is from two farms under our fold in Koraput.  Both the coffees have been carefully roasted and blended in the right proportion to get a magical brew. About Kruti Coffee:Kruti Coffee is one of India's fastest growing specialty coffee entity and cafe chain. Specialty coffee standards are followed across the value chain. Kruti Coffee started it's specialty coffee journey by transforming farm management practices of Kindiriguda tribal coffee farms in the Eastern Indian State of Odisha. Kruti Coffee has instituted strict specialty standards in processing, roasting and brewing. Currently Kruti Coffee roasts it's entire coffee inventory by following standards set by SCA  Kruti Coffee",https://kruticoffee.com/products/kruti-coffee-koraput-arabica-blend-drip-bag-medium-roast-pack-of-5,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0506_6.jpg?v=1778066465,:350.00,
+  Kruti Coffee is one of India's fastest growing specialty coffee entity and cafe chain. Specialty coffee standards are followed across the value chain. Kruti Coffee started it's specialty coffee journey by transforming farm management practices of Kindiriguda tribal coffee farms in the Eastern Indian State of Odisha. Kruti Coffee has instituted strict specialty standards in processing, roasting and brewing. Currently Kruti Coffee roasts it's entire coffee inventory by following standards set by SCA",https://kruticoffee.com/products/kruti-coffee-koraput-arabica-blend-drip-bag-medium-roast-pack-of-5,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Koraput_Arabica_Drip_Bag_KC_F.jpg?v=1779270513,:350.00,Pack of 5 100% ARABICA | BLEND OF COFFEE FROM KORAPUT,,,
 Kruti Coffee,Koraput Arabica Blend | Signature Blend | 250 G,Rs. 700.00,INR,"100% ARABICA | BLEND OF COFFEE     FROM KORAPUT   
   PROCESS:    WASHED     
   CUPPING NOTES:    ROASTED ALMONDS AND CHOCOLATE   
@@ -132,9 +109,60 @@ Kruti Coffee,Koraput Arabica Blend | Signature Blend | 250 G,Rs. 700.00,INR,"100
  Please select the grind preference based on the equipment you will be using to brew your coffee. We will grind as per your preference, before shipping the coffee to you (with best compliments from us). 
  The coffee in this packet is a blend of washed coffee from two farms under our fold in Koraput. Both the coffees have been carefully roasted and blended in the right proportion to get a magical brew.  
   About Koraput Arabica Blend:  
- Koraput Arabica is a blend developed by Kruti Coffee that combines washed coffee from Kindiriguda and another farm under our panel in Koraput.  This signature blend of ours is a tribute to the region Koraput that produces some amazing coffees.
-[Meta Description]: Koraput Arabica Blend 250G Enjoy A Smooth Medium Roast With Our Koraput Arabica Blend. Perfect For Any Coffee Occasion—Order Yours Now!
-",https://kruticoffee.com/products/koraput-arabica-blend-signature-blend-250-g,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0504.jpg?v=1777877747,Pour Over (V60):700.00,
+ Koraput Arabica is a blend developed by Kruti Coffee that combines washed coffee from Kindiriguda and another farm under our panel in Koraput.  This signature blend of ours is a tribute to the region Koraput that produces some amazing coffees.",https://kruticoffee.com/products/koraput-arabica-blend-signature-blend-250-g,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Korapur_Arabica_KC_F.jpg?v=1779273491,Pour Over (V60):700.00,MEDIUM,,,
+Kruti Coffee,Koraput Light Drip Bags | Pack of 5,Rs. 350.00,INR,"100% Arabica | Single Origin  
+  Process   :  Washed  
+   Cupping Notes :   Gooseberry, Honey, Nutmeg  
+  Bright tart fruit, rounded honey sweetness, finishing with a warm spice complexity.  
+  Roast:   Light  
+  Altitude:     2854-2952 Ft Msl  
+  Origin:   Koraput, Odisha  
+  Usp:     Forest Grown, Shade Grown  
+  Quantity:   5 Drip Bags (Each 12 Grams)  
+  Description:  
+  Primary Flavour Categories (Flavour Wheel Level 1)  
+ 
+ 
+  Fruity  
+ 
+ 
+  Sweet  
+ 
+ 
+  Spices  
+ 
+ 
+  Secondary Categories (Level 2)  
+ 
+ 
+  Berry / Tart Fruit  
+ 
+ 
+  Brown Sugar / Honey Sweetness  
+ 
+ 
+  Warm Spice  
+ 
+ 
+  Specific Tasting Notes (Level 3)  
+ 
+ 
+  Gooseberry – bright, tart fruit acidity with a crisp, refreshing character  
+ 
+ 
+  Honey – natural sweetness with smooth, floral sugar notes and a rounded mouthfeel  
+ 
+ 
+  Nutmeg – gentle warm spice adding depth and aromatic complexity to the finish  
+ 
+ 
+  Aroma   :  honey sweetness with subtle warm spice  
+  Acidity   :  bright, gooseberry-like tartness  
+  Flavour   :  honeyed sweetness layered with fresh gooseberry  
+  Finish   :  delicate nutmeg spice with lingering honey  
+  Summary Expression:   Bright gooseberry acidity balanced by honeyed sweetness, finishing with a delicate hint of nutmeg spice.  
+ These drip bags have been specially designed to make brewing easy for you at home or as you travel. Please refer to the packaging for brewing instruction. 
+ This specialty naturals coffee from Koraput- “ Koraput Light ” has been roasted Light for those who like the nuanced taste notes characteristic of the coffee from Koraput.",https://kruticoffee.com/products/koraput-light-drip-bags-pack-of-5,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/KoraputLightdripbag.jpg?v=1779267983,:350.00,Light,"Koraput, Odisha",,
 Kruti Coffee,Koraput Light | Single Origin | 100 G,Rs. 400.00,INR,"100% Arabica | Single Origin  
   Process   :  Washed  
    Cupping Notes :   Gooseberry, Honey, Nutmeg  
@@ -185,16 +213,13 @@ Kruti Coffee,Koraput Light | Single Origin | 100 G,Rs. 400.00,INR,"100% Arabica 
   Acidity   :  bright, gooseberry-like tartness  
   Flavor   :  honeyed sweetness layered with fresh gooseberry  
   Finish   :  delicate nutmeg spice with lingering honey  
-  Summary Expression:   Bright gooseberry acidity balanced by honeyed sweetness, finishing with a delicate hint of nutmeg spice.
-[Meta Description]: Koraput Light 100G Experience The Rich Flavors Of Premium Koraput Naturals Specialty Coffee. Elevate Your Coffee Game—Order Now!
-",https://kruticoffee.com/products/koraput-light,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli-image_15.png?v=1773649153,Pour Over (V60):400.00,
+  Summary Expression:   Bright gooseberry acidity balanced by honeyed sweetness, finishing with a delicate hint of nutmeg spice.",https://kruticoffee.com/products/koraput-light,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Koraput_light_tin_F.jpg?v=1779274790,Pour Over (V60):400.00,Light,"Koraput, Odisha",,
 Kruti Coffee,"Kruti Coffee - Premium South Indian Filter Coffee Blend, Dark Roast, 250G",Rs. 400.00,INR,"PREMIUM SOUTH INDIAN FILTER COFFEE   
   ROAST:  DARK       ORIGIN:    INDIA    
   INGREDIENTS: ARABICA COFFEE + ROBUSTA COFFEE + CHICORY   
       QUANTITY:   250G     
  Our roasting team has put together months of roasting trials, combination of beans and market research to bring this magical blend of arabica coffee, robusta coffee and chicory combined in our signature recipe  into a Premium South Indian Filter Coffee with magical aroma and taste. To be brewed in traditional South Indian Filter Coffee style, our packets come with the coffee ground to the perfect size specified for South Indian filters. 
-   About Kruti Coffee :  Kruti Coffee is one of India's fastest growing specialty coffee entity and cafe chain. Specialty coffee standards are followed across the value chain. Kruti Coffee started it's specialty coffee journey by transforming farm management practices of Kindiriguda tribal coffee farms in the Eastern Indian State of Odisha. Kruti Coffee has instituted strict specialty standards in processing, roasting and brewing. Currently Kruti Coffee roasts it's entire coffee inventory by following standards set by SCA
-[Meta Description]:  PREMIUM SOUTH INDIAN FILTER COFFEEROAST: DARK   ORIGIN: INDIAINGREDIENTS: ARABICA COFFEE + ROBUSTA COFFEE + CHICORY QUANTITY: 250G Our roasting team has put together months of roasting trials, combination of beans and market research to bring this magical blend of arabica coffee, robusta coffee and chicory combined in our signature recipe  into a Premium South Indian Filter Coffee with magical aroma and taste. To be brewed in traditional South Indian Filter Coffee style, our packets come with the coffee ground to the perfect size specified for South Indian filters.About Kruti Coffee: Kruti Coffee is one of India's fastest growing specialty coffee entity and cafe chain. Specialty coffee standards are followed across the value chain. Kruti Coffee started it's specialty coffee journey by transforming farm management practices of Kindiriguda tribal coffee farms in the Eastern Indian State of Odisha. Kruti Coffee has instituted strict specialty standards in processing, roasting and brewing. Currently Kruti Coffee roasts it's entire coffee inventory by following standards set by SCA Kruti Coffee",https://kruticoffee.com/products/kruti-coffee-premium-south-indian-filter-coffee-blend-dark-roast-250g,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0507_2.jpg?v=1778136603,:400.00,
+   About Kruti Coffee :  Kruti Coffee is one of India's fastest growing specialty coffee entity and cafe chain. Specialty coffee standards are followed across the value chain. Kruti Coffee started it's specialty coffee journey by transforming farm management practices of Kindiriguda tribal coffee farms in the Eastern Indian State of Odisha. Kruti Coffee has instituted strict specialty standards in processing, roasting and brewing. Currently Kruti Coffee roasts it's entire coffee inventory by following standards set by SCA",https://kruticoffee.com/products/kruti-coffee-premium-south-indian-filter-coffee-blend-dark-roast-250g,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/South_Indian_KC_F.jpg?v=1779273624,:400.00,DARK,,,
 Kruti Coffee,Paraja Strong Drip Bags | Pack Of 5,Rs. 350.00,INR,"100% ARABICA | SINGLE ORIGIN       
   PROCESS:    WASHED      
   CUPPING NOTES:     CHERRIES &amp; CHOCOLATE    
@@ -205,9 +230,7 @@ Kruti Coffee,Paraja Strong Drip Bags | Pack Of 5,Rs. 350.00,INR,"100% ARABICA | 
   QUANTITY:   5 DRIP BAGS (EACH 12 GRAM)    
  These drip bags have been specially designed to make brewing easy for you at home or as you travel. Please refer packaging for brewing instruction. 
    This washed coffee from Kindiriguda- “  Paraja Strong  ” has been roasted medium dark for those who like their coffee strong. This roast profile is our tribute to the legacy and culture of Paraja tribe of Koraput, majority of Kindiriguda farmers belong to the Paraja tribe  This coffee goes nicely as black coffee as well as milk based coffee.  
-   About Kindiriguda : A small tribal village of 40 families in Koraput, Odisha. Kruti Coffee supports Kindiriguda tribal coffee farmers   across the value chain to ensure specialty standards are maintained throughout.
-[Meta Description]: Paraja Strong Drip Bag (Box Of 5) Bold Coffee Flavor On The Go! Try Our Paraja Strong Drip Bags For An Energizing Experience—Order Today!
-",https://kruticoffee.com/products/paraja-strong-drip-bag-medium-dark-roast,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0505_24.jpg?v=1777977681,:350.00,
+   About Kindiriguda : A small tribal village of 40 families in Koraput, Odisha. Kruti Coffee supports Kindiriguda tribal coffee farmers   across the value chain to ensure specialty standards are maintained throughout.",https://kruticoffee.com/products/paraja-strong-drip-bag-medium-dark-roast,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Paraja_Drip_Bag_KC_F.jpg?v=1779270729,:350.00,MEDIUM DARK,,,
 Kruti Coffee,Paraja Strong | Single Origin | 250g,Rs. 700.00,INR,"100% ARABICA | SINGLE ORIGIN      
    PROCESS :   WASHED     
    CUPPING NOTES:    CHERRIES &amp; CHOCOLATE  
@@ -218,18 +241,4 @@ Kruti Coffee,Paraja Strong | Single Origin | 250g,Rs. 700.00,INR,"100% ARABICA |
    QUANTITY:    250 GRAMS  
  This washed coffee from Kindiriguda- “ Paraja Strong ” has been roasted medium dark for those who like their coffee strong. This roast profile is our tribute to the legacy and culture of the Paraja tribe of Koraput (a majority of Kindiriguda farmers belong to the Paraja tribe). This coffee goes nicely as black coffee as well as milk based coffee. 
  Please select the grind preference based on the equipment you will be using to brew your coffee. We will grind as per your preference, before shipping the coffee to you (with best compliments from us). 
-   About Kindiriguda : A small tribal village of 40 families in Koraput, Odisha. Kruti Coffee supports Kindiriguda tribal coffee farmers across the value chain to ensure specialty standards are maintained throughout.
-[Meta Description]: Paraja Strong 250G Indulge In Bold Dark Roast Koraput Coffee. Perfect For Those Who Love Strong Flavors—Shop Now For A Robust Experience!
-",https://kruticoffee.com/products/paraja-strong,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0504_9_bb326ca2-9833-45d3-8f32-28b06cc64462.jpg?v=1777885616,Pour Over (V60):700.00,
-Kruti Coffee,Premium Espresso Blend | Premium Coffee | 1 KG,Rs. 2000.00,INR,"PREMIUM ESPRESSO BLEND OF  COFFEE  BEANS FROM INDIA    
-  ROAST:    DARK         
-  ORIGIN:    INDIA     
-  QUANTITY:   1 KG    
- This is Kruti Coffee's premium espresso blend, roasted especially for the purpose of espresso. You may order this as whole bean or espresso grinds.  We will be happy to grind the beans before shipping the coffee to you if you prefer so (with best compliments from us).  
-  Our premium beans have been combined to right mix and perfect roast profile to ensure rich crema and aroma. We have priced it competitively so that it becomes your preferred choice for regular domestic and commercial use in cafes for espresso based drinks.
-[Meta Description]: Premium Espresso Blend 1Kg Indulge In Our Dark Roast Espresso Blend For A Rich, Bold Flavor. Perfect For Espresso Lovers—Order Today!
-",https://kruticoffee.com/products/kruti-coffee-premium-espresso-blend-1premium-quality-rich-flavour-profile-medium-dark-roast-1-kg,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/pomelli_photoshoot_image_1_1_0507_6.jpg?v=1778134695,:2000.00,
-Kruti Coffee,Ragi & Jaggery Cookies,Rs. 195.00,INR,"Kruti Ragi &amp; Jaggery cookies are rich in fiber and iron and crispy.  
- Packed perfectly to ensure longevity. 
- Make it your snack of choice at home and while travelling.
-[Meta Description]: Kruti Ragi & Jaggery cookies are rich in fiber and iron and crispy. Packed perfectly to ensure longevity.Make it your snack of choice at home and while travelling. Kruti Coffee",https://kruticoffee.com/products/kruti-ragi-jaggery-cookies,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Render_Mockup_4000_4000_2025-10-28.png?v=1761631338,:195.00,
+   About Kindiriguda : A small tribal village of 40 families in Koraput, Odisha. Kruti Coffee supports Kindiriguda tribal coffee farmers across the value chain to ensure specialty standards are maintained throughout.",https://kruticoffee.com/products/paraja-strong,https://cdn.shopify.com/s/files/1/0631/7427/9381/files/Paraja_Strong_KC_F.jpg?v=1779273856,Pour Over (V60):700.00,MEDIUM DARK,,,

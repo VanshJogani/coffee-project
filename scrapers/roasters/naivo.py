@@ -163,6 +163,8 @@ class NaivoScraper:
 
         # Extract structured attributes (roast, origin, tasting notes)
         roast = ""
+        origin = ""
+        tasting_notes = ""
         full_text = soup.get_text(" ", strip=True)
 
         # Check attribute table
@@ -175,12 +177,24 @@ class NaivoScraper:
             val = td.get_text(strip=True)
             if "roast" in key:
                 roast = val
+            elif not origin and ("origin" in key or "region" in key or "location" in key or "estate" in key or "farm" in key):
+                origin = val
+            elif not tasting_notes and ("tasting" in key or "flavour" in key or "flavor" in key or "cupper" in key or "notes" in key):
+                tasting_notes = val
 
         # Fallback: regex in full text
         if not roast:
             m = re.search(r"Roast[:\s—\-]{1,3}([^,•\n\r]{3,40})", full_text, re.IGNORECASE)
             if m:
                 roast = m.group(1).strip()
+        if not origin:
+            m = re.search(r"(?:Origin|Region|Location)\s*[:\-–—]\s*([^,•\n\r]{3,60})", full_text, re.IGNORECASE)
+            if m:
+                origin = m.group(1).strip()
+        if not tasting_notes:
+            m = re.search(r"(?:Tasting\s+Notes?|Flavou?r\s+Notes?|Cupper['']?s\s+Notes?)\s*[:\-–—]\s*([^\n\r]{5,150})", full_text, re.IGNORECASE)
+            if m:
+                tasting_notes = m.group(1).strip()
 
         # Image
         img_url = ""
@@ -227,6 +241,8 @@ class NaivoScraper:
             image_url=img_url,
             variant_prices=variant_prices,
             roast_type=roast,
+            origin=origin,
+            tasting_notes=tasting_notes,
         )
 
     @staticmethod

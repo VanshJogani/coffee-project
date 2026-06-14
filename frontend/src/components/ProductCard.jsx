@@ -41,24 +41,26 @@ function ProductCard({ product, onClick }) {
         <div className="text-[10px] uppercase tracking-widest text-luxury-gold font-bold">
           {roaster}
         </div>
-        <div className="flex items-start justify-between gap-2">
-          <div className="font-semibold text-sm line-clamp-2 text-luxury-umber leading-snug">{name}</div>
-          {roastType && (
-            <div className="text-[11px] text-luxury-umber/60 flex items-center gap-1 shrink-0 mt-0.5">
-              <span className="w-1 h-1 rounded-full bg-luxury-clay" />
-              <span className="font-semibold">Roast:</span> {roastType}
-            </div>
-          )}
-        </div>
+        <div className="font-semibold text-sm line-clamp-2 text-luxury-umber leading-snug">{name}</div>
 
-        {origin && (
-          <div className="flex justify-end">
-            <div className="text-[11px] text-luxury-umber/60 flex items-center gap-1">
-              <span className="w-1 h-1 rounded-full bg-luxury-clay" />
-              <span className="font-semibold">Origin:</span> {origin}
-            </div>
+        <div className="flex items-center justify-between">
+          <div className="text-[11px] text-luxury-umber/60 flex items-center gap-1">
+            {roastType && (
+              <>
+                <span className="w-1 h-1 rounded-full bg-luxury-clay" />
+                <span className="font-semibold">Roast:</span> {roastType}
+              </>
+            )}
           </div>
-        )}
+          <div className="text-[11px] text-luxury-umber/60 flex items-center gap-1">
+            {origin && (
+              <>
+                <span className="w-1 h-1 rounded-full bg-luxury-clay" />
+                <span className="font-semibold">Origin:</span> {origin}
+              </>
+            )}
+          </div>
+        </div>
 
         {tastingNotes && (
           <div className="mt-2 text-[11px] leading-relaxed text-luxury-umber/50 line-clamp-2 italic">

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import api from "../api/client";
 
-export function useFilters(selectedCategory) {
+export function useFilters(selectedCategory, { initialOrigins = [] } = {}) {
   const [options, setOptions] = useState({
     roasters: [], roastTypes: [], origins: [], processes: [],
     priceMin: 0, priceMax: 10000
@@ -10,7 +10,7 @@ export function useFilters(selectedCategory) {
 
   const [selectedRoasters, setSelectedRoasters] = useState([]);
   const [selectedRoastTypes, setSelectedRoastTypes] = useState([]);
-  const [selectedOrigins, setSelectedOrigins] = useState([]);
+  const [selectedOrigins, setSelectedOrigins] = useState(initialOrigins);
   const [selectedProcesses, setSelectedProcesses] = useState([]);
   const [selectedFlavours, setSelectedFlavours] = useState([]);
   const [priceRange, setPriceRange] = useState([0, 10000]);
@@ -73,6 +73,8 @@ export function useFilters(selectedCategory) {
     selectedRoasters, selectedRoastTypes, selectedOrigins,
     selectedProcesses, selectedFlavours, priceRange,
     setPriceRange,
+    setSelectedOrigins,
+    setSelectedFlavours,
     onToggleRoaster: toggle(setSelectedRoasters),
     onToggleRoastType: toggle(setSelectedRoastTypes),
     onToggleOrigin: toggle(setSelectedOrigins),

@@ -1,51 +1,69 @@
 import React, { useState } from "react";
+import { fetchProducts } from "../api/client";
 
-function CoffeeRandomizer({ allProducts, onSelectCoffee }) {
+// Roast options shown in the customize panel — kept static so the UI doesn't
+// depend on whatever page happens to be loaded.
+const ROAST_OPTIONS = ["Light Roast", "Medium Roast", "Medium-Dark Roast", "Dark Roast"];
+
+function CoffeeRandomizer({ onSelectCoffee }) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState(null); // null | "customize"
   const [selectedRoasts, setSelectedRoasts] = useState([]);
   const [tastingInput, setTastingInput] = useState("");
+  const [picking, setPicking] = useState(false);
 
-  const coffeeProducts = allProducts.filter(p => p.category === "Coffee");
+  // Fetch a freshly shuffled pool from the API (RANDOM() order each call).
+  // _bust is a timestamp param that prevents the browser from returning a cached response.
+  const fetchRandomPool = async (roasts, flavourKeywords) => {
+    const params = {
+      category: "Coffee",
+      sort: "discover",
+      limit: 200,
+      page: 1,
+      _bust: Date.now(),
+      ...(roasts.length === 1 ? { roastType: roasts[0] } : {}),
+      ...(flavourKeywords.length ? { flavour: flavourKeywords.join(",") } : {}),
+    };
+    const data = await fetchProducts(params);
+    return data.data || [];
+  };
 
-  const roastOptions = Array.from(
-    new Set(coffeeProducts.map(p => p.roastType).filter(Boolean))
-  ).sort();
+  const pickRandom = (pool) => pool[Math.floor(Math.random() * pool.length)];
 
-  const getFilteredPool = () => {
-    let pool = coffeeProducts;
-    if (selectedRoasts.length) {
-      pool = pool.filter(p => selectedRoasts.includes(p.roastType));
+  const handleFullyRandom = async () => {
+    setPicking(true);
+    try {
+      const pool = await fetchRandomPool([], []);
+      if (pool.length) onSelectCoffee(pickRandom(pool));
+    } finally {
+      setPicking(false);
+      setOpen(false);
+      resetState();
     }
-    if (tastingInput.trim()) {
-      const keywords = tastingInput.toLowerCase().split(",").map(s => s.trim()).filter(Boolean);
-      pool = pool.filter(p => {
-        const notes = `${p.tastingNotes || ""} ${p.description || ""}`.toLowerCase();
-        return keywords.some(kw => notes.includes(kw));
-      });
+  };
+
+  const handleCustomRandom = async () => {
+    const keywords = tastingInput.toLowerCase().split(",").map(s => s.trim()).filter(Boolean);
+    setPicking(true);
+    try {
+      let pool = await fetchRandomPool(selectedRoasts, keywords);
+      // Client-side filter for multiple roast types (API only accepts one at a time)
+      if (selectedRoasts.length > 1) {
+        pool = pool.filter(p => selectedRoasts.includes(p.roastType));
+      }
+      // Client-side flavour filter when multiple keywords given
+      if (keywords.length) {
+        pool = pool.filter(p => {
+          const text = `${p.tastingNotes || ""} ${p.description || ""}`.toLowerCase();
+          return keywords.some(kw => text.includes(kw));
+        });
+      }
+      if (pool.length) onSelectCoffee(pickRandom(pool));
+    } finally {
+      setPicking(false);
+      setOpen(false);
+      resetState();
     }
-    return pool;
-  };
-
-  const pickRandom = (pool) => {
-    if (!pool || !pool.length) return null;
-    return pool[Math.floor(Math.random() * pool.length)];
-  };
-
-  const handleFullyRandom = () => {
-    const coffee = pickRandom(coffeeProducts);
-    if (coffee) onSelectCoffee(coffee);
-    setOpen(false);
-    resetState();
-  };
-
-  const handleCustomRandom = () => {
-    const pool = getFilteredPool();
-    if (!pool.length) return;
-    const coffee = pickRandom(pool);
-    if (coffee) onSelectCoffee(coffee);
-    setOpen(false);
-    resetState();
   };
 
   const resetState = () => {
@@ -59,8 +77,6 @@ function CoffeeRandomizer({ allProducts, onSelectCoffee }) {
       prev.includes(r) ? prev.filter(x => x !== r) : [...prev, r]
     );
   };
-
-  if (!coffeeProducts.length) return null;
 
   return (
     <>
@@ -107,17 +123,25 @@ function CoffeeRandomizer({ allProducts, onSelectCoffee }) {
                 <button
                   type="button"
                   onClick={handleFullyRandom}
-                  className="w-full py-4 px-5 bg-luxury-umber text-white rounded-xl font-bold text-sm hover:bg-luxury-gold transition-colors flex items-center justify-center gap-2"
+                  disabled={picking}
+                  className="w-full py-4 px-5 bg-luxury-umber text-white rounded-xl font-bold text-sm hover:bg-luxury-gold transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
+                  {picking ? (
+                    <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  )}
                   Surprise Me!
                 </button>
                 <button
                   type="button"
                   onClick={() => setMode("customize")}
-                  className="w-full py-4 px-5 bg-white border-2 border-luxury-clay/20 text-luxury-umber rounded-xl font-bold text-sm hover:border-luxury-gold transition-colors flex items-center justify-center gap-2"
+                  disabled={picking}
+                  className="w-full py-4 px-5 bg-white border-2 border-luxury-clay/20 text-luxury-umber rounded-xl font-bold text-sm hover:border-luxury-gold transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
@@ -135,7 +159,7 @@ function CoffeeRandomizer({ allProducts, onSelectCoffee }) {
                     Roast Level (optional)
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {roastOptions.map(r => (
+                    {ROAST_OPTIONS.map(r => (
                       <button
                         key={r}
                         type="button"
@@ -167,28 +191,28 @@ function CoffeeRandomizer({ allProducts, onSelectCoffee }) {
                   <p className="text-[10px] text-luxury-clay mt-1">Comma-separated flavors you like</p>
                 </div>
 
-                {/* Result count + Action */}
-                <div className="pt-2 space-y-3">
-                  <p className="text-xs text-center text-luxury-clay">
-                    {getFilteredPool().length} coffees match your preferences
-                  </p>
-                  <div className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setMode(null)}
-                      className="flex-1 py-3 border border-luxury-clay/20 text-luxury-umber rounded-xl text-xs font-bold hover:bg-luxury-stone/20 transition-colors"
-                    >
-                      Back
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCustomRandom}
-                      disabled={getFilteredPool().length === 0}
-                      className="flex-1 py-3 bg-luxury-umber text-white rounded-xl text-xs font-bold hover:bg-luxury-gold transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      Find My Coffee
-                    </button>
-                  </div>
+                <div className="pt-2 flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setMode(null)}
+                    disabled={picking}
+                    className="flex-1 py-3 border border-luxury-clay/20 text-luxury-umber rounded-xl text-xs font-bold hover:bg-luxury-stone/20 transition-colors disabled:opacity-60"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCustomRandom}
+                    disabled={picking}
+                    className="flex-1 py-3 bg-luxury-umber text-white rounded-xl text-xs font-bold hover:bg-luxury-gold transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                  >
+                    {picking && (
+                      <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    )}
+                    Find My Coffee
+                  </button>
                 </div>
               </div>
             )}

@@ -1,8 +1,31 @@
 import React from "react";
 
 const FLAVOUR_CHIPS = [
-  "Chocolate", "Caramel", "Fruity", "Citrus", "Floral",
-  "Nutty", "Berry", "Honey", "Spice", "Vanilla",
+  // Floral
+  "Honeysuckle", "Saffron", "Greeny", "Rose", "Jasmine", "Chamomile", "Black Tea",
+  // Fruity - Berry
+  "Strawberry", "Raspberry", "Mulberry", "Blueberry", "Raisin", "Plum", "Dates", "Fig",
+  // Fruity - Dried Fruit
+  "Apricot", "Coconut", "Cherry", "Pomegranate", "Mango", "Pineapple", "Passionfruit",
+  // Fruity - Other Fruit
+  "Grape", "Apple", "Papaya", "Muskmelon", "Peach", "Pear",
+  // Fruity - Citrus
+  "Orange", "Lemon", "Lime",
+  // Sour / Fermented
+  "Wine", "Whiskey", "Fermented", "Overripe",
+  // Green / Vegetative
+  "Olive Oil", "Bay Leaf", "Coriander", "Tulsi",
+  // Roasted
+  "Smokey", "Grain", "Malt", "Pipe Tobacco", "Cereal",
+  // Spices
+  "Pepper", "Anise", "Fennel", "Cardamom", "Nutmeg", "Cinnamon", "Clove",
+  // Nutty / Cocoa
+  "Almond", "Hazelnut", "Cashewnut", "Peanut", "Walnut",
+  "Chocolate", "Dark Chocolate", "Cocoa Nibs", "Honey", "Caramelised",
+  // Sweet
+  "Jaggery", "Molasses", "Sugarcane", "Vanilla",
+  // Others
+  "Woody", "Earthy",
 ];
 
 function GroupedProcesses({ label, groupedOptions, selected, onToggle, isCollapsible, isExpanded, onToggleExpand }) {
@@ -225,25 +248,84 @@ function MultiCheckbox({ label, options, selected, onToggle, searchable, isColla
 }
 
 function FlavourChips({ selected, onToggle }) {
+  const [query, setQuery] = React.useState("");
+
+  const filteredChips = React.useMemo(() => {
+    if (!query.trim()) return FLAVOUR_CHIPS;
+    return FLAVOUR_CHIPS.filter(c => c.toLowerCase().includes(query.toLowerCase()));
+  }, [query]);
+
+  // Separate selected and unselected
+  const selectedChips = filteredChips.filter(c => selected.includes(c));
+  const unselectedChips = filteredChips.filter(c => !selected.includes(c));
+
   return (
     <div className="mb-8">
       <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-luxury-gold mb-3 px-1">
       </div>
-      <div className="flex flex-wrap gap-2">
-        {FLAVOUR_CHIPS.map((chip) => (
+
+      {/* Search input */}
+      <div className="relative mb-3">
+        <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-luxury-clay/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+        </svg>
+        <input
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder="Search tasting notes…"
+          className="w-full rounded-md border border-luxury-clay/40 bg-white pl-7 pr-3 py-1.5 text-[11px] text-luxury-umber placeholder-luxury-clay/50 focus:outline-none focus:border-luxury-gold"
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-luxury-clay/50 hover:text-luxury-gold text-sm"
+          >
+            ×
+          </button>
+        )}
+      </div>
+
+      {/* Selected chips shown first */}
+      {selectedChips.length > 0 && (
+        <div className="mb-2">
+          <div className="text-[9px] font-semibold uppercase tracking-[0.15em] text-luxury-umber/50 mb-1.5 px-1">
+            Selected ({selectedChips.length})
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {selectedChips.map((chip) => (
+              <button
+                key={chip}
+                type="button"
+                onClick={() => onToggle(chip)}
+                className="rounded-full border border-luxury-gold bg-luxury-gold/20 text-luxury-umber px-2.5 py-0.5 text-[11px] font-medium transition-all duration-200 shadow-sm flex items-center gap-1"
+              >
+                {chip}
+                <svg className="w-2.5 h-2.5 text-luxury-umber/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Unselected chips */}
+      <div className="flex flex-wrap gap-1.5">
+        {unselectedChips.map((chip) => (
           <button
             key={chip}
             type="button"
             onClick={() => onToggle(chip)}
-            className={`rounded-full border px-3 py-1 text-[11px] font-medium transition-all duration-300 ${
-              selected.includes(chip)
-                ? "border-luxury-gold bg-luxury-gold/20 text-luxury-umber shadow"
-                : "border-luxury-clay/40 bg-white text-luxury-umber/60 hover:border-luxury-gold hover:text-luxury-umber shadow-sm"
-            }`}
+            className="rounded-full border border-luxury-clay/40 bg-white text-luxury-umber/60 px-2.5 py-0.5 text-[11px] font-medium transition-all duration-300 hover:border-luxury-gold hover:text-luxury-umber shadow-sm"
           >
             {chip}
           </button>
         ))}
+        {query && !filteredChips.length && (
+          <p className="text-[11px] text-luxury-clay/50 px-1">No notes match "{query}"</p>
+        )}
       </div>
     </div>
   );
@@ -311,18 +393,19 @@ function FiltersPanel({
   onToggleProcess,
   onToggleFlavour,
   onPriceRangeChange,
-  onClear
+  onClear,
+  expandOrigin = false,
 }) {
   const roastLabel = selectedCategory === "Tea" ? "Tea Type" : "Roast Type";
   const originLabel = selectedCategory === "Tea" ? "Origin" : "Origin / Region";
 
-  // State for collapsible sections - all collapsed by default
+  // State for collapsible sections - all collapsed by default, origin expands if coming from atlas
   const [expandedSections, setExpandedSections] = React.useState({
     price: false,
     flavour: false,
     roaster: false,
     roastType: false,
-    origin: false,
+    origin: expandOrigin,
     process: false,
   });
 

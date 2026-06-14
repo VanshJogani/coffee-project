@@ -23,6 +23,9 @@ class Product:
                          # HTML scrapers that can't determine per-weight price store weights only:
                          # "250g; 500g"  (no colon = no price for that weight, cleaner uses base price)
     roast_type: str = field(default="")   # Optional, not all scrapers populate this
+    origin: str = field(default="")        # Geographic origin (e.g. "Chikmagalur", "Araku Valley")
+    tasting_notes: str = field(default="") # Flavour notes (e.g. "Chocolate, Caramel, Berry")
+    process: str = field(default="")       # Processing method (e.g. "Natural", "Washed", "Honey")
 
 
 def save_products_csv(products: list[Product], out_path: Path) -> None:

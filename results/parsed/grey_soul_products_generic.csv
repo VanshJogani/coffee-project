@@ -1,4 +1,4 @@
-roaster,name,price,currency,description,product_url,image_url,variant_prices,roast_type
+roaster,name,price,currency,description,product_url,image_url,variant_prices,roast_type,origin,tasting_notes,process
 Grey Soul,Pink Lemonade (Ultra-Light),Rs. 899.00,INR,"#5 SERIES - HIGH SCORING LOTS | Pink Lemonade  
  Lemonade like with  Sweet &amp; lively acidity. 
  
@@ -76,9 +76,84 @@ Grey Soul,Pink Lemonade (Ultra-Light),Rs. 899.00,INR,"#5 SERIES - HIGH SCORING L
  Rested Coffee = Better Coffee 
  Freshly roasted coffee continues to evolve. Harsh or roasty notes fade, giving way to sweetness, clarity, and complexity. 
  Our resting guide: 
- Minimum rest (Filter): 10 days after roast date Minimum rest (Espresso): Up to 3 weeks after roast date 
- Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.
-[Meta Description]: #5 SERIES - HIGH SCORING LOTS | Pink Lemonade Lemonade like with Sweet &amp; lively acidity. Suitable for all brew methods. Ideal as Filter. Starts shipping 5th May 2026. Serving as Pour-over at Bandra, Mumbai &amp; Pune, Koregoan Park Origin Tsiesema Village, Kohima, Nagaland Process Sun-Dried Anaerobic Naturals with ",https://greysoul.coffee/products/pink-lemonade-ultra-light-nagaland-coffee,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/pinklemonadeblack_bag_w_o_windoe.jpg?v=1777349154,200 GMS:899.00,
+ Minimum rest (Filter): 5 days after roast date Minimum rest (Espresso): Up to 9 weeks after roast date 
+ Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.",https://greysoul.coffee/products/pink-lemonade-ultra-light-nagaland-coffee,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/pinklemonadeblack_bag_w_o_windoe.jpg?v=1777349154,200 GMS:899.00,"Ultra-Light roast with elevated heat & restrained airflow, developed to 16%","Tsiesema Village, Kohima, Nagaland",,Sun-Dried Anaerobic Naturals with Raised Bed Drying.
+Grey Soul,Cane and Lime (Light-Med Roast),Rs. 799.00,INR,"#1 SERIES - FRUIT FORWARD LOTS | Cane &amp; Lime  
+ 
+   Dense &amp; Sugar-driven flavours in your final cup.  
+ 
+   Suitable for all brew methods.    
+ 
+ 
+ 
+  Origin  
+  Yelnoorkhan Estate, Pandaravalli Village, Mallenahalli  
+ 
+ 
+  Process  
+   High altitude washed arabica dried on raised beds.   
+ 
+ 
+  Varietal &amp; Altitude  
+ 
+   Chandragiri  grown at 5300 Feet   
+ 
+ 
+ 
+  Dry Aroma  
+   Dates &amp; Chickoo   
+ 
+ 
+  Pre Crust Aroma  
+   Cardamon, Green Grapes &amp; Dates   
+ 
+ 
+  Post Crust Aroma  
+   Chickoo, Milk Chocolate &amp; Raisins   
+ 
+ 
+  Based on Sensory Evaluation  
+ 
+   Sweet lime &amp; gooseberry brightness, layered over dense sugar-driven base of jaggery &amp; sugarcane   
+ 
+ 
+ 
+  Roast Profile  
+ 
+    Light-Medium Roast  with high air flow &amp; 14-15 % development.  
+ 
+ 
+ 
+  Characteristics  
+ 
+   Juicy mouthfeel with a medium body &amp; bright, clean acidity.   
+ 
+ 
+ 
+  Minimum resting period  
+   Filter 7 Days | Espresso 14 Days   
+ 
+ 
+  A song that pairs well  
+    
+ 
+ 
+ 
+   
+  About the region / estate :   
+ At a maximum elevation of 5300 feet above MSL, the coffees from the Yelnoorkhan Estate are in a class of their own. These high elevation coffees are much sought-after and have the rare distinction of having been sold under the Yelnoor Khan Mist brand name in North America in the early 2000s. 
+ Established in the early 1900s, this estate was taken over by Kelachandra Coffee in 2021. Located in the direct vicinity of the Mullayanagiri peak, it tells the story of the history and origins of coffee culture in India. Due to the terrain’s harsh demands, handpicked coffee continues to remain a uniquely Indian tradition, even as the rest of the world moves on to mechanization. The ethos of respect for the land and the crop directly translates into one of Kelachandra Coffee’s finest single-origin produce.  
+  Roasters thought :  
+ High elevation coffees tend to carry tighter cell structure and higher organic acid content. To manage this, we used  high airflow throughout the roast , allowing for cleaner heat transfer and avoiding any roast-induced heaviness that could mask the cup’s definition. 
+ The profile was taken to a  light–medium endpoint with ~14% development , giving just enough time to round off sharper acids while maintaining the coffee’s natural brightness and juiciness. 
+ Rather than extending development, we prioritised a  clean and efficient Maillard phase , ensuring that sweetness builds without muting the acidity. 
+ In the cup, this translates to a  structured citrus profile , where  sweet lime and gooseberry  define the front, supported by a dense,  sugarcane and jaggery-driven sweetness .   
+ 
+  Brew Approach:  
+ 18.5 GMS Med-Fine (Fellow Ode Gen 2.0, 3.9 Setting) 55 ML bloom 45 seconds  Swirl immediately after pour Then 80 ML Then At 1.30 again 80 ML Then again 95 ML to finish it off with gentle swirl in the end.  
+ Water at 94  °  Celsius (TDS not more than 140 PPM).    
+ For  more brightness (lime forward)  → go slightly coarser + reduce final pour agitation 
+ For  more sweetness (jaggery heavy)  → grind finer + extend brew closer to 2:50",https://greysoul.coffee/products/cane-lime-light-med-roast,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/cane_and_lime_shopify.jpg?v=1777633640,200 GMS:799.00,Light-Medium Roastwith high air flow & 14-15 % development.,"Yelnoorkhan Estate, Pandaravalli Village, Mallenahalli",,High altitude washed arabica dried on raised beds.
 Grey Soul,Shevaroys Washed (Light-Med Roast),Rs. 799.00,INR,"#1 SERIES - FRUIT FORWARD LOT | SHEVAROYS WASHED  
   Ripe tropical fruit notes of plums &amp; Green Grapes.  
    Suitable for all brew methods. Ideal as Filter.   
@@ -156,8 +231,7 @@ Grey Soul,Shevaroys Washed (Light-Med Roast),Rs. 799.00,INR,"#1 SERIES - FRUIT F
   Roast Time : 8.30 Minutes  
   Brew Approach:  
  18 GMS Med-Fine (Fellow Ode Gen 2.0, 3.8 Setting) 40 ML bloom 45 seconds  Swirl immediately after pour Then 80 ML Then At 1.30 again 80 ML Then again 80 ML to finish it off with gentle swirl in the end.  
- Water above 94  °  Celsius (TDS not more than 140 PPM).
-[Meta Description]: #1 SERIES - FRUIT FORWARD LOT | SHEVAROYS WASHED by grey soul coffee roasters Ripe tropical fruit notes of plums & Green Grapes. Suitable for all brew methods. Ideal as Filter. Serving as Pourover at Bandra, Mumbai & Koregaon Park, Pune Origin PKC Kudiraipanjan Estate, Shevaroys hills, Tamil Nadu Process Mechanically washed with fresh stream water and soaked again for 48 hours then dried for 18 days, hulled and polished. BRIX 24 Varietal & Altitude SLN 9 & Catimor grown at 1400 MSL Dry Aroma Berries & Plums Wet Aroma Plum, Figs & Grapes Based on Sensory Evaluation Ripe tropical fruit notes of plums & Green Grapes along with Pomegranates & cacao nibs finish. Roast Profile Light-med Roast with variable drum speed and airflow with total roast time of 9 minutes. Characteristics Clean crisp profile with bright Acidity & Med-heavy body. Minimum resting period Filter 5 Days | Espresso 21 Days A song that pairs well Roaster's thought : The Shevaroys Washed opens our 1 Series with clarity and structure. Built to highlight origin character, this lot from PKC Kudiraipanjan Estate in the Shevaroys Hills of Tamil Nadu showcases the expressive side of high grown washed Arabica. Grown at 1400 MSL with SLN 9 and Catimor varieties and harvested at 24.8 Brix, the cherries were mechanically washed using fresh stream water, soaked for 48 hours, and dried slowly over 18 days before hulling and polishing. The extended soak sharpens clarity while maintaining fruit integrity. Roasted light to medium with controlled airflow and a total roast time of 9 minutes, this profile is designed to preserve acidity and aromatic lift while building structure. In the cup, expect green kiwi, ripe grapes and raw honey, layered with plum and pomegranate brightness. A spearmint lift and cacao nib finish add dimension. The acidity is bright but refined, supported by a clean, crisp structure and a medium heavy body. Roast Profile: Sample Roast Machine : Bullet IBTS R1 Roast Machine : Probat VFD Development % : 14First Crack Temperature : Below 195° Celsius Roast Time : 8.30 Minutes Brew Approach: 18 GMS Med-Fine (Fellow Ode Gen 2.0, 3.8 Setting)40 ML bloom 45 seconds Swirl immediately after pourThen 80 MLThen At 1.30 again 80 MLThen again 80 ML to finish it off with gentle swirl in the end. Water above 94° Celsius (TDS not more than 140 PPM).",https://greysoul.coffee/products/shevaroys-washed-grey-soul-coffee,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/shevaroy_BAG.jpg?v=1772166311,200 GMS:799.00,
+ Water above 94  °  Celsius (TDS not more than 140 PPM).",https://greysoul.coffee/products/shevaroys-washed-grey-soul-coffee,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/shevaroy_BAG.jpg?v=1772166311,200 GMS:799.00,Light-med Roast with variable drum speed and airflow with total roast time of 9 minutes.,"PKC Kudiraipanjan Estate, Shevaroys hills, Tamil Nadu",,"Mechanically washed with fresh stream water and soaked again for 48 hours then dried for 18 days, hulled and polished."
 Grey Soul,MOGRA,Rs. 899.00,INR,"#5 SERIES - HIGH SCORING LOTS | MOGRA  
  Jasmine in your final cup. 
    Suitable for all brew methods. Ideal as Filter.   
@@ -238,13 +312,12 @@ Grey Soul,MOGRA,Rs. 899.00,INR,"#5 SERIES - HIGH SCORING LOTS | MOGRA
  Freshly roasted coffee continues to evolve. Harsh or roasty notes fade, giving way to sweetness, clarity, and complexity. 
  Our resting guide: 
  Minimum rest (Filter): 10 days after roast date Minimum rest (Espresso): Up to 3 weeks after roast date 
- Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.
-[Meta Description]: #5 SERIES - HIGH SCORING LOTS | MOGRA Jasmine in your final cup. Suitable for all brew methods. Ideal as Filter. Serving as Pour-over at Bandra, Mumbai (10th September onwards) Origin Ratnagiri Estate, Chikmagalur Process Anaerobic Fermented Naturals with culture microbes &amp; mechanical dried at the farm. Varietal &a",https://greysoul.coffee/products/mogra-light-roast,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/front_mogra.jpg?v=1775470177,200 GMS:899.00,
+ Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.",https://greysoul.coffee/products/mogra-light-roast,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/front_mogra.jpg?v=1775470177,200 GMS:899.00,Light Roast dropped with an early 1st crack & 16% DTR.,"Ratnagiri Estate, Chikmagalur",,Anaerobic Fermented Naturals with culture microbes & mechanical dried at the farm.
 Grey Soul,THE YELLOW LOT,Rs. 799.00,INR,"#2 SERIES - ROASTERS ART | THE YELLOW LOT  
  
    Deeply sweet cup, Crema Rich &amp; Heavy Bodied with Lingering aftertaste.  
  
-   Suitable for all brew methods.    
+   Suitable for all brew methods. Ideal as Espresso &amp; Cold Brew.   
  
  
  
@@ -314,8 +387,7 @@ Grey Soul,THE YELLOW LOT,Rs. 799.00,INR,"#2 SERIES - ROASTERS ART | THE YELLOW L
   Development % : 17 First Crack Temperature : Below 195 °  Celsius    
   Brew Approach:  
  19 GMS Med-Fine (Fellow Ode Gen 2.0, 3.9 Setting) 55 ML bloom 45 seconds  Swirl immediately after pour Then 80 ML Then At 1.30 again 80 ML Then again 80 ML to finish it off with gentle swirl in the end.  
- Water at 94  °  Celsius (TDS not more than 140 PPM).
-[Meta Description]: #2 SERIES - ROASTERS ART | THE YELLOW LOT by grey soul coffee roasters Deeply sweet cup, Crema Rich & Heavy Bodied with Lingering aftertaste. Suitable for all brew methods. Origin Ratnagiri Estate, Chikmagalur Process Anaerobic Fermented Naturals are hot washed followed by a rapid cold wash & eventually tumble mechanical dried at the farm. BRIX 24.8 Varietal & Altitude SL9 grown at 4450 Feet Dry Aroma Ripe Red berries Wet Aroma Jackfruit, Dates & milk chocolate. Based on Sensory Evaluation Banana, Deep Date Sweetness along with milk chocolate and subtropical fruit finish. Roast Profile Roasted above medium with high DTR & variable drum speed. Characteristics Deeply sweet cup, Crema Rich & Heavy Bodied with Lingering aftertaste & balanced acidity. Minimum resting period Filter 7 Days | Espresso 11 Days A song that pairs well Roaster's thought : Sourced from Ratnagiri Estate in Chikmagalur, this SL9 lot was grown at 4450 ft and harvested at a Brix of 24.8, allowing for deep sugar development before processing. The coffee undergoes anaerobic fermentation, followed by a hot wash and rapid cold wash, then tumble mechanical drying at the estate to stabilise the fruit intensity. Roasted above medium with a high development ratio and variable drum speed, this profile is designed to push sugar caramelisation while preserving the fruit core. In the cup, expect ripe banana, deep date sweetness and milk chocolate layered over a subtle melon finish. The body is heavy and syrup like, producing a dense crema and a long, structured aftertaste with balanced acidity. Versatile across brew methods, it performs exceptionally well in milk, where the sweetness expands and the texture becomes velvety and round. Roast Profile: Sample Roast Machine : Bullet IBTS R1 Roast Machine : Probat VFD Development % : 17First Crack Temperature : Below 195° Celsius Brew Approach: 19 GMS Med-Fine (Fellow Ode Gen 2.0, 3.9 Setting)55 ML bloom 45 seconds Swirl immediately after pourThen 80 MLThen At 1.30 again 80 MLThen again 80 ML to finish it off with gentle swirl in the end. Water at 94° Celsius (TDS not more than 140 PPM).",https://greysoul.coffee/products/the-yellow-lot-grey-soul-coffee,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/yellow_lot_bag_4cbdd164-c2e5-43d9-ad61-5b533017fc57.jpg?v=1772166965,200 GMS:799.00,
+ Water at 94  °  Celsius (TDS not more than 140 PPM).",https://greysoul.coffee/products/the-yellow-lot-grey-soul-coffee,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/yellow_lot_bag_4cbdd164-c2e5-43d9-ad61-5b533017fc57.jpg?v=1772166965,200 GMS:799.00,Roasted above medium with high DTR & variable drum speed.,"Ratnagiri Estate, Chikmagalur",,Anaerobic Fermented Naturals are hot washed followed by a rapid cold wash & eventually tumble mechanical dried at the farm.
 Grey Soul,Summer in Kodaikanal (Light Roast),Rs. 799.00,INR,"#1 SERIES - FRUIT FORWARD LOTS | SUMMER IN KODAIKANAL  
  
  Mandarin brightness &amp; rounded body that carries a lingering tropical fruit finish. 
@@ -391,8 +463,7 @@ Grey Soul,Summer in Kodaikanal (Light Roast),Rs. 799.00,INR,"#1 SERIES - FRUIT F
   Development % : 14 First Crack Temperature : Below 194 °  Celsius    
   Brew Approach:  
  19 GMS Med-Fine (Fellow Ode Gen 2.0, 3.9 Setting) 55 ML bloom 45 seconds  Swirl immediately after pour Then 80 ML Then At 1.30 again 80 ML Then again 95 ML to finish it off with gentle swirl in the end.  
- Water at 97  °  Celsius (TDS not more than 140 PPM).
-[Meta Description]: This lot was sourced from St. Joseph Estate, situated in the hills of Perumalmalai in Kodaikanal, a region often referred to as the Princess of Hill Stations. The estate sits at approximately 4000 feet above sea level, where cooler mountain temperatures allow for slower cherry maturation and a more concentrated sugar development in the fruit. The coffee is composed of Catimore, Chandragiri, and SLN9 cultivars, varieties well suited to the high elevation conditions of the region. Cherries were harvested at peak ripeness and processed as sun-dried naturals, using controlled dehydrator technology to carefully regulate moisture loss during the drying phase. This method allows for a stable fermentation environment while preserving the integrity of the fruit sugars and aromatic compounds. During roasting, we aimed to highlight the coffee’s natural fruit density and creamy structure. The profile follows a light roast approach with elevated airflow and a development ratio of approximately 14%, allowing for clarity of flavour while maintaining the underlying sweetness and tactile body. In the cup, the coffee expresses a profile reminiscent of strawberries and cream, supported by a soft mandarin-like acidity and layered tropical fruit undertones. The acidity is sweet and rounded rather than sharp, and the mouthfeel develops into a medium to medium-heavy body with a smooth, almost velvety texture.",https://greysoul.coffee/products/kodaikanal-naturals,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/grey_bag_34bde099-bc7e-40ba-8586-14935957c8b6.jpg?v=1773839500,200 GMS:799.00,
+ Water at 97  °  Celsius (TDS not more than 140 PPM).",https://greysoul.coffee/products/kodaikanal-naturals,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/grey_bag_34bde099-bc7e-40ba-8586-14935957c8b6.jpg?v=1773839500,200 GMS:799.00,Light Roast with high air flow & 14% development,"Princess of Hill Stations (Kodaikanal), Perumalmalai Hills, St. Joseph Estate",,Sun Dried Naturals using Controlled Dehydrator Drying
 Grey Soul,Coffee Drip bags (Med Roast),Rs. 499.00,INR,"ALL CAN BREW COFFEE DRIP BAGS.   
   ROASTED GROUND INDIAN SPECIALTY.   ANYTIME. ANYWHERE.   
   Ready to Brew 6 Bags of 16 Gram Each.  
@@ -434,8 +505,7 @@ Grey Soul,Coffee Drip bags (Med Roast),Rs. 499.00,INR,"ALL CAN BREW COFFEE DRIP 
   Roaster thoughts :  A lot that we got back this year. The sole reason being the reception this coffee received and the final cup that was enjoyed by thousands. Roast profile of this coffee is a medium roast withing a 8.30 minute roast time and 15% DTR. While cupping the dry aroma of the coffee was almost blueberry and fruit candy like. The wet aroma was berry like and resembled fruit pulp. Upon taste the dense blueberry notes were quite evident with balanced acidity, syrupy body and milk chocolate notes in the finish. 
  
  Roast Profile :  Roast Machine : Probat Development Time : 1m 5secs  
- Charge Temperature : 175 °  Celsius First Crack Temperature :192 °  Celsius
-[Meta Description]: Easy pour coffee bags by grey soul coffee roasters. ROASTED GROUND INDIAN SPECIALTY. ANYTIME. ANYWHERE. Ready to Brew Bags of 16 Gram Each. Ripe Blueberries with rich milk chocolate finish. Origin Belur, Karnataka Process Hand picked, controlled fermentation & slow sun-dried Cupping Notes Ripe Blueberries along with rich milk chocolate notes in the finish. Syrupy mouthfeel and balanced acidity. Varietal Station Selection Roast Profile 208° Drop Med roast with variable drum speed and a longer roast period to achieve a 15% DTR. Altitude 900 MASL A song that pairs well Best enjoyed black. All you have to do is: Step 1: Tear the filter, stretch the hangers and place it on a coffee mug.Step 2: Pour 45 ML of boiled water and wait for 30 seconds.Step 3: Pour the remaining 200 ml of boiled water in batches, discard the filter and enjoy your brew. Roaster thoughts :A lot that we got back this year. The sole reason being the reception this coffee received and the final cup that was enjoyed by thousands. Roast profile of this coffee is a medium roast withing a 8.30 minute roast time and 15% DTR. While cupping the dry aroma of the coffee was almost blueberry and fruit candy like. The wet aroma was berry like and resembled fruit pulp. Upon taste the dense blueberry notes were quite evident with balanced acidity, syrupy body and milk chocolate notes in the finish.",https://greysoul.coffee/products/ready-to-brew-coffee-drip-bags,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/DRIP_BAG_FRONT.jpg?v=1742888149,:499.00,
+ Charge Temperature : 175 °  Celsius First Crack Temperature :192 °  Celsius",https://greysoul.coffee/products/ready-to-brew-coffee-drip-bags,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/DRIP_BAG_FRONT.jpg?v=1742888149,:499.00,208° Drop Med roast with variable drum speed and a longer roast period to achieve a 15% DTR.,"Belur, Karnataka",,"Hand picked, controlled fermentation & slow sun-dried"
 Grey Soul,Raspberry in Loop,Rs. 799.00,INR,"#2 SERIES - ROASTERS ART | 2.3  RASPBERRY IN LOOP    
   Heavy Bodied with Raspberry tartiness in your final cup.  
    Suitable for all brew methods.    
@@ -502,8 +572,7 @@ Grey Soul,Raspberry in Loop,Rs. 799.00,INR,"#2 SERIES - ROASTERS ART | 2.3  RASP
  Freshly roasted coffee continues to evolve. Harsh or roasty notes fade, giving way to sweetness, clarity, and complexity. 
  Our resting guide: 
  Minimum rest (Filter): 7 days after roast date Minimum rest (Espresso): Up to 2-3 weeks after roast date 
- Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.
-[Meta Description]: #2 SERIES - ROASTERS ART | 2.3 RASPBERRY IN LOOP  Heavy Bodied with Raspberry tartiness in your final cup. Suitable for all brew methods.  Origin Chikmagalur, Karnataka Process Anaerobic fermentation done in 3 stages for 72 hours , 48 hours and 24 hours consecutively. Eventually sun-dried on raised beds for a extended ",https://greysoul.coffee/products/raspberry-in-loop,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/RIL.jpg?v=1774334778,200 GMS:799.00,
+ Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.",https://greysoul.coffee/products/raspberry-in-loop,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/RIL.jpg?v=1774334778,200 GMS:799.00,"Med Roast with high DTR, low fan speed & variable drum RPM.","Chikmagalur, Karnataka",,"Anaerobic fermentation done in 3 stages for 72 hours , 48 hours and 24 hours consecutively. Eventually sun-dried on raised beds for a extended period."
 Grey Soul,Odisha Fermented Naturals (Light Roast),Rs. 699.00,INR,"#6 TRIBAL FARM LANDS | 6.1 ODISHA NATURALS  
   Pomegranate, Maple Syrup with clear plum finish.  
    Suitable for all brew methods. Ideal as Pourover, Aeropress &amp; French Press.   
@@ -564,8 +633,7 @@ Grey Soul,Odisha Fermented Naturals (Light Roast),Rs. 699.00,INR,"#6 TRIBAL FARM
  Freshly roasted coffee continues to evolve. Harsh or roasty notes fade, giving way to sweetness, clarity, and complexity. 
  Our resting guide: 
  Minimum rest (Filter): 10 days after roast date Minimum rest (Espresso): Up to 3 weeks after roast date 
- Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.
-[Meta Description]: #6 TRIBAL FARM LANDS | 6.1 ODISHA NATURALS Pomegranate, Maple Syrup with clear plum finish. Suitable for all brew methods. Ideal as Pourover, Aeropress &amp; French Press. Origin Koraput, Odisha Process Fermented sun-dried naturals Dry Aroma Orange Zest, Berries &amp; chocolate Wet Aroma Berry jam, Orange &amp; Betel l",https://greysoul.coffee/products/odisha-floral-honey-light-med-roast-copy,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/odisha_fermernrted_bnwt.jpg?v=1764817114,200 GMS:699.00,
+ Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.",https://greysoul.coffee/products/odisha-floral-honey-light-med-roast-copy,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/odisha_fermernrted_bnwt.jpg?v=1764817114,200 GMS:699.00,Light Roast dropped at 202° with early 1st crack & total roast time of under 8.30 mins.,"Koraput, Odisha",,Fermented sun-dried naturals
 Grey Soul,Roasters Espresso (Med Roast),Rs. 799.00,INR,"#2 ROASTERS ART | ROASTERS ESPRESSO 3.0  
    Well rounded Heavy Body with a base of sweet &amp; creamy milk chocolate.   
    Suitable for all brew methods.    
@@ -628,8 +696,7 @@ Grey Soul,Roasters Espresso (Med Roast),Rs. 799.00,INR,"#2 ROASTERS ART | ROASTE
  Freshly roasted coffee continues to evolve. Harsh or roasty notes fade, giving way to sweetness, clarity, and complexity. 
  Our resting guide: 
  Minimum rest (Filter): 10 days after roast date Minimum rest (Espresso): Up to 3 weeks after roast date 
- Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.
-[Meta Description]: #2 ROASTERS ART | ROASTERS ESPRESSO 3.0 Well rounded Heavy Body with a base of sweet &amp; creamy milk chocolate. Suitable for all brew methods.  Serving as House blend at Grey Soul Coffee Roasters, Koregoan Park, Pune. Origin Chikmagalur, Karnataka Varietal &amp; Altitude Selection 5B, 9 &amp; Chandragiri grown at 380",https://greysoul.coffee/products/roasters-espresso-med-dark-profile,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/roasters_espresso_bag.jpg?v=1772165921,200 GMS:799.00,
+ Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.",https://greysoul.coffee/products/roasters-espresso-med-dark-profile,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/roasters_espresso_bag.jpg?v=1772165921,200 GMS:799.00,"Low Temperature Fed Slightly above Med Roast, High DTR & Extended Maillard Phase.","Chikmagalur, Karnataka",,
 Grey Soul,Strawberry in Loop,Rs. 799.00,INR,"#2 SERIES - ROASTERS ART | 2.2  STRAWBERRY IN LOOP    
   Fruity, Round body with Red Berry Finish.  
    Suitable for all brew methods.    
@@ -696,8 +763,7 @@ Grey Soul,Strawberry in Loop,Rs. 799.00,INR,"#2 SERIES - ROASTERS ART | 2.2  STR
  Freshly roasted coffee continues to evolve. Harsh or roasty notes fade, giving way to sweetness, clarity, and complexity. 
  Our resting guide: 
  Minimum rest (Filter): 10 days after roast date Minimum rest (Espresso): Up to 3 weeks after roast date 
- Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.
-[Meta Description]: #2 SERIES - ROASTERS ART | 2.2 STRAWBERRY IN LOOP by grey soul coffee roasters Fruity, Round body with Red Berry Finish. Suitable for all brew methods. Serving as House blend at Grey Soul Coffee Roasters, Bandra, Mumbai. Origin Chikmagalur, Karnataka Process Various Coffee Processing Techniques Varietal Blended Varietals grown at 4500 Feet Dry Aroma Red Berries, Peaches & Sugarcane Wet Aroma Berry Jam & Milk Chocolate Sensory Evaluation Milk Chocolate covered Strawberries with raspberry aftertaste. Roast Profile Roasted Slightly above Medium with 15-20% DTR & Extended Maillard Phase. Characteristics Complex profile balanced by deep finish of berries & milk chocolate. Minimum resting period Filter : 9 | Espresso 14 Days A song that pairs well Roaster thoughts :After Mango in Loop we as roasters are creating a similar and complex blend of arabica called Strawberry in Loop. This blend releases an aroma of red ripe berries immediately post grinding it. It can be enjoyed both with and without milk especially a cortado. As roasters the creation of this blend took us over 3 months, after several roasting profiles & blending lots different ways to eventually do over a dozen espresso trials. Expect an invigorating aroma, sweet rich espresso and a final cup full of red berry sweetness. Brew Approach : 18.5 Gram -> 45 ML (1:2.25)Temperature 93-95 CExtraction time 25 secSteady pressure of 9 Pressure profiling,Start: 2 bars → 6 bars at 10 sec → hold at 9 bars from 10–30 sec Brew Better: Water & Resting Guidelines Water is just as important as the beans. For the cleanest, most balanced cup, we recommend using **mineral water with a Total Dissolved Solids (TDS) level not above 140 ppm**. This will allow the true flavor of your coffee to shine. Rested Coffee = Better Coffee Freshly roasted coffee continues to evolve. Harsh or roasty notes fade, giving way to sweetness, clarity, and complexity. Our resting guide: Minimum rest (Filter): 10 days after roast dateMinimum rest (Espresso): Up to 3 weeks after roast date Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.",https://greysoul.coffee/products/strawberry-in-loop-medium-roast-grey-soul-coffee,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/SIL.jpg?v=1774334864,200 GMS:799.00,
+ Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.",https://greysoul.coffee/products/strawberry-in-loop-medium-roast-grey-soul-coffee,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/SIL.jpg?v=1774334864,200 GMS:799.00,Roasted Slightly above Medium with 15-20% DTR & Extended Maillard Phase.,"Chikmagalur, Karnataka",,Various Coffee Processing Techniques
 Grey Soul,White Hario filter paper size 02,Rs. 420.00,INR,"Hario Size 02 White Coffee Brewing Filter Paper. 
  Product Type: Disposable Filters Cone Shaped white paper filter for 02 pour-over brewers Each filter brews a single or a double cup at a time. 
   100 Sheets of paper filter per packet.  
@@ -722,62 +788,4 @@ Grey Soul,White Hario filter paper size 02,Rs. 420.00,INR,"Hario Size 02 White C
  
  
   Weight  
- 100 g
-[Meta Description]: Hario Size 02 White Coffee Brewing Filter Paper. Product Type: Disposable Filters Cone Shaped white paper filter for 02 pour-over brewers Each filter brews a single or a double cup at a time. 100 Sheets of paper filter per packet. Product specification: Material Paper Product Code VCF-02-100W Brand Hario Country of ori",https://greysoul.coffee/products/hario-filter-paper-size-02-40-brown,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/Hario-V60-White-Filter-Paper_jpeg.webp?v=1757320150,:420.00,
-Grey Soul,Ultra Light Nagaland,Rs. 699.00,INR,"#4 SERIES - NORTHEASTERN INDIA | 4.1 ULTRA LIGHT NAGALAND  
-   Cranberries, Mandarin, Kiwi,   Tamarind   &amp; bright citrus in the cup.   
- 
- 
- 
-  Origin  
-   Mokokchung, Nagaland   
- 
- 
-  Process  
-   Sun-dried graded naturals   
- 
- 
-  Varietal &amp; Altitude  
-  Chandragiri &amp; SLN 9 grown at 1350 M  
- 
- 
-  Dry Aroma  
-     Kiwi, Green Mango    
- 
- 
-  Wet Aroma  
-   Mandarins &amp; green Grapes   
- 
- 
-  Sensory Evaluation  
-  Cranberries, Mandarin, Kiwi &amp; Tamarind  
- 
- 
-  Roast Profile  
-     Ultra-light Roast with 12% DTR &amp; 9.20 Mins roast time.   
- 
- 
-  Minimum resting period  
-  Filter 7 Days   
- 
- 
-  Characteristics  
-  Light-med body, juicy mouthfeel &amp; bright citrus in the cup.  
- 
- 
-  A song that pairs well  
-    
- 
- 
- 
-  Roaster thoughts :   
- 
-  Another one of those high potential LOTS that we look forward to. Coffee processing plays a key role that impacts the final cup, but it is the region that makes a difference for this LOT. The LOT is something we haven't come across before and would want every brewer to experience this in its full glory. Though this coffee shines as a light-med and medium roast, we feel the best way to represent this LOT is by roasting it lighter. The flavors are clean and the cup is very well balanced. Its now yours to experience.    
-  Brew Better: Water &amp; Resting Guidelines  
- Water is just as important as the beans. For the cleanest, most balanced cup, we recommend using **mineral water with a Total Dissolved Solids (TDS) level not above 140 ppm**. This will allow the true flavor of your coffee to shine. 
- Rested Coffee = Better Coffee 
- Freshly roasted coffee continues to evolve. Harsh or roasty notes fade, giving way to sweetness, clarity, and complexity. 
- Our resting guide: 
- Minimum rest (Filter): 10 days after roast date  
- Patience pays off. Let your coffee settle, and enjoy a cup that truly reflects its origin.
-[Meta Description]: #4 SERIES - NORTHEASTERN INDIA | 4.1 ULTRA LIGHT NAGALAND Cranberries, Mandarin, Kiwi, Tamarind &amp; bright citrus in the cup. Origin Mokokchung, Nagaland Process Sun-dried graded naturals Varietal &amp; Altitude Chandragiri &amp; SLN 9 grown at 1350 M Dry Aroma Kiwi, Green Mango Wet Aroma Mandarins &amp; green Grapes",https://greysoul.coffee/products/nagaland-kohima-23-naturals-light-roast-profile,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/ultra_light_nagaland_grey_o_grey.jpg?v=1764843770,200 GMS:699.00,
+ 100 g",https://greysoul.coffee/products/hario-filter-paper-size-02-40-brown,https://cdn.shopify.com/s/files/1/0543/4517/1141/files/Hario-V60-White-Filter-Paper_jpeg.webp?v=1757320150,:420.00,,,,

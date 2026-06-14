@@ -1,8 +1,13 @@
 import React from "react";
 import InteractiveFlavourWheel from "./InteractiveFlavourWheel";
 
-const FlavourWheelModal = ({ isOpen, onClose }) => {
+const FlavourWheelModal = ({ isOpen, onClose, onFlavourSelect }) => {
   if (!isOpen) return null;
+
+  const handleFlavourSelect = (flavour) => {
+    if (onFlavourSelect) onFlavourSelect(flavour);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
@@ -15,7 +20,7 @@ const FlavourWheelModal = ({ isOpen, onClose }) => {
             <h2 className="text-xl font-bold text-coffee-900" style={{ fontFamily: "'Playfair Display', serif" }}>
               Indian Coffee <em style={{ color: '#C4973B' }}>Flavour Wheel</em>
             </h2>
-            <p className="text-sm text-slate-500">Hover to explore tasting notes across nine families</p>
+            <p className="text-sm text-slate-500">Click any tasting note on the outer ring to filter coffees</p>
           </div>
           <button
             onClick={onClose}
@@ -29,7 +34,7 @@ const FlavourWheelModal = ({ isOpen, onClose }) => {
         </div>
 
         <div className="flex-1 overflow-auto">
-          <InteractiveFlavourWheel />
+          <InteractiveFlavourWheel onFlavourSelect={handleFlavourSelect} />
         </div>
 
         <div className="p-3 border-t border-[#E4C770]/30 bg-[#FBF7F1] text-xs text-slate-400 italic text-center">

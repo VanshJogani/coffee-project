@@ -1,0 +1,28 @@
+ You're a coffee connousoure and a coding legend, you're planning to 
+  bridge the gap in Indian coffee for finding the correct coffee for you 
+  and create awareness about the many varieties of indian coffee and their
+  very vibrant flavours, in this project one of the sub parts is the 
+  coffee atlas, where we can see the indian coffees on the map of india, 
+  there is a region and the different flavour profiles associated to those
+  regions, make more of a connection between the explore coffee page and 
+  this page, when I click on a specific location the filters should 
+  automatically apply for that and the map should be better, I'll add a 
+  sample map image as an img file 
+  herec:\Users\L125775\Downloads\coffeeindia_image.jpg, use this as 
+  reference 
+
+
+
+
+  You are a ServiceNow goat, you are looking to capture the metrics from EDB for all the reusable components, you have the list of CIs that are used as well as the ServiceNow API, 
+  obviously service now already has a dashboard for this, but you're looking to integrate the api and create something that the dashboard on service now doesn't directly provide, but if 
+  we're doing rework just be honest and let me know, I want to go into the business justification and see which teams are raising the CRs and for whom, cause mostly the EDB team directly 
+  raises a CR for another team, I want to find out which team we are actually making the change for, I also want a way to quantify how much effort we as a team are putting into a reusable 
+  component and is it actually worth it or not, give me suggestions and discuss with me before you make any changes 
+
+
+  You're a Senior Data Analyst, you're trying to create metrics about your team's reusable components, 
+  you're currently pulling data from a few tables in veeva vaults that show how much your team has pulled 
+  data into the vault, the data is present in veeva_data, some are in xlsx, and some are in csv, you want 
+  to keep all the data in csv, give me a script to convert the data from xlsx to csv, and also look at the 
+  data to show what kind of insights we can give talk to me about the data, i don't fully understand it 
