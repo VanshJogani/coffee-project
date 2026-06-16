@@ -51,15 +51,16 @@ const QUERY = `
 `;
 
 // GET /api/posts
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const db = getDb();
-    res.json(db.prepare(QUERY).all().map(parsePost));
+    const { rows } = await db.execute(QUERY);
+    res.json(rows.map(parsePost));
   } catch (err) { next(err); }
 });
 
 // POST /api/posts
-router.post("/", (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     const db = getDb();
     const { title, body, authorName, recipeId } = req.body;
@@ -67,52 +68,56 @@ router.post("/", (req, res, next) => {
 
     // If recipeId provided, mark that recipe as public
     if (recipeId) {
-      const recipe = db.prepare("SELECT id FROM recipes WHERE id = ?").get(Number(recipeId));
-      if (!recipe) return res.status(400).json({ error: "Recipe not found" });
-      db.prepare("UPDATE recipes SET isPublic = 1, authorName = ? WHERE id = ?")
-        .run(authorName || null, Number(recipeId));
+      const { rows: recipeRows } = await db.execute({ sql: "SELECT id FROM recipes WHERE id = ?", args: [Number(recipeId)] });
+      if (!recipeRows[0]) return res.status(400).json({ error: "Recipe not found" });
+      await db.execute({
+        sql: "UPDATE recipes SET isPublic = 1, authorName = ? WHERE id = ?",
+        args: [authorName || null, Number(recipeId)]
+      });
     }
 
     const now = new Date().toISOString();
-    const info = db.prepare(
-      "INSERT INTO community_posts (title, body, authorName, recipeId, likes, createdAt) VALUES (?, ?, ?, ?, 0, ?)"
-    ).run(title.trim(), body?.trim() || null, authorName?.trim() || null,
-          recipeId ? Number(recipeId) : null, now);
+    const result = await db.execute({
+      sql: "INSERT INTO community_posts (title, body, authorName, recipeId, likes, createdAt) VALUES (?, ?, ?, ?, 0, ?)",
+      args: [title.trim(), body?.trim() || null, authorName?.trim() || null,
+            recipeId ? Number(recipeId) : null, now]
+    });
 
-    const created = db.prepare(
-      `SELECT p.*, r.name AS recipe_name, r.brewerType AS recipe_brewerType,
+    const { rows: created } = await db.execute({
+      sql: `SELECT p.*, r.name AS recipe_name, r.brewerType AS recipe_brewerType,
        r.grindSize AS recipe_grindSize, r.coffeeGrams AS recipe_coffeeGrams,
        r.waterGrams AS recipe_waterGrams, r.waterTempC AS recipe_waterTempC,
        r.targetBrewTimeSec AS recipe_targetBrewTimeSec, r.bloomTimeSec AS recipe_bloomTimeSec,
        r.steps AS recipe_steps, r.notes AS recipe_notes, r.sourceRecipe AS recipe_sourceRecipe
-       FROM community_posts p LEFT JOIN recipes r ON r.id = p.recipeId WHERE p.id = ?`
-    ).get(info.lastInsertRowid);
+       FROM community_posts p LEFT JOIN recipes r ON r.id = p.recipeId WHERE p.id = ?`,
+      args: [Number(result.lastInsertRowid)]
+    });
 
-    res.status(201).json(parsePost(created));
+    res.status(201).json(parsePost(created[0]));
   } catch (err) { next(err); }
 });
 
 // PUT /api/posts/:id/like
-router.put("/:id/like", (req, res, next) => {
+router.put("/:id/like", async (req, res, next) => {
   try {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const info = db.prepare("UPDATE community_posts SET likes = likes + 1 WHERE id = ?").run(id);
-    if (info.changes === 0) return res.status(404).json({ error: "Post not found" });
-    const post = db.prepare("SELECT likes FROM community_posts WHERE id = ?").get(id);
-    res.json({ likes: post.likes });
+    const result = await db.execute({ sql: "UPDATE community_posts SET likes = likes + 1 WHERE id = ?", args: [id] });
+    if (result.rowsAffected === 0) return res.status(404).json({ error: "Post not found" });
+    const { rows } = await db.execute({ sql: "SELECT likes FROM community_posts WHERE id = ?", args: [id] });
+    res.json({ likes: rows[0].likes });
   } catch (err) { next(err); }
 });
 
 // DELETE /api/posts/:id
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const info = db.prepare("DELETE FROM community_posts WHERE id = ?").run(id);
-    if (info.changes === 0) return res.status(404).json({ error: "Post not found" });
+    const result = await db.execute({ sql: "DELETE FROM community_posts WHERE id = ?", args: [id] });
+    if (result.rowsAffected === 0) return res.status(404).json({ error: "Post not found" });
     res.status(204).send();
   } catch (err) { next(err); }
 });

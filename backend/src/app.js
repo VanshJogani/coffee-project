@@ -16,11 +16,14 @@ const processesRouter = require("./routes/processes");
 
 dotenv.config();
 
-// Initialize DB and schema at startup
-const db = getDb();
-initSchema(db);
-createIndexes(db);
-runMigrations(db);
+// Initialize DB and schema at startup (async)
+const dbReady = (async () => {
+  const db = getDb();
+  await db.execute("PRAGMA foreign_keys = ON");
+  await initSchema(db);
+  await createIndexes(db);
+  await runMigrations(db);
+})();
 
 const app = express();
 
@@ -56,5 +59,4 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: "Internal server error" });
 });
 
-module.exports = app;
-
+module.exports = { app, dbReady };

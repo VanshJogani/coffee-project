@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const Database = require("better-sqlite3");
+const { createClient } = require("@libsql/client");
 const { normalizeProcess } = require("./src/utils/processNormalizer");
 
 // ── Roast type normalization ──────────────────────────────────────────────────
@@ -18,7 +18,7 @@ function normalizeProduct(raw, index) {
   const rawRoastType = raw.roastType || raw.Roast_Level || "";
   const rawProcess = raw.process || raw.Process || "";
   const normalizedProcess = normalizeProcess(rawProcess) || rawProcess;
-  
+
   const product = {
     productId: String(raw.productId || raw.id || index + 1),
     name: raw.name || raw.Name || "Unknown Coffee",
@@ -198,7 +198,7 @@ function normalizeProduct(raw, index) {
   return product;
 }
 
-function main() {
+async function main() {
   const args = process.argv.slice(2);
   const jsonPath = args[0] || "results/cleaned_coffee_products.json";
   const fullPath = path.resolve(process.cwd(), jsonPath);
@@ -221,23 +221,29 @@ function main() {
     process.exit(1);
   }
 
-  const dbPath = process.env.DATABASE_PATH || path.join(__dirname, "coffee.db");
-  const db = new Database(dbPath);
-  db.pragma("journal_mode = WAL");
-  db.pragma("foreign_keys = ON");
+  // Create client — supports both Turso (remote) and local file
+  let db;
+  if (process.env.TURSO_DATABASE_URL) {
+    db = createClient({
+      url: process.env.TURSO_DATABASE_URL,
+      authToken: process.env.TURSO_AUTH_TOKEN,
+    });
+  } else {
+    const dbPath = process.env.DATABASE_PATH || path.join(__dirname, "coffee.db");
+    db = createClient({ url: `file:${dbPath}` });
+  }
 
   // Drop and recreate tables
-  db.exec(`
-    DROP TABLE IF EXISTS brew_notes;
-    DROP TABLE IF EXISTS brew_logs;
-    DROP TABLE IF EXISTS bean_inventory;
-    DROP TABLE IF EXISTS recipes;
-    DROP TABLE IF EXISTS user_profile;
-    DROP TABLE IF EXISTS reviews;
-    DROP TABLE IF EXISTS product_variants;
-    DROP TABLE IF EXISTS products;
-
-    CREATE TABLE products (
+  await db.batch([
+    "DROP TABLE IF EXISTS brew_notes",
+    "DROP TABLE IF EXISTS brew_logs",
+    "DROP TABLE IF EXISTS bean_inventory",
+    "DROP TABLE IF EXISTS recipes",
+    "DROP TABLE IF EXISTS user_profile",
+    "DROP TABLE IF EXISTS reviews",
+    "DROP TABLE IF EXISTS product_variants",
+    "DROP TABLE IF EXISTS products",
+    `CREATE TABLE products (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       productId TEXT UNIQUE,
       name TEXT NOT NULL,
@@ -254,18 +260,16 @@ function main() {
       url TEXT,
       quantity TEXT,
       category TEXT
-    );
-
-    CREATE TABLE product_variants (
+    )`,
+    `CREATE TABLE product_variants (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       productId INTEGER NOT NULL,
       quantity TEXT,
       price REAL,
       originalProductId TEXT,
       FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE reviews (
+    )`,
+    `CREATE TABLE reviews (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       productId INTEGER NOT NULL,
       reviewerName TEXT NOT NULL,
@@ -274,17 +278,15 @@ function main() {
       createdAt TEXT NOT NULL,
       updatedAt TEXT NOT NULL,
       FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE user_profile (
+    )`,
+    `CREATE TABLE user_profile (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       displayName TEXT DEFAULT 'Brewer',
       defaultGrinder TEXT,
       defaultBrewer TEXT,
       createdAt TEXT NOT NULL
-    );
-
-    CREATE TABLE recipes (
+    )`,
+    `CREATE TABLE recipes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       brewerType TEXT NOT NULL,
@@ -300,9 +302,8 @@ function main() {
       notes TEXT,
       createdAt TEXT NOT NULL,
       updatedAt TEXT NOT NULL
-    );
-
-    CREATE TABLE bean_inventory (
+    )`,
+    `CREATE TABLE bean_inventory (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       productId INTEGER,
       customName TEXT,
@@ -314,9 +315,8 @@ function main() {
       createdAt TEXT NOT NULL,
       updatedAt TEXT NOT NULL,
       FOREIGN KEY (productId) REFERENCES products(id) ON DELETE SET NULL
-    );
-
-    CREATE TABLE brew_logs (
+    )`,
+    `CREATE TABLE brew_logs (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       recipeId INTEGER,
       beanInventoryId INTEGER,
@@ -333,9 +333,8 @@ function main() {
       createdAt TEXT NOT NULL,
       FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE SET NULL,
       FOREIGN KEY (beanInventoryId) REFERENCES bean_inventory(id) ON DELETE SET NULL
-    );
-
-    CREATE TABLE brew_notes (
+    )`,
+    `CREATE TABLE brew_notes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       productId INTEGER NOT NULL,
       authorName TEXT NOT NULL,
@@ -344,22 +343,21 @@ function main() {
       createdAt TEXT NOT NULL,
       FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE,
       FOREIGN KEY (brewLogId) REFERENCES brew_logs(id) ON DELETE SET NULL
-    );
-
-    CREATE INDEX idx_products_roaster ON products(roaster);
-    CREATE INDEX idx_products_roastType ON products(roastType);
-    CREATE INDEX idx_products_origin ON products(origin);
-    CREATE INDEX idx_products_category ON products(category);
-    CREATE INDEX idx_products_cuppingDate ON products(cuppingDate);
-    CREATE INDEX idx_products_price ON products(price);
-    CREATE INDEX idx_products_name ON products(name);
-    CREATE INDEX idx_product_variants_productId ON product_variants(productId);
-    CREATE INDEX idx_reviews_productId ON reviews(productId);
-    CREATE INDEX idx_brew_logs_beanInventoryId ON brew_logs(beanInventoryId);
-    CREATE INDEX idx_brew_logs_recipeId ON brew_logs(recipeId);
-    CREATE INDEX idx_brew_notes_productId ON brew_notes(productId);
-    CREATE INDEX idx_bean_inventory_productId ON bean_inventory(productId);
-  `);
+    )`,
+    "CREATE INDEX idx_products_roaster ON products(roaster)",
+    "CREATE INDEX idx_products_roastType ON products(roastType)",
+    "CREATE INDEX idx_products_origin ON products(origin)",
+    "CREATE INDEX idx_products_category ON products(category)",
+    "CREATE INDEX idx_products_cuppingDate ON products(cuppingDate)",
+    "CREATE INDEX idx_products_price ON products(price)",
+    "CREATE INDEX idx_products_name ON products(name)",
+    "CREATE INDEX idx_product_variants_productId ON product_variants(productId)",
+    "CREATE INDEX idx_reviews_productId ON reviews(productId)",
+    "CREATE INDEX idx_brew_logs_beanInventoryId ON brew_logs(beanInventoryId)",
+    "CREATE INDEX idx_brew_logs_recipeId ON brew_logs(recipeId)",
+    "CREATE INDEX idx_brew_notes_productId ON brew_notes(productId)",
+    "CREATE INDEX idx_bean_inventory_productId ON bean_inventory(productId)",
+  ], "write");
 
   // Normalize all products first
   const normalized = data.map((item, idx) => normalizeProduct(item, idx));
@@ -373,66 +371,68 @@ function main() {
     }
     const entry = canonicalMap.get(key);
     entry.variants.push({ quantity: p.quantity, price: p.price, originalProductId: p.productId });
-    // Keep the canonical record's price as the lowest non-null price
-    // and update quantity to match so the card shows the correct weight for that price
     if (p.price != null && (entry.canonical.price == null || p.price < entry.canonical.price)) {
       entry.canonical.price = p.price;
       entry.canonical.quantity = p.quantity;
     }
   }
 
-  const insertProduct = db.prepare(
-    `INSERT INTO products (productId, name, roaster, roastType, origin, process, tastingNotes,
-      score, price, imageUrl, cuppingDate, description, url, quantity, category)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  );
-
-  const insertVariant = db.prepare(
-    `INSERT INTO product_variants (productId, quantity, price, originalProductId)
-     VALUES (?, ?, ?, ?)`
-  );
-
-  const insertReview = db.prepare(
-    `INSERT INTO reviews (productId, reviewerName, rating, comment, createdAt, updatedAt)
-     VALUES (?, ?, ?, ?, ?, ?)`
-  );
-
   const sampleReviews = [
     { reviewerName: "Coffee Lover", rating: 5, comment: "Fantastic cup, really enjoyed the balance and sweetness." },
     { reviewerName: "Taster Bot", rating: 4, comment: "Great clarity and acidity, would buy again." }
   ];
 
-  const seedAll = db.transaction(() => {
-    let productCount = 0;
+  // Use transaction for bulk inserts
+  const tx = await db.transaction("write");
+  let productCount = 0;
+
+  try {
     const now = new Date().toISOString();
 
     for (const { canonical: p, variants } of canonicalMap.values()) {
-      const info = insertProduct.run(
-        p.productId, p.name, p.roaster, p.roastType, p.origin, p.process,
-        p.tastingNotes, p.score, p.price, p.imageUrl, p.cuppingDate,
-        p.description, p.url, p.quantity, p.category
-      );
-      const dbId = info.lastInsertRowid;
+      const result = await tx.execute({
+        sql: `INSERT INTO products (productId, name, roaster, roastType, origin, process, tastingNotes,
+          score, price, imageUrl, cuppingDate, description, url, quantity, category)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [p.productId, p.name, p.roaster, p.roastType, p.origin, p.process,
+              p.tastingNotes, p.score, p.price, p.imageUrl, p.cuppingDate,
+              p.description, p.url, p.quantity, p.category]
+      });
+      const dbId = Number(result.lastInsertRowid);
       productCount++;
 
       // Insert variants (skip if only one variant with no distinct quantity)
       if (variants.length > 1) {
         for (const v of variants) {
-          insertVariant.run(dbId, v.quantity || null, v.price ?? null, v.originalProductId);
+          await tx.execute({
+            sql: `INSERT INTO product_variants (productId, quantity, price, originalProductId)
+             VALUES (?, ?, ?, ?)`,
+            args: [dbId, v.quantity || null, v.price ?? null, v.originalProductId]
+          });
         }
       }
 
       // Sample reviews
       for (const r of sampleReviews) {
-        insertReview.run(dbId, r.reviewerName, r.rating, r.comment, now, now);
+        await tx.execute({
+          sql: `INSERT INTO reviews (productId, reviewerName, rating, comment, createdAt, updatedAt)
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          args: [dbId, r.reviewerName, r.rating, r.comment, now, now]
+        });
       }
     }
 
-    return productCount;
-  });
+    await tx.commit();
+  } catch (err) {
+    await tx.rollback();
+    throw err;
+  }
 
-  const count = seedAll();
-  console.log(`Seeded ${count} products (from ${normalized.length} raw entries) into the database.`);
+  console.log(`Seeded ${productCount} products (from ${normalized.length} raw entries) into the database.`);
+  db.close();
 }
 
-main();
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

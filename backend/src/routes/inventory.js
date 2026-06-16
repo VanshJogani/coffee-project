@@ -3,84 +3,108 @@ const { getDb } = require("../db");
 
 const router = express.Router();
 
-function enrichRow(db, row) {
-  if (!row) return null;
-  if (row.productId) {
-    const product = db.prepare(
-      "SELECT name, roaster, imageUrl, tastingNotes, roastType, origin FROM products WHERE id = ?"
-    ).get(row.productId);
-    if (product) {
-      return { ...row, displayName: product.name, displayRoaster: product.roaster,
-               imageUrl: product.imageUrl, tastingNotes: product.tastingNotes,
-               roastType: product.roastType, origin: product.origin };
-    }
-  }
-  return { ...row, displayName: row.customName || "Unknown Bean", displayRoaster: row.customRoaster || "" };
-}
-
-router.get("/", (req, res, next) => {
+// Use a JOIN query instead of N+1 enrichRow calls (network round-trips to Turso)
+router.get("/", async (req, res, next) => {
   try {
     const db = getDb();
-    const rows = db.prepare("SELECT * FROM bean_inventory ORDER BY createdAt DESC").all();
-    res.json(rows.map(r => enrichRow(db, r)));
+    const { rows } = await db.execute(`
+      SELECT bi.*,
+        COALESCE(p.name, bi.customName, 'Unknown Bean') as displayName,
+        COALESCE(p.roaster, bi.customRoaster, '') as displayRoaster,
+        p.imageUrl, p.tastingNotes, p.roastType, p.origin
+      FROM bean_inventory bi
+      LEFT JOIN products p ON p.id = bi.productId
+      ORDER BY bi.createdAt DESC
+    `);
+    res.json(rows);
   } catch (err) { next(err); }
 });
 
-router.get("/:id", (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const row = db.prepare("SELECT * FROM bean_inventory WHERE id = ?").get(id);
-    if (!row) return res.status(404).json({ error: "Bean not found" });
-    res.json(enrichRow(db, row));
+    const { rows } = await db.execute({
+      sql: `SELECT bi.*,
+        COALESCE(p.name, bi.customName, 'Unknown Bean') as displayName,
+        COALESCE(p.roaster, bi.customRoaster, '') as displayRoaster,
+        p.imageUrl, p.tastingNotes, p.roastType, p.origin
+      FROM bean_inventory bi
+      LEFT JOIN products p ON p.id = bi.productId
+      WHERE bi.id = ?`,
+      args: [id]
+    });
+    if (!rows[0]) return res.status(404).json({ error: "Bean not found" });
+    res.json(rows[0]);
   } catch (err) { next(err); }
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     const db = getDb();
     const { productId, customName, customRoaster, gramsRemaining, purchaseDate, openedDate, notes } = req.body;
     if (!productId && !customName) return res.status(400).json({ error: "productId or customName required" });
     const now = new Date().toISOString();
-    const info = db.prepare(
-      `INSERT INTO bean_inventory (productId, customName, customRoaster, gramsRemaining, purchaseDate, openedDate, notes, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).run(productId || null, customName || null, customRoaster || null,
-          gramsRemaining ?? 0, purchaseDate || null, openedDate || null, notes || null, now, now);
-    const row = db.prepare("SELECT * FROM bean_inventory WHERE id = ?").get(info.lastInsertRowid);
-    res.status(201).json(enrichRow(db, row));
+    const result = await db.execute({
+      sql: `INSERT INTO bean_inventory (productId, customName, customRoaster, gramsRemaining, purchaseDate, openedDate, notes, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [productId || null, customName || null, customRoaster || null,
+            gramsRemaining ?? 0, purchaseDate || null, openedDate || null, notes || null, now, now]
+    });
+    const { rows } = await db.execute({
+      sql: `SELECT bi.*,
+        COALESCE(p.name, bi.customName, 'Unknown Bean') as displayName,
+        COALESCE(p.roaster, bi.customRoaster, '') as displayRoaster,
+        p.imageUrl, p.tastingNotes, p.roastType, p.origin
+      FROM bean_inventory bi
+      LEFT JOIN products p ON p.id = bi.productId
+      WHERE bi.id = ?`,
+      args: [Number(result.lastInsertRowid)]
+    });
+    res.status(201).json(rows[0]);
   } catch (err) { next(err); }
 });
 
-router.put("/:id", (req, res, next) => {
+router.put("/:id", async (req, res, next) => {
   try {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const existing = db.prepare("SELECT * FROM bean_inventory WHERE id = ?").get(id);
+    const { rows: existingRows } = await db.execute({ sql: "SELECT * FROM bean_inventory WHERE id = ?", args: [id] });
+    const existing = existingRows[0];
     if (!existing) return res.status(404).json({ error: "Bean not found" });
     const b = req.body;
     const now = new Date().toISOString();
-    db.prepare(
-      `UPDATE bean_inventory SET productId=?, customName=?, customRoaster=?,
-        gramsRemaining=?, purchaseDate=?, openedDate=?, notes=?, updatedAt=? WHERE id=?`
-    ).run(b.productId ?? existing.productId, b.customName ?? existing.customName,
-          b.customRoaster ?? existing.customRoaster, b.gramsRemaining ?? existing.gramsRemaining,
-          b.purchaseDate ?? existing.purchaseDate, b.openedDate ?? existing.openedDate,
-          b.notes ?? existing.notes, now, id);
-    const updated = db.prepare("SELECT * FROM bean_inventory WHERE id = ?").get(id);
-    res.json(enrichRow(db, updated));
+    await db.execute({
+      sql: `UPDATE bean_inventory SET productId=?, customName=?, customRoaster=?,
+        gramsRemaining=?, purchaseDate=?, openedDate=?, notes=?, updatedAt=? WHERE id=?`,
+      args: [b.productId ?? existing.productId, b.customName ?? existing.customName,
+            b.customRoaster ?? existing.customRoaster, b.gramsRemaining ?? existing.gramsRemaining,
+            b.purchaseDate ?? existing.purchaseDate, b.openedDate ?? existing.openedDate,
+            b.notes ?? existing.notes, now, id]
+    });
+    const { rows: updated } = await db.execute({
+      sql: `SELECT bi.*,
+        COALESCE(p.name, bi.customName, 'Unknown Bean') as displayName,
+        COALESCE(p.roaster, bi.customRoaster, '') as displayRoaster,
+        p.imageUrl, p.tastingNotes, p.roastType, p.origin
+      FROM bean_inventory bi
+      LEFT JOIN products p ON p.id = bi.productId
+      WHERE bi.id = ?`,
+      args: [id]
+    });
+    res.json(updated[0]);
   } catch (err) { next(err); }
 });
 
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const info = db.prepare("DELETE FROM bean_inventory WHERE id = ?").run(id);
-    if (info.changes === 0) return res.status(404).json({ error: "Bean not found" });
+    const result = await db.execute({ sql: "DELETE FROM bean_inventory WHERE id = ?", args: [id] });
+    if (result.rowsAffected === 0) return res.status(404).json({ error: "Bean not found" });
     res.status(204).send();
   } catch (err) { next(err); }
 });

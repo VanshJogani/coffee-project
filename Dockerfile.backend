@@ -2,20 +2,13 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY backend/package.json backend/package-lock.json* ./backend/
-COPY package.json ./
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev
 
-RUN npm install --omit=dev && npm install --prefix backend --omit=dev
-
-COPY backend ./backend
+COPY . .
 
 ENV NODE_ENV=production
-ENV BACKEND_PORT=4000
-ENV DATABASE_PATH=/app/backend/coffee.db
-
-WORKDIR /app/backend
 
 EXPOSE 4000
 
 CMD ["node", "src/server.js"]
-

@@ -3,7 +3,7 @@ const { getDb } = require("../db");
 
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const db = getDb();
     const { productId, isPublic, limit = 200 } = req.query;
@@ -23,8 +23,8 @@ router.get("/", (req, res, next) => {
     const whereSql = whereClauses.length ? "WHERE " + whereClauses.join(" AND ") : "";
     const safeLimit = Math.min(parseInt(limit, 10) || 200, 500);
 
-    const rows = db.prepare(`
-      SELECT bl.*,
+    const { rows } = await db.execute({
+      sql: `SELECT bl.*,
         CASE WHEN bi.productId IS NOT NULL THEN p.name ELSE bi.customName END as beanName,
         CASE WHEN bi.productId IS NOT NULL THEN p.roaster ELSE bi.customRoaster END as beanRoaster,
         bi.productId as catalogProductId,
@@ -35,79 +35,84 @@ router.get("/", (req, res, next) => {
       LEFT JOIN recipes r ON r.id = bl.recipeId
       ${whereSql}
       ORDER BY bl.createdAt DESC
-      LIMIT ?
-    `).all(...params, safeLimit);
+      LIMIT ?`,
+      args: [...params, safeLimit]
+    });
 
     res.json(rows);
   } catch (err) { next(err); }
 });
 
-router.get("/:id", (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const row = db.prepare("SELECT * FROM brew_logs WHERE id = ?").get(id);
-    if (!row) return res.status(404).json({ error: "Brew log not found" });
-    res.json(row);
+    const { rows } = await db.execute({ sql: "SELECT * FROM brew_logs WHERE id = ?", args: [id] });
+    if (!rows[0]) return res.status(404).json({ error: "Brew log not found" });
+    res.json(rows[0]);
   } catch (err) { next(err); }
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     const db = getDb();
     const { recipeId, beanInventoryId, brewerName, grinderName, grindSize,
             coffeeGrams, waterGrams, waterTempC, brewTimeSec, rating, notes, isPublic } = req.body;
     const now = new Date().toISOString();
 
-    const info = db.prepare(
-      `INSERT INTO brew_logs (recipeId, beanInventoryId, brewerName, grinderName, grindSize,
+    const result = await db.execute({
+      sql: `INSERT INTO brew_logs (recipeId, beanInventoryId, brewerName, grinderName, grindSize,
         coffeeGrams, waterGrams, waterTempC, brewTimeSec, rating, notes, isPublic, createdAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).run(recipeId || null, beanInventoryId || null, brewerName || null, grinderName || null,
-          grindSize || null, coffeeGrams || null, waterGrams || null, waterTempC || null,
-          brewTimeSec || null, rating || null, notes || null, isPublic !== false ? 1 : 0, now);
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [recipeId || null, beanInventoryId || null, brewerName || null, grinderName || null,
+            grindSize || null, coffeeGrams || null, waterGrams || null, waterTempC || null,
+            brewTimeSec || null, rating || null, notes || null, isPublic !== false ? 1 : 0, now]
+    });
 
     if (beanInventoryId && coffeeGrams) {
-      db.prepare(
-        "UPDATE bean_inventory SET gramsRemaining = MAX(0, gramsRemaining - ?), updatedAt = ? WHERE id = ?"
-      ).run(coffeeGrams, now, beanInventoryId);
+      await db.execute({
+        sql: "UPDATE bean_inventory SET gramsRemaining = MAX(0, gramsRemaining - ?), updatedAt = ? WHERE id = ?",
+        args: [coffeeGrams, now, beanInventoryId]
+      });
     }
 
-    const created = db.prepare("SELECT * FROM brew_logs WHERE id = ?").get(info.lastInsertRowid);
-    res.status(201).json(created);
+    const { rows: created } = await db.execute({ sql: "SELECT * FROM brew_logs WHERE id = ?", args: [Number(result.lastInsertRowid)] });
+    res.status(201).json(created[0]);
   } catch (err) { next(err); }
 });
 
-router.put("/:id", (req, res, next) => {
+router.put("/:id", async (req, res, next) => {
   try {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const existing = db.prepare("SELECT * FROM brew_logs WHERE id = ?").get(id);
+    const { rows: existingRows } = await db.execute({ sql: "SELECT * FROM brew_logs WHERE id = ?", args: [id] });
+    const existing = existingRows[0];
     if (!existing) return res.status(404).json({ error: "Brew log not found" });
     const b = req.body;
-    db.prepare(
-      `UPDATE brew_logs SET brewerName=?, grinderName=?, grindSize=?, coffeeGrams=?,
-        waterGrams=?, waterTempC=?, brewTimeSec=?, rating=?, notes=?, isPublic=? WHERE id=?`
-    ).run(b.brewerName ?? existing.brewerName, b.grinderName ?? existing.grinderName,
-          b.grindSize ?? existing.grindSize, b.coffeeGrams ?? existing.coffeeGrams,
-          b.waterGrams ?? existing.waterGrams, b.waterTempC ?? existing.waterTempC,
-          b.brewTimeSec ?? existing.brewTimeSec, b.rating ?? existing.rating,
-          b.notes ?? existing.notes,
-          b.isPublic !== undefined ? (b.isPublic ? 1 : 0) : existing.isPublic, id);
-    const updated = db.prepare("SELECT * FROM brew_logs WHERE id = ?").get(id);
-    res.json(updated);
+    await db.execute({
+      sql: `UPDATE brew_logs SET brewerName=?, grinderName=?, grindSize=?, coffeeGrams=?,
+        waterGrams=?, waterTempC=?, brewTimeSec=?, rating=?, notes=?, isPublic=? WHERE id=?`,
+      args: [b.brewerName ?? existing.brewerName, b.grinderName ?? existing.grinderName,
+            b.grindSize ?? existing.grindSize, b.coffeeGrams ?? existing.coffeeGrams,
+            b.waterGrams ?? existing.waterGrams, b.waterTempC ?? existing.waterTempC,
+            b.brewTimeSec ?? existing.brewTimeSec, b.rating ?? existing.rating,
+            b.notes ?? existing.notes,
+            b.isPublic !== undefined ? (b.isPublic ? 1 : 0) : existing.isPublic, id]
+    });
+    const { rows: updated } = await db.execute({ sql: "SELECT * FROM brew_logs WHERE id = ?", args: [id] });
+    res.json(updated[0]);
   } catch (err) { next(err); }
 });
 
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const info = db.prepare("DELETE FROM brew_logs WHERE id = ?").run(id);
-    if (info.changes === 0) return res.status(404).json({ error: "Brew log not found" });
+    const result = await db.execute({ sql: "DELETE FROM brew_logs WHERE id = ?", args: [id] });
+    if (result.rowsAffected === 0) return res.status(404).json({ error: "Brew log not found" });
     res.status(204).send();
   } catch (err) { next(err); }
 });

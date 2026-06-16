@@ -5,7 +5,7 @@ const { normalizeOrigin, isValidOrigin } = require("../utils/originNormalizer");
 
 const router = express.Router();
 
-router.get("/filter-options", (req, res, next) => {
+router.get("/filter-options", async (req, res, next) => {
   try {
     const db = getDb();
     const { category } = req.query;
@@ -17,14 +17,17 @@ router.get("/filter-options", (req, res, next) => {
       params.push(category);
     }
 
-    const roasters = db.prepare(`SELECT DISTINCT p.roaster FROM products p ${catFilter} WHERE p.roaster IS NOT NULL AND p.roaster != '' ORDER BY p.roaster`
-      .replace("WHERE p.roaster", catFilter ? "AND p.roaster" : "WHERE p.roaster")).all(...params).map(r => r.roaster);
+    const roasterSql = `SELECT DISTINCT p.roaster FROM products p ${catFilter} ${catFilter ? "AND" : "WHERE"} p.roaster IS NOT NULL AND p.roaster != '' ORDER BY p.roaster`;
+    const { rows: roasterRows } = await db.execute({ sql: roasterSql, args: params });
+    const roasters = roasterRows.map(r => r.roaster);
 
-    const roastTypes = db.prepare(`SELECT DISTINCT p.roastType FROM products p ${catFilter} WHERE p.roastType IS NOT NULL AND p.roastType != '' ORDER BY p.roastType`
-      .replace("WHERE p.roastType", catFilter ? "AND p.roastType" : "WHERE p.roastType")).all(...params).map(r => r.roastType);
+    const roastTypeSql = `SELECT DISTINCT p.roastType FROM products p ${catFilter} ${catFilter ? "AND" : "WHERE"} p.roastType IS NOT NULL AND p.roastType != '' ORDER BY p.roastType`;
+    const { rows: roastTypeRows } = await db.execute({ sql: roastTypeSql, args: params });
+    const roastTypes = roastTypeRows.map(r => r.roastType);
 
-    const originsRaw = db.prepare(`SELECT DISTINCT p.origin FROM products p ${catFilter} WHERE p.origin IS NOT NULL AND p.origin != '' ORDER BY p.origin`
-      .replace("WHERE p.origin", catFilter ? "AND p.origin" : "WHERE p.origin")).all(...params).map(r => r.origin);
+    const originSql = `SELECT DISTINCT p.origin FROM products p ${catFilter} ${catFilter ? "AND" : "WHERE"} p.origin IS NOT NULL AND p.origin != '' ORDER BY p.origin`;
+    const { rows: originRows } = await db.execute({ sql: originSql, args: params });
+    const originsRaw = originRows.map(r => r.origin);
     // Normalize and filter to only valid geographic origins
     const seenOrigins = new Map();
     for (const o of originsRaw) {
@@ -35,14 +38,17 @@ router.get("/filter-options", (req, res, next) => {
     }
     const origins = [...seenOrigins.values()].sort((a, b) => a.localeCompare(b));
 
-    const processes = db.prepare(`SELECT DISTINCT p.process FROM products p ${catFilter} WHERE p.process IS NOT NULL AND p.process != '' ORDER BY p.process`
-      .replace("WHERE p.process", catFilter ? "AND p.process" : "WHERE p.process")).all(...params).map(r => r.process);
+    const processSql = `SELECT DISTINCT p.process FROM products p ${catFilter} ${catFilter ? "AND" : "WHERE"} p.process IS NOT NULL AND p.process != '' ORDER BY p.process`;
+    const { rows: processRows } = await db.execute({ sql: processSql, args: params });
+    const processes = processRows.map(r => r.process);
 
-    const fermentations = db.prepare(`SELECT DISTINCT p.fermentation FROM products p ${catFilter} WHERE p.fermentation IS NOT NULL AND p.fermentation != '' ORDER BY p.fermentation`
-      .replace("WHERE p.fermentation", catFilter ? "AND p.fermentation" : "WHERE p.fermentation")).all(...params).map(r => r.fermentation);
+    const fermentationSql = `SELECT DISTINCT p.fermentation FROM products p ${catFilter} ${catFilter ? "AND" : "WHERE"} p.fermentation IS NOT NULL AND p.fermentation != '' ORDER BY p.fermentation`;
+    const { rows: fermentationRows } = await db.execute({ sql: fermentationSql, args: params });
+    const fermentations = fermentationRows.map(r => r.fermentation);
 
-    const priceRow = db.prepare(`SELECT MIN(p.price) as minPrice, MAX(p.price) as maxPrice FROM products p ${catFilter} WHERE p.price IS NOT NULL AND p.price > 0`
-      .replace("WHERE p.price", catFilter ? "AND p.price" : "WHERE p.price")).get(...params);
+    const priceSql = `SELECT MIN(p.price) as minPrice, MAX(p.price) as maxPrice FROM products p ${catFilter} ${catFilter ? "AND" : "WHERE"} p.price IS NOT NULL AND p.price > 0`;
+    const { rows: priceRows } = await db.execute({ sql: priceSql, args: params });
+    const priceRow = priceRows[0];
 
     res.json({
       roasters,
@@ -60,9 +66,8 @@ router.get("/filter-options", (req, res, next) => {
 
 /**
  * GET /api/products/grouped-processes
- * Get processes grouped by taxonomy category (only non-empty)
  */
-router.get("/grouped-processes", (req, res, next) => {
+router.get("/grouped-processes", async (req, res, next) => {
   try {
     const db = getDb();
     const { category } = req.query;
@@ -70,32 +75,31 @@ router.get("/grouped-processes", (req, res, next) => {
     let catFilter = "";
     const params = [];
     if (category) {
-      catFilter = "WHERE p.category = ?";
+      catFilter = "AND p.category = ?";
       params.push(category);
     }
 
-    // Get all distinct processes from products
-    const productProcesses = db.prepare(`
-      SELECT DISTINCT p.process FROM products p 
-      WHERE p.process IS NOT NULL AND p.process != '' ${catFilter ? "AND p.category = ?" : ""}
-      ORDER BY p.process
-    `).all(...params).map(r => r.process);
+    const { rows: processRows } = await db.execute({
+      sql: `SELECT DISTINCT p.process FROM products p
+      WHERE p.process IS NOT NULL AND p.process != '' ${catFilter}
+      ORDER BY p.process`,
+      args: params
+    });
+    const productProcesses = processRows.map(r => r.process);
 
     // Group by taxonomy
     const grouped = {};
-    
+
     for (const categoryName in COFFEE_PROCESSING_TAXONOMY) {
       const methods = COFFEE_PROCESSING_TAXONOMY[categoryName].methods;
-      
-      // Build a map of all methods in this category
+
       const categoryMethods = [];
       for (const methodName in methods) {
         if (productProcesses.includes(methodName)) {
           categoryMethods.push(methodName);
         }
       }
-      
-      // Only include category if it has processes
+
       if (categoryMethods.length > 0) {
         grouped[categoryName] = {
           description: COFFEE_PROCESSING_TAXONOMY[categoryName].description,
@@ -112,7 +116,6 @@ router.get("/grouped-processes", (req, res, next) => {
 
 /**
  * GET /api/products/standard-processes
- * Get list of standard/valid coffee processes for reference
  */
 router.get("/standard-processes", (req, res) => {
   try {
@@ -123,7 +126,7 @@ router.get("/standard-processes", (req, res) => {
   }
 });
 
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const db = getDb();
     const {
@@ -173,7 +176,8 @@ router.get("/", (req, res, next) => {
     if (origin) {
       const originList = origin.split(",").map(r => r.trim()).filter(Boolean);
       // Match all raw origin values that normalize to any of the selected canonical origins
-      const allOrigins = db.prepare(`SELECT DISTINCT origin FROM products WHERE origin IS NOT NULL AND origin != ''`).all().map(r => r.origin);
+      const { rows: allOriginRows } = await db.execute("SELECT DISTINCT origin FROM products WHERE origin IS NOT NULL AND origin != ''");
+      const allOrigins = allOriginRows.map(r => r.origin);
       const matchingRaw = allOrigins.filter(o => {
         const n = normalizeOrigin(o);
         return n && originList.some(sel => sel.toLowerCase() === n.toLowerCase());
@@ -254,11 +258,14 @@ router.get("/", (req, res, next) => {
 
     const whereSql = whereClauses.length ? `WHERE ${whereClauses.join(" AND ")}` : "";
 
-    const countSql = `SELECT COUNT(DISTINCT p.id) as total FROM products p ${whereSql}`;
-    const total = db.prepare(countSql).get(...params).total;
+    const { rows: countRows } = await db.execute({
+      sql: `SELECT COUNT(DISTINCT p.id) as total FROM products p ${whereSql}`,
+      args: params
+    });
+    const total = countRows[0].total;
 
-    const dataSql = `
-      SELECT
+    const { rows } = await db.execute({
+      sql: `SELECT
         p.*,
         IFNULL(AVG(r.rating), 0) as avgRating,
         COUNT(r.id) as reviewCount
@@ -267,10 +274,9 @@ router.get("/", (req, res, next) => {
       ${whereSql}
       GROUP BY p.id
       ORDER BY ${orderBy}
-      LIMIT ? OFFSET ?
-    `;
-
-    const rows = db.prepare(dataSql).all(...params, pageSize, offset);
+      LIMIT ? OFFSET ?`,
+      args: [...params, pageSize, offset]
+    });
 
     res.json({
       data: rows,
@@ -286,7 +292,7 @@ router.get("/", (req, res, next) => {
   }
 });
 
-router.get("/:id", (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
@@ -294,36 +300,35 @@ router.get("/:id", (req, res, next) => {
       return res.status(400).json({ error: "Invalid product id" });
     }
 
-    const product = db.prepare(`
-      SELECT
+    const { rows: productRows } = await db.execute({
+      sql: `SELECT
         p.*,
         IFNULL(AVG(r.rating), 0) as avgRating,
         COUNT(r.id) as reviewCount
       FROM products p
       LEFT JOIN reviews r ON r.productId = p.id
       WHERE p.id = ?
-      GROUP BY p.id
-    `).get(id);
+      GROUP BY p.id`,
+      args: [id]
+    });
 
-    if (!product) {
+    if (!productRows[0]) {
       return res.status(404).json({ error: "Product not found" });
     }
 
-    const reviews = db.prepare(`
-      SELECT id, productId, reviewerName, rating, comment, createdAt, updatedAt
-      FROM reviews
-      WHERE productId = ?
-      ORDER BY createdAt DESC
-    `).all(id);
+    const { rows: reviews } = await db.execute({
+      sql: `SELECT id, productId, reviewerName, rating, comment, createdAt, updatedAt
+      FROM reviews WHERE productId = ? ORDER BY createdAt DESC`,
+      args: [id]
+    });
 
-    const variants = db.prepare(`
-      SELECT id, quantity, price
-      FROM product_variants
-      WHERE productId = ?
-      ORDER BY price ASC NULLS LAST
-    `).all(id);
+    const { rows: variants } = await db.execute({
+      sql: `SELECT id, quantity, price
+      FROM product_variants WHERE productId = ? ORDER BY price ASC`,
+      args: [id]
+    });
 
-    return res.json({ ...product, reviews, variants });
+    return res.json({ ...productRows[0], reviews, variants });
   } catch (err) {
     next(err);
   }
