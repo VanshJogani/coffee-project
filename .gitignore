@@ -35,4 +35,4 @@ CLAUDE.md
 .env.local
 .env.*.local
 
-.npmrc
+/.npmrc
