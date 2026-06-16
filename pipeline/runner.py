@@ -5,6 +5,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from pipeline.parser import GenericRoastersParser
 from pipeline.cleaner import GenericRoastersCleaner
+from pipeline.merge import merge
+from pipeline.seed_turso import seed
 
 
 def main() -> None:
@@ -95,6 +97,19 @@ def main() -> None:
                 fut.result()
             except Exception as e:
                 print(f"Error processing roaster {name}: {e}")
+
+
+    # ── Post-scrape: merge cleaned CSVs and seed into Turso ──────────────────
+    json_output = results_root / "cleaned_coffee_products.json"
+    count = merge(cleaned_dir, json_output)
+
+    if count > 0 and os.environ.get("TURSO_DATABASE_URL"):
+        print(f"\nSeeding {count} products into Turso...")
+        seed(json_output)
+    elif count > 0:
+        print(f"\nMerged {count} products. Skipping Turso seed (no TURSO_DATABASE_URL set).")
+    else:
+        print("\nNo products to seed.")
 
 
 if __name__ == "__main__":
