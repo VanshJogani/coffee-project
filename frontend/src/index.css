@@ -4,16 +4,18 @@
 
 html {
   scroll-padding-top: 140px;
+  scroll-behavior: smooth;
 }
 
 body {
   @apply text-luxury-umber bg-luxury-light;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .container-page {
-  @apply max-w-7xl mx-auto px-6;
+  @apply max-w-7xl mx-auto px-4 sm:px-6;
 }
 
 .shelf-glow {
@@ -34,6 +36,18 @@ body {
   transform: translateY(-4px);
 }
 
+/* Disable hover lift on touch devices to prevent sticky state */
+@media (hover: none) {
+  .premium-card:hover {
+    transform: none;
+    box-shadow: 0 1px 3px rgba(38, 28, 21, 0.08);
+  }
+  .premium-card:active {
+    transform: scale(0.98);
+    transition-duration: 100ms;
+  }
+}
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -43,4 +57,37 @@ body {
   scrollbar-width: none;
 }
 
+/* Touch target utility */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
 
+/* Overscroll containment for modals/sheets */
+.overscroll-contain {
+  overscroll-behavior: contain;
+}
+
+/* Safe area utilities */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Animations for mobile sheets/modals */
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}

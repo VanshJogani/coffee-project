@@ -5,15 +5,16 @@ import LandingPage from "./pages/LandingPage";
 import ExplorePage from "./pages/ExplorePage";
 import BrewPage from "./pages/BrewPage";
 import IndiaMapPage from "./pages/IndiaMapPage";
+import AppLayout from "./components/AppLayout";
 import "./index.css";
 
 const Root = () => (
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/explore" element={<ExplorePage />} />
-      <Route path="/brew/*" element={<BrewPage />} />
-      <Route path="/map" element={<IndiaMapPage />} />
+      <Route path="/explore" element={<AppLayout><ExplorePage /></AppLayout>} />
+      <Route path="/brew/*" element={<AppLayout><BrewPage /></AppLayout>} />
+      <Route path="/map" element={<AppLayout><IndiaMapPage /></AppLayout>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   </BrowserRouter>
@@ -24,3 +25,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Root />
   </React.StrictMode>
 );
+
+// Register service worker for PWA
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  });
+}

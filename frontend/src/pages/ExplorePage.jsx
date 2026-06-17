@@ -16,6 +16,8 @@ import ModeDropdown from "../components/ModeDropdown";
 import CoffeeRandomizer from "../components/CoffeeRandomizer";
 import CardCarousel from "../components/CardCarousel";
 import SwipeView from "../components/SwipeView";
+import MobileFilterSheet from "../components/MobileFilterSheet";
+import SkeletonCard from "../components/SkeletonCard";
 
 const CATEGORIES = ["Coffee", "Tea", "Accessories", "Events", "Subscriptions"];
 
@@ -28,7 +30,9 @@ function ExplorePage() {
   const [sort, setSort] = useState("discover");
   const [viewMode, setViewMode] = useState("grid");
   const [wheelOpen, setWheelOpen] = useState(false);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [atlasOrigin, setAtlasOrigin] = useState(null);
+  const [initialLoad, setInitialLoad] = useState(true);
   const debounceRef = useRef(null);
 
   // Read origin from URL params (from Coffee Atlas navigation)
@@ -57,6 +61,11 @@ function ExplorePage() {
     activeFilters: filters.activeFilters,
   });
   const detail = useProductDetail();
+
+  // Track initial load for skeleton vs full-screen loading
+  useEffect(() => {
+    if (!loading && initialLoad) setInitialLoad(false);
+  }, [loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCategoryChange = (cat) => {
     setSelectedCategory(cat);
@@ -89,7 +98,7 @@ function ExplorePage() {
 
   return (
     <>
-      {loading && <LoadingScreen />}
+      {loading && initialLoad && <LoadingScreen />}
       <div className="min-h-screen stone-gradient">
         <header className="border-b border-luxury-clay/20 bg-luxury-umber text-white shelf-glow sticky top-0 z-50">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-luxury-gold/50 via-luxury-gold to-luxury-gold/50 opacity-30" />
@@ -143,7 +152,7 @@ function ExplorePage() {
                     key={key}
                     type="button"
                     onClick={() => setViewMode(key)}
-                    className={`px-3 py-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest transition-all ${
+                    className={`px-3 py-2 min-h-[44px] min-w-[44px] flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-widest transition-all ${
                       viewMode === key ? "bg-luxury-gold/20 text-luxury-gold" : "text-luxury-clay hover:text-white"
                     }`}
                     title={label}
@@ -158,12 +167,12 @@ function ExplorePage() {
               <SortSelect value={sort} onChange={setSort} />
             </div>
           </div>
-          <div className="container-page flex items-center gap-8 py-0">
+          <div className="container-page flex items-center gap-4 md:gap-8 py-0 overflow-x-auto scrollbar-hide">
             {CATEGORIES.map(cat => (
               <button
                 key={cat}
                 type="button"
-                className={`pb-4 pt-2 text-[11px] font-bold uppercase tracking-widest border-b-2 transition-all ${
+                className={`min-h-[44px] pb-3 pt-3 px-1 text-xs md:text-[11px] font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${
                   selectedCategory === cat
                     ? "border-luxury-gold text-luxury-light"
                     : "border-transparent text-luxury-clay hover:text-luxury-light hover:border-luxury-clay/30"
@@ -176,7 +185,7 @@ function ExplorePage() {
           </div>
         </header>
 
-        <main className="container-page py-12 flex flex-col gap-6">
+        <main className="container-page py-8 md:py-12 flex flex-col gap-6">
           {/* Atlas origin banner */}
           {atlasOrigin && (
             <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-luxury-gold/10 border border-luxury-gold/25 backdrop-blur-sm -mb-2">
@@ -201,35 +210,63 @@ function ExplorePage() {
               </div>
             </div>
           )}
-          <div className="flex flex-col md:flex-row gap-8">          {viewMode === "grid" && (
-            <FiltersPanel
-              selectedCategory={selectedCategory}
-              roasterOptions={filters.options.roasters}
-              roastTypeOptions={filters.options.roastTypes}
-              originOptions={filters.options.origins}
-              processOptions={filters.options.processes}
-              groupedProcessOptions={filters.groupedProcessOptions}
-              selectedRoasters={filters.selectedRoasters}
-              selectedRoastTypes={filters.selectedRoastTypes}
-              selectedOrigins={filters.selectedOrigins}
-              selectedProcesses={filters.selectedProcesses}
-              selectedFlavours={filters.selectedFlavours}
-              priceRange={filters.priceRange}
-              priceMin={filters.options.priceMin}
-              priceMax={filters.options.priceMax}
-              onToggleRoaster={filters.onToggleRoaster}
-              onToggleRoastType={filters.onToggleRoastType}
-              onToggleOrigin={filters.onToggleOrigin}
-              onToggleProcess={filters.onToggleProcess}
-              onToggleFlavour={filters.onToggleFlavour}
-              onPriceRangeChange={filters.setPriceRange}
-              onClear={filters.clearFilters}
-              expandOrigin={!!atlasOrigin}
-            />
+
+          {/* Mobile filter trigger */}
+          {viewMode === "grid" && (
+            <div className="flex items-center gap-3 md:hidden">
+              <button
+                type="button"
+                onClick={() => setMobileFiltersOpen(true)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-luxury-clay/25 bg-white shadow-sm hover:border-luxury-gold transition-all min-h-[44px]"
+              >
+                <svg className="w-4 h-4 text-luxury-umber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                <span className="text-xs font-bold text-luxury-umber">Filters</span>
+                {(filters.selectedRoasters.length + filters.selectedRoastTypes.length + filters.selectedOrigins.length + filters.selectedProcesses.length + filters.selectedFlavours.length) > 0 && (
+                  <span className="bg-luxury-gold text-luxury-umber text-[10px] font-bold min-w-[20px] h-5 flex items-center justify-center px-1.5 rounded-full">
+                    {filters.selectedRoasters.length + filters.selectedRoastTypes.length + filters.selectedOrigins.length + filters.selectedProcesses.length + filters.selectedFlavours.length}
+                  </span>
+                )}
+              </button>
+              <div className="flex-1">
+                <SearchBar value={searchInput} onChange={setSearchInput} />
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col md:flex-row gap-8">
+            {viewMode === "grid" && (
+            <div className="hidden md:block">
+              <FiltersPanel
+                selectedCategory={selectedCategory}
+                roasterOptions={filters.options.roasters}
+                roastTypeOptions={filters.options.roastTypes}
+                originOptions={filters.options.origins}
+                processOptions={filters.options.processes}
+                groupedProcessOptions={filters.groupedProcessOptions}
+                selectedRoasters={filters.selectedRoasters}
+                selectedRoastTypes={filters.selectedRoastTypes}
+                selectedOrigins={filters.selectedOrigins}
+                selectedProcesses={filters.selectedProcesses}
+                selectedFlavours={filters.selectedFlavours}
+                priceRange={filters.priceRange}
+                priceMin={filters.options.priceMin}
+                priceMax={filters.options.priceMax}
+                onToggleRoaster={filters.onToggleRoaster}
+                onToggleRoastType={filters.onToggleRoastType}
+                onToggleOrigin={filters.onToggleOrigin}
+                onToggleProcess={filters.onToggleProcess}
+                onToggleFlavour={filters.onToggleFlavour}
+                onPriceRangeChange={filters.setPriceRange}
+                onClear={filters.clearFilters}
+                expandOrigin={!!atlasOrigin}
+              />
+            </div>
           )}
           <section className="flex-1 flex flex-col">
             {viewMode === "grid" && (
-              <div className="mb-3">
+              <div className="mb-3 hidden md:block">
                 <SearchBar value={searchInput} onChange={setSearchInput} />
               </div>
             )}
@@ -240,10 +277,14 @@ function ExplorePage() {
 
             {viewMode === "grid" && (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {products.map(p => (
-                    <ProductCard key={p.id} product={p} onClick={() => detail.openDetail(p)} />
-                  ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  {loading && !initialLoad ? (
+                    Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+                  ) : (
+                    products.map(p => (
+                      <ProductCard key={p.id} product={p} onClick={() => detail.openDetail(p)} />
+                    ))
+                  )}
                 </div>
                 <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
               </>
@@ -273,6 +314,39 @@ function ExplorePage() {
           isOpen={wheelOpen}
           onClose={() => setWheelOpen(false)}
           onFlavourSelect={(flavour) => filters.setSelectedFlavours([flavour])}
+        />
+        <MobileFilterSheet
+          isOpen={mobileFiltersOpen}
+          onClose={() => setMobileFiltersOpen(false)}
+          filterProps={{
+            selectedCategory,
+            roasterOptions: filters.options.roasters,
+            roastTypeOptions: filters.options.roastTypes,
+            originOptions: filters.options.origins,
+            processOptions: filters.options.processes,
+            groupedProcessOptions: filters.groupedProcessOptions,
+            selectedRoasters: filters.selectedRoasters,
+            selectedRoastTypes: filters.selectedRoastTypes,
+            selectedOrigins: filters.selectedOrigins,
+            selectedProcesses: filters.selectedProcesses,
+            selectedFlavours: filters.selectedFlavours,
+            priceRange: filters.priceRange,
+            priceMin: filters.options.priceMin,
+            priceMax: filters.options.priceMax,
+            onToggleRoaster: filters.onToggleRoaster,
+            onToggleRoastType: filters.onToggleRoastType,
+            onToggleOrigin: filters.onToggleOrigin,
+            onToggleProcess: filters.onToggleProcess,
+            onToggleFlavour: filters.onToggleFlavour,
+            onPriceRangeChange: filters.setPriceRange,
+            onClear: filters.clearFilters,
+            expandOrigin: !!atlasOrigin,
+          }}
+          activeFilterCount={
+            filters.selectedRoasters.length + filters.selectedRoastTypes.length +
+            filters.selectedOrigins.length + filters.selectedProcesses.length +
+            filters.selectedFlavours.length
+          }
         />
         <CoffeeRandomizer onSelectCoffee={handleRandomCoffee} />
       </div>

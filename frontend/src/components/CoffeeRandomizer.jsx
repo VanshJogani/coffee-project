@@ -84,7 +84,7 @@ function CoffeeRandomizer({ onSelectCoffee }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-full bg-luxury-umber text-white shadow-lg hover:bg-luxury-gold hover:scale-105 transition-all duration-300 flex items-center gap-2 group"
+        className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50 px-5 py-3 rounded-full bg-luxury-umber text-white shadow-lg hover:bg-luxury-gold hover:scale-105 transition-all duration-300 flex items-center gap-2 group"
       >
         <svg className="w-5 h-5 group-hover:animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />

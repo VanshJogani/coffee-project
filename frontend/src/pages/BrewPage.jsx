@@ -43,23 +43,28 @@ function BrewPage() {
         </div>
 
         {/* Sub-tab nav */}
-        <div className="container-page flex items-center gap-1 py-0 overflow-x-auto scrollbar-hide">
-          {BREW_TABS.map(tab => (
-            <NavLink
-              key={tab.path}
-              to={tab.path}
-              end={tab.end}
-              className={({ isActive }) =>
-                `pb-4 pt-2 px-3 text-[11px] font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${
-                  isActive
-                    ? "border-luxury-gold text-luxury-light"
-                    : "border-transparent text-luxury-clay hover:text-luxury-light hover:border-luxury-clay/30"
-                }`
-              }
-            >
-              {tab.label}
-            </NavLink>
-          ))}
+        <div className="container-page relative py-0">
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide scroll-smooth" style={{ scrollSnapType: "x mandatory" }}>
+            {BREW_TABS.map(tab => (
+              <NavLink
+                key={tab.path}
+                to={tab.path}
+                end={tab.end}
+                className={({ isActive }) =>
+                  `min-h-[44px] flex items-center pb-3 pt-3 px-4 text-xs md:text-[11px] font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${
+                    isActive
+                      ? "border-luxury-gold text-luxury-light"
+                      : "border-transparent text-luxury-clay hover:text-luxury-light hover:border-luxury-clay/30"
+                  }`
+                }
+                style={{ scrollSnapAlign: "start" }}
+              >
+                {tab.label}
+              </NavLink>
+            ))}
+          </div>
+          {/* Scroll fade indicators */}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-luxury-umber to-transparent pointer-events-none md:hidden" />
         </div>
       </header>
 

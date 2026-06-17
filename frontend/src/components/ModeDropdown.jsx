@@ -44,7 +44,7 @@ function ModeDropdown() {
   }, []);
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative hidden md:block">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
