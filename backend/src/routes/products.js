@@ -42,10 +42,6 @@ router.get("/filter-options", async (req, res, next) => {
     const { rows: processRows } = await db.execute({ sql: processSql, args: params });
     const processes = processRows.map(r => r.process);
 
-    const fermentationSql = `SELECT DISTINCT p.fermentation FROM products p ${catFilter} ${catFilter ? "AND" : "WHERE"} p.fermentation IS NOT NULL AND p.fermentation != '' ORDER BY p.fermentation`;
-    const { rows: fermentationRows } = await db.execute({ sql: fermentationSql, args: params });
-    const fermentations = fermentationRows.map(r => r.fermentation);
-
     const priceSql = `SELECT MIN(p.price) as minPrice, MAX(p.price) as maxPrice FROM products p ${catFilter} ${catFilter ? "AND" : "WHERE"} p.price IS NOT NULL AND p.price > 0`;
     const { rows: priceRows } = await db.execute({ sql: priceSql, args: params });
     const priceRow = priceRows[0];
@@ -55,7 +51,6 @@ router.get("/filter-options", async (req, res, next) => {
       roastTypes,
       origins,
       processes,
-      fermentations,
       priceMin: priceRow ? Math.floor(priceRow.minPrice || 0) : 0,
       priceMax: priceRow ? Math.ceil(priceRow.maxPrice || 10000) : 10000
     });
@@ -134,7 +129,6 @@ router.get("/", async (req, res, next) => {
       roastType,
       origin,
       process: processFilter,
-      fermentation,
       category,
       search,
       flavour,
@@ -195,14 +189,6 @@ router.get("/", async (req, res, next) => {
       const list = processFilter.split(",").map(r => r.trim()).filter(Boolean);
       if (list.length) {
         whereClauses.push(`p.process IN (${list.map(() => "?").join(",")})`);
-        params.push(...list);
-      }
-    }
-
-    if (fermentation) {
-      const list = fermentation.split(",").map(r => r.trim()).filter(Boolean);
-      if (list.length) {
-        whereClauses.push(`p.fermentation IN (${list.map(() => "?").join(",")})`);
         params.push(...list);
       }
     }

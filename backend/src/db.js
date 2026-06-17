@@ -34,7 +34,6 @@ async function initSchema(db) {
       roastType TEXT,
       origin TEXT,
       process TEXT,
-      fermentation TEXT,
       tastingNotes TEXT,
       score REAL,
       price REAL,
@@ -223,21 +222,11 @@ async function createIndexes(db) {
     `CREATE INDEX IF NOT EXISTS idx_process_methods_name ON process_methods(name)`,
     `CREATE INDEX IF NOT EXISTS idx_process_methods_categoryId ON process_methods(categoryId)`,
     `CREATE INDEX IF NOT EXISTS idx_process_methods_parentMethodId ON process_methods(parentMethodId)`,
-    `CREATE INDEX IF NOT EXISTS idx_products_fermentation ON products(fermentation)`
   ], "write");
 }
 
 async function runMigrations(db) {
   const { normalizeProcess } = require("./utils/processNormalizer");
-
-  // Check columns on products table
-  const productsInfo = await db.execute("PRAGMA table_info(products)");
-  const productsCols = productsInfo.rows.map(c => c.name);
-
-  if (!productsCols.includes("fermentation")) {
-    await db.execute("ALTER TABLE products ADD COLUMN fermentation TEXT");
-    await db.execute("CREATE INDEX IF NOT EXISTS idx_products_fermentation ON products(fermentation)");
-  }
 
   // Normalize existing processes
   try {

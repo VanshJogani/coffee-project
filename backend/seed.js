@@ -1,7 +1,11 @@
 const fs = require("fs");
 const path = require("path");
+const dotenv = require("dotenv");
 const { createClient } = require("@libsql/client");
 const { normalizeProcess } = require("./src/utils/processNormalizer");
+
+// Load env from root .env (handles TURSO_DATABASE_URL, TURSO_AUTH_TOKEN)
+dotenv.config({ path: path.join(__dirname, "..", ".env") });
 
 // ── Roast type normalization ──────────────────────────────────────────────────
 function normalizeRoastType(raw) {
@@ -400,6 +404,9 @@ async function main() {
       });
       const dbId = Number(result.lastInsertRowid);
       productCount++;
+      if (productCount % 20 === 0) {
+        console.log(`  seeded ${productCount} products...`);
+      }
 
       // Insert variants (skip if only one variant with no distinct quantity)
       if (variants.length > 1) {
