@@ -1,15 +1,29 @@
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "/api";
+
+console.log("[API] baseURL:", BASE_URL);
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/api" // Uses Railway URL in production, proxy in dev
+  baseURL: BASE_URL
+});
+
+// Log every outgoing request
+api.interceptors.request.use(config => {
+  console.log(`[API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, config.params || "");
+  return config;
 });
 
 // Centralized response error handler
 api.interceptors.response.use(
-  res => res,
+  res => {
+    console.log(`[API] ✔ ${res.config.url} — ${res.status}`, Array.isArray(res.data) ? `(${res.data.length} items)` : "");
+    return res;
+  },
   err => {
     const status = err.response?.status;
     const message = err.response?.data?.error || err.response?.data?.errors?.[0] || err.message;
+    console.error(`[API] ✘ ${err.config?.url} — ${status || "NO RESPONSE"}`, message, err.response?.data || err.message);
     if (status === 404) {
       showToast("Not found: " + message, "warn");
     } else if (status >= 400 && status < 500) {

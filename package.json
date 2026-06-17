@@ -7,13 +7,14 @@
     "frontend"
   ],
   "scripts": {
+    "setup": "npm install && cd backend && npm install",
     "seed": "node backend/seed.js cleaned_coffee_products.json",
     "dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\"",
-    "dev:backend": "npm --workspace backend run dev",
+    "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "npm --workspace frontend run dev",
-    "build": "npm --workspace backend run build && npm --workspace frontend run build",
-    "start": "npm --workspace backend run start",
-    "test": "npm --workspace backend test && npm --workspace frontend test"
+    "build": "cd backend && npm run build && npm --workspace frontend run build",
+    "start": "cd backend && npm run start",
+    "test": "cd backend && npm test && npm --workspace frontend test"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"

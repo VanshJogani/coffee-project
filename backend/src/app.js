@@ -21,8 +21,8 @@ const dbReady = (async () => {
   const db = getDb();
   await db.execute("PRAGMA foreign_keys = ON");
   await initSchema(db);
-  await createIndexes(db);
   await runMigrations(db);
+  await createIndexes(db);
 })();
 
 const app = express();
@@ -38,8 +38,22 @@ app.use(
   })
 );
 
-app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok" });
+app.get("/api/health", async (_req, res) => {
+  const db = getDb();
+  let productCount = 0;
+  try {
+    const result = await db.execute("SELECT COUNT(*) as count FROM products");
+    productCount = result.rows[0].count;
+  } catch (e) {
+    productCount = "error: " + e.message;
+  }
+  res.json({
+    status: "ok",
+    dbMode: process.env.TURSO_DATABASE_URL ? "turso" : "local-file",
+    tursoUrlSet: !!process.env.TURSO_DATABASE_URL,
+    tursoTokenSet: !!process.env.TURSO_AUTH_TOKEN,
+    productCount
+  });
 });
 
 app.use("/api/products", productsRouter);
