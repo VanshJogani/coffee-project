@@ -3,6 +3,7 @@ import FiltersPanel from "./FiltersPanel";
 
 function MobileFilterSheet({ isOpen, onClose, filterProps, activeFilterCount }) {
   const sheetRef = useRef(null);
+  const scrollRef = useRef(null);
   const [startY, setStartY] = useState(0);
   const [currentY, setCurrentY] = useState(0);
   const [dragging, setDragging] = useState(false);
@@ -18,6 +19,8 @@ function MobileFilterSheet({ isOpen, onClose, filterProps, activeFilterCount }) 
   }, [isOpen]);
 
   const handleTouchStart = (e) => {
+    // Only enable swipe-dismiss when content is scrolled to top
+    if (scrollRef.current && scrollRef.current.scrollTop > 0) return;
     setStartY(e.touches[0].clientY);
     setDragging(true);
   };
@@ -87,7 +90,7 @@ function MobileFilterSheet({ isOpen, onClose, filterProps, activeFilterCount }) 
         </div>
 
         {/* Scrollable filter content */}
-        <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-4" style={{ WebkitOverflowScrolling: "touch" }}>
+        <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain px-5 py-4" style={{ WebkitOverflowScrolling: "touch" }}>
           <FiltersPanel {...filterProps} />
         </div>
 

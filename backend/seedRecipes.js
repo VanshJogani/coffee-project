@@ -5,7 +5,7 @@
  * Usage: node backend/seedRecipes.js
  */
 
-const { getDb, initSchema, runMigrations } = require("./src/db");
+const { getDb, initSchema, runMigrations, closeDb } = require("./src/db");
 
 const BUILT_IN_RECIPES = [
   // -- Original 6 -------------------------------------------------------------
@@ -409,9 +409,11 @@ async function main() {
   seeded = BUILT_IN_RECIPES.length;
 
   console.log(`✅ Built-in recipes: ${seeded} seeded (re-seeded with prep/brew phases).`);
+  closeDb();
 }
 
 main().catch(err => {
   console.error(err);
+  closeDb();
   process.exit(1);
 });

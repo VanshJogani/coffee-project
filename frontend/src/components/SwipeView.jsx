@@ -53,13 +53,13 @@ function SwipeView({ products, onProductClick }) {
   }, [currentCard, prefs]);
 
   const handlePointerDown = (e) => {
-    startX.current = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    startX.current = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
     setIsDragging(true);
   };
 
   const handlePointerMove = (e) => {
     if (!isDragging) return;
-    const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    const x = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
     setDragX(x - startX.current);
   };
 

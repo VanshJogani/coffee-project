@@ -1,9 +1,16 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import RatingStars from "./RatingStars";
 
 function CardCarousel({ products, onProductClick }) {
   const [index, setIndex] = useState(0);
   const touchStartX = useRef(null);
+
+  // Clamp index when products array shrinks
+  useEffect(() => {
+    if (products.length > 0 && index >= products.length) {
+      setIndex(Math.max(0, products.length - 1));
+    }
+  }, [products.length, index]);
 
   if (!products.length) {
     return <div className="py-20 text-center text-sm text-luxury-clay">No coffees to show.</div>;

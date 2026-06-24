@@ -246,11 +246,13 @@ function getProcessHierarchy(process) {
   if (!normalized) return [];
 
   const chain = [normalized];
+  const visited = new Set([normalized]);
   let current = normalized;
 
   while (true) {
     const parent = getParentProcess(current);
-    if (!parent) break;
+    if (!parent || visited.has(parent)) break;
+    visited.add(parent);
     chain.push(parent);
     current = parent;
   }

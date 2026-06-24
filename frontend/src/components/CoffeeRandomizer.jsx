@@ -11,6 +11,7 @@ function CoffeeRandomizer({ onSelectCoffee }) {
   const [selectedRoasts, setSelectedRoasts] = useState([]);
   const [tastingInput, setTastingInput] = useState("");
   const [picking, setPicking] = useState(false);
+  const [emptyMessage, setEmptyMessage] = useState("");
 
   // Fetch a freshly shuffled pool from the API (RANDOM() order each call).
   // _bust is a timestamp param that prevents the browser from returning a cached response.
@@ -32,19 +33,25 @@ function CoffeeRandomizer({ onSelectCoffee }) {
 
   const handleFullyRandom = async () => {
     setPicking(true);
+    setEmptyMessage("");
     try {
       const pool = await fetchRandomPool([], []);
-      if (pool.length) onSelectCoffee(pickRandom(pool));
+      if (pool.length) {
+        onSelectCoffee(pickRandom(pool));
+        setOpen(false);
+        resetState();
+      } else {
+        setEmptyMessage("No coffees found. Try again later!");
+      }
     } finally {
       setPicking(false);
-      setOpen(false);
-      resetState();
     }
   };
 
   const handleCustomRandom = async () => {
     const keywords = tastingInput.toLowerCase().split(",").map(s => s.trim()).filter(Boolean);
     setPicking(true);
+    setEmptyMessage("");
     try {
       let pool = await fetchRandomPool(selectedRoasts, keywords);
       // Client-side filter for multiple roast types (API only accepts one at a time)
@@ -58,11 +65,15 @@ function CoffeeRandomizer({ onSelectCoffee }) {
           return keywords.some(kw => text.includes(kw));
         });
       }
-      if (pool.length) onSelectCoffee(pickRandom(pool));
+      if (pool.length) {
+        onSelectCoffee(pickRandom(pool));
+        setOpen(false);
+        resetState();
+      } else {
+        setEmptyMessage("No coffees match your criteria. Try broadening your filters.");
+      }
     } finally {
       setPicking(false);
-      setOpen(false);
-      resetState();
     }
   };
 
@@ -70,6 +81,7 @@ function CoffeeRandomizer({ onSelectCoffee }) {
     setMode(null);
     setSelectedRoasts([]);
     setTastingInput("");
+    setEmptyMessage("");
   };
 
   const toggleRoast = (r) => {
@@ -116,6 +128,9 @@ function CoffeeRandomizer({ onSelectCoffee }) {
               <div className="text-2xl mb-1">🎲</div>
               <h3 className="text-lg font-bold text-luxury-umber">I'm Feeling Lucky</h3>
               <p className="text-xs text-luxury-clay mt-1">Discover your next favorite coffee</p>
+              {emptyMessage && (
+                <p className="text-xs text-red-500 mt-3 font-medium bg-red-50 px-3 py-2 rounded-lg">{emptyMessage}</p>
+              )}
             </div>
 
             {mode === null && (

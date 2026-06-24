@@ -4,7 +4,11 @@ const { getDb } = require("../db");
 const router = express.Router();
 
 function parseSteps(row) {
-  return { ...row, steps: row.steps ? JSON.parse(row.steps) : [] };
+  let steps = [];
+  if (row.steps) {
+    try { steps = JSON.parse(row.steps); } catch { steps = []; }
+  }
+  return { ...row, steps };
 }
 
 // GET /api/recipes?community=1  — public community recipes only
@@ -57,8 +61,8 @@ router.post("/", async (req, res, next) => {
         isPublic, authorName, authorSetup, roastLevel, coffeeBrand, coffeeName,
         createdAt, updatedAt)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: [name, brewerType, grindSize || null, coffeeGrams || null, waterGrams || null,
-            waterTempC || null, bloomTimeSec || null, targetBrewTimeSec || null,
+      args: [name, brewerType, grindSize || null, coffeeGrams ?? null, waterGrams ?? null,
+            waterTempC ?? null, bloomTimeSec ?? null, targetBrewTimeSec ?? null,
             steps ? JSON.stringify(steps) : null, sourceRecipe || null, notes || null,
             isPublic ? 1 : 0, authorName || null,
             authorSetup ? JSON.stringify(authorSetup) : null,

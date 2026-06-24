@@ -9,6 +9,7 @@ export function useProducts({ category, search, sort, activeFilters }) {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [fetching, setFetching] = useState(false);
   const [error, setError] = useState("");
   const isFirstLoad = useRef(true);
   const prevFiltersKey = useRef("");
@@ -35,6 +36,7 @@ export function useProducts({ category, search, sort, activeFilters }) {
 
     const load = async () => {
       setError("");
+      setFetching(true);
       try {
         const cleanFilters = Object.fromEntries(
           Object.entries(activeFilters).filter(([, v]) => v !== undefined)
@@ -68,6 +70,7 @@ export function useProducts({ category, search, sort, activeFilters }) {
         if (!cancelled) setError("Failed to load products.");
       } finally {
         if (!cancelled) {
+          setFetching(false);
           if (isFirstLoad.current) {
             isFirstLoad.current = false;
             setInitialLoading(false);
@@ -82,5 +85,5 @@ export function useProducts({ category, search, sort, activeFilters }) {
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  return { products, total, page, setPage, totalPages, loading: initialLoading, error };
+  return { products, total, page, setPage, totalPages, loading: initialLoading, fetching, error };
 }

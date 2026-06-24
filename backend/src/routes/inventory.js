@@ -75,6 +75,9 @@ router.put("/:id", async (req, res, next) => {
     const existing = existingRows[0];
     if (!existing) return res.status(404).json({ error: "Bean not found" });
     const b = req.body;
+    if (b.gramsRemaining !== undefined && (typeof b.gramsRemaining !== "number" || b.gramsRemaining < 0)) {
+      return res.status(400).json({ error: "gramsRemaining must be a non-negative number" });
+    }
     const now = new Date().toISOString();
     await db.execute({
       sql: `UPDATE bean_inventory SET productId=?, customName=?, customRoaster=?,

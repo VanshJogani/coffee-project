@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const path = require("path");
 const dotenv = require("dotenv");
 
 const { getDb, initSchema, createIndexes, runMigrations } = require("./db");
@@ -14,7 +15,7 @@ const postsRouter = require("./routes/posts");
 const roastersRouter = require("./routes/roasters");
 const processesRouter = require("./routes/processes");
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, "..", ".env") });
 
 // Initialize DB and schema at startup (async)
 const dbReady = (async () => {
@@ -28,15 +29,25 @@ const dbReady = (async () => {
 const app = express();
 
 app.use(helmet());
-app.use(express.json());
+app.use(express.json({ limit: "50kb" }));
+
+if (process.env.NODE_ENV === "production" && !process.env.CORS_ORIGIN) {
+  throw new Error("CORS_ORIGIN must be set in production");
+}
 
 const corsOrigin = process.env.CORS_ORIGIN || "*";
 app.use(
   cors({
-    origin: corsOrigin === "*" ? true : corsOrigin,
+    origin: corsOrigin === "*" ? true : corsOrigin.split(","),
     credentials: true
   })
 );
+
+// Guard: ensure DB schema is ready before any route handles a request
+app.use(async (_req, _res, next) => {
+  await dbReady;
+  next();
+});
 
 app.get("/api/health", async (_req, res) => {
   const db = getDb();

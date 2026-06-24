@@ -22,7 +22,7 @@ function parsePost(row) {
       waterTempC: recipe_waterTempC,
       targetBrewTimeSec: recipe_targetBrewTimeSec,
       bloomTimeSec: recipe_bloomTimeSec,
-      steps: recipe_steps ? JSON.parse(recipe_steps) : [],
+      steps: recipe_steps ? (() => { try { return JSON.parse(recipe_steps); } catch { return []; } })() : [],
       notes: recipe_notes,
       sourceRecipe: recipe_sourceRecipe,
       authorName: post.authorName,
@@ -54,8 +54,22 @@ const QUERY = `
 router.get("/", async (req, res, next) => {
   try {
     const db = getDb();
-    const { rows } = await db.execute(QUERY);
-    res.json(rows.map(parsePost));
+    const { page = 1, limit = 30 } = req.query;
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const pageSize = Math.min(100, Math.max(1, parseInt(limit, 10) || 30));
+    const offset = (pageNum - 1) * pageSize;
+
+    const { rows: countRows } = await db.execute("SELECT COUNT(*) as total FROM community_posts");
+    const total = countRows[0].total;
+
+    const { rows } = await db.execute({
+      sql: QUERY + " LIMIT ? OFFSET ?",
+      args: [pageSize, offset]
+    });
+    res.json({
+      data: rows.map(parsePost),
+      pagination: { page: pageNum, limit: pageSize, total, totalPages: Math.ceil(total / pageSize) }
+    });
   } catch (err) { next(err); }
 });
 
@@ -66,20 +80,24 @@ router.post("/", async (req, res, next) => {
     const { title, body, authorName, recipeId } = req.body;
     if (!title?.trim()) return res.status(400).json({ error: "title is required" });
 
+    const safeTitle = title.trim().slice(0, 200);
+    const safeBody = body?.trim().slice(0, 10000) || null;
+    const safeAuthor = authorName?.trim().slice(0, 100) || null;
+
     // If recipeId provided, mark that recipe as public
     if (recipeId) {
       const { rows: recipeRows } = await db.execute({ sql: "SELECT id FROM recipes WHERE id = ?", args: [Number(recipeId)] });
       if (!recipeRows[0]) return res.status(400).json({ error: "Recipe not found" });
       await db.execute({
         sql: "UPDATE recipes SET isPublic = 1, authorName = ? WHERE id = ?",
-        args: [authorName || null, Number(recipeId)]
+        args: [safeAuthor, Number(recipeId)]
       });
     }
 
     const now = new Date().toISOString();
     const result = await db.execute({
       sql: "INSERT INTO community_posts (title, body, authorName, recipeId, likes, createdAt) VALUES (?, ?, ?, ?, 0, ?)",
-      args: [title.trim(), body?.trim() || null, authorName?.trim() || null,
+      args: [safeTitle, safeBody, safeAuthor,
             recipeId ? Number(recipeId) : null, now]
     });
 

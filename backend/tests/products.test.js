@@ -1,18 +1,18 @@
 const request = require("supertest");
-const { getDb, initSchema } = require("../src/db");
-const app = require("../src/app");
+const { getDb } = require("../src/db");
+const { app, dbReady } = require("../src/app");
 
 describe("Products API", () => {
-  beforeAll((done) => {
+  beforeAll(async () => {
     process.env.NODE_ENV = "test";
-    process.env.TEST_DATABASE_PATH = ":memory:";
-    const db = getDb();
-    initSchema(db);
+    // Wait for schema initialization to complete
+    await dbReady;
 
-    db.run(
-      `INSERT INTO products (productId, name, roaster, roastType, origin, tastingNotes, score, price, imageUrl, cuppingDate, description, url)
+    const db = getDb();
+    await db.execute({
+      sql: `INSERT INTO products (productId, name, roaster, roastType, origin, tastingNotes, score, price, imageUrl, cuppingDate, description, url)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
+      args: [
         "test-1",
         "Test Coffee",
         "Test Roaster",
@@ -25,12 +25,8 @@ describe("Products API", () => {
         "2024-01-01",
         "Test description",
         "https://example.com/test-coffee"
-      ],
-      (err) => {
-        if (err) return done(err);
-        done();
-      }
-    );
+      ]
+    });
   });
 
   it("GET /api/products should return products with pagination", async () => {
@@ -40,4 +36,3 @@ describe("Products API", () => {
     expect(res.body.pagination).toBeDefined();
   });
 });
-

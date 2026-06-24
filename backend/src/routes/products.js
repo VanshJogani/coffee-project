@@ -196,25 +196,27 @@ router.get("/", async (req, res, next) => {
     if (flavour) {
       const list = flavour.split(",").map(f => f.trim()).filter(Boolean);
       for (const f of list) {
-        whereClauses.push("(LOWER(p.tastingNotes) LIKE ? OR LOWER(p.description) LIKE ?)");
-        params.push(`%${f.toLowerCase()}%`, `%${f.toLowerCase()}%`);
+        const escaped = f.toLowerCase().replace(/[%_]/g, "\\$&");
+        whereClauses.push("(LOWER(p.tastingNotes) LIKE ? ESCAPE '\\' OR LOWER(p.description) LIKE ? ESCAPE '\\')");
+        params.push(`%${escaped}%`, `%${escaped}%`);
       }
     }
 
     if (priceMin != null && priceMin !== "") {
-      whereClauses.push("(p.price IS NULL OR p.price >= ?)");
+      whereClauses.push("p.price IS NOT NULL AND p.price >= ?");
       params.push(Number(priceMin));
     }
 
     if (priceMax != null && priceMax !== "") {
-      whereClauses.push("(p.price IS NULL OR p.price <= ?)");
+      whereClauses.push("p.price IS NOT NULL AND p.price <= ?");
       params.push(Number(priceMax));
     }
 
     if (search) {
-      const like = `%${search}%`;
+      const escaped = search.replace(/[%_]/g, "\\$&");
+      const like = `%${escaped}%`;
       whereClauses.push(
-        "(p.name LIKE ? OR p.roaster LIKE ? OR p.tastingNotes LIKE ? OR p.description LIKE ?)"
+        "(p.name LIKE ? ESCAPE '\\' OR p.roaster LIKE ? ESCAPE '\\' OR p.tastingNotes LIKE ? ESCAPE '\\' OR p.description LIKE ? ESCAPE '\\')"
       );
       params.push(like, like, like, like);
     }

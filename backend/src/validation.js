@@ -8,7 +8,10 @@ function validateRating(rating) {
   if (!Number.isFinite(num) || num < 1 || num > 5) {
     return { valid: false, message: "Rating must be between 1 and 5." };
   }
-  return { valid: true, value: Math.round(num) };
+  if (!Number.isInteger(num)) {
+    return { valid: false, message: "Rating must be a whole number." };
+  }
+  return { valid: true, value: num };
 }
 
 function validateReviewPayload(body) {

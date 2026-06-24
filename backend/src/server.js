@@ -1,13 +1,16 @@
+const path = require("path");
 const dotenv = require("dotenv");
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, "..", ".env") });
 
 const { app, dbReady } = require("./app");
 const { closeDb } = require("./db");
 
 const port = process.env.BACKEND_PORT || process.env.PORT || 4000;
 
+let server;
+
 dbReady.then(() => {
-  app.listen(port, () => {
+  server = app.listen(port, () => {
     console.log(`Backend API listening on http://localhost:${port}`);
   });
 }).catch((err) => {
@@ -15,9 +18,25 @@ dbReady.then(() => {
   process.exit(1);
 });
 
-// Graceful shutdown
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received, shutting down gracefully");
-  closeDb();
-  process.exit(0);
-});
+// Graceful shutdown — drain connections, then close DB
+function shutdown(signal) {
+  console.log(`${signal} received, shutting down gracefully`);
+  if (server) {
+    server.close(() => {
+      closeDb();
+      process.exit(0);
+    });
+    // Force exit after 10s if connections don't drain
+    setTimeout(() => {
+      console.warn("Forcing shutdown after timeout");
+      closeDb();
+      process.exit(1);
+    }, 10000);
+  } else {
+    closeDb();
+    process.exit(0);
+  }
+}
+
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));

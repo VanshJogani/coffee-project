@@ -171,7 +171,9 @@ function normalizeOrigin(raw) {
   if (!raw || typeof raw !== "string") return null;
   const key = raw.trim().toLowerCase();
   if (!key) return null;
-  return KNOWN_ORIGINS[key] || null;
+  if (KNOWN_ORIGINS[key]) return KNOWN_ORIGINS[key];
+  // Fallback: title-case the trimmed input so unknown origins are still usable
+  return raw.trim().replace(/\b\w/g, c => c.toUpperCase());
 }
 
 function isValidOrigin(raw) {

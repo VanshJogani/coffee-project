@@ -178,7 +178,8 @@ router.post("/", async (req, res, next) => {
     const db = getDb();
     const { name, websiteUrl, establishedYear, description } = req.body;
 
-    if (!name) {
+    const trimmedName = (name || "").trim();
+    if (!trimmedName) {
       return res.status(400).json({ error: "Name is required" });
     }
 
@@ -187,7 +188,7 @@ router.post("/", async (req, res, next) => {
     const result = await db.execute({
       sql: `INSERT INTO roasters (name, websiteUrl, establishedYear, description, createdAt, updatedAt)
       VALUES (?, ?, ?, ?, ?, ?)`,
-      args: [name, websiteUrl || null, establishedYear || null, description || null, now, now]
+      args: [trimmedName, websiteUrl || null, establishedYear ?? null, description || null, now, now]
     });
 
     // Initialize ratings for new roaster
@@ -199,9 +200,9 @@ router.post("/", async (req, res, next) => {
 
     res.status(201).json({
       id: Number(result.lastInsertRowid),
-      name,
+      name: trimmedName,
       websiteUrl: websiteUrl || null,
-      establishedYear: establishedYear || null,
+      establishedYear: establishedYear ?? null,
       description: description || null,
       createdAt: now,
       updatedAt: now
@@ -220,22 +221,28 @@ router.put("/:id", async (req, res, next) => {
     const { id } = req.params;
     const { name, websiteUrl, establishedYear, description } = req.body;
 
-    const { rows: roasterRows } = await db.execute({ sql: "SELECT id FROM roasters WHERE id = ?", args: [id] });
+    const { rows: roasterRows } = await db.execute({ sql: "SELECT * FROM roasters WHERE id = ?", args: [id] });
     if (!roasterRows[0]) {
       return res.status(404).json({ error: "Roaster not found" });
     }
 
+    const existing = roasterRows[0];
     const now = new Date().toISOString();
+
+    const updatedName = name !== undefined ? (name || "").trim() : existing.name;
+    if (!updatedName) {
+      return res.status(400).json({ error: "Name cannot be empty" });
+    }
 
     await db.execute({
       sql: `UPDATE roasters
       SET name = ?, websiteUrl = ?, establishedYear = ?, description = ?, updatedAt = ?
       WHERE id = ?`,
       args: [
-        name !== undefined ? name : null,
-        websiteUrl !== undefined ? websiteUrl : null,
-        establishedYear !== undefined ? establishedYear : null,
-        description !== undefined ? description : null,
+        updatedName,
+        websiteUrl !== undefined ? websiteUrl : existing.websiteUrl,
+        establishedYear !== undefined ? establishedYear : existing.establishedYear,
+        description !== undefined ? description : existing.description,
         now,
         id
       ]
@@ -310,7 +317,7 @@ router.post("/:id/locations", async (req, res, next) => {
     const result = await db.execute({
       sql: `INSERT INTO roaster_locations (roasterId, city, state, country, address, latitude, longitude, phoneNumber, menuUrl, operatingHours, createdAt, updatedAt)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: [id, city, state || null, country, address || null, latitude || null, longitude || null,
+      args: [id, city, state || null, country, address || null, latitude ?? null, longitude ?? null,
             phoneNumber || null, menuUrl || null, operatingHours || null, now, now]
     });
 

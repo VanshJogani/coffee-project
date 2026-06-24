@@ -343,7 +343,7 @@ function PriceRange({ min, max, value, onChange }) {
           min={0}
           max={high}
           value={low}
-          onChange={(e) => onChange([Math.min(Number(e.target.value), high), high])}
+          onChange={(e) => onChange([Math.max(0, Math.min(Number(e.target.value), high)), high])}
           className="w-20 rounded border border-luxury-clay/40 px-2 py-1 text-[11px] text-luxury-umber focus:outline-none focus:border-luxury-gold"
           placeholder="Min"
         />
@@ -353,7 +353,7 @@ function PriceRange({ min, max, value, onChange }) {
           min={low}
           max={max}
           value={high}
-          onChange={(e) => onChange([low, Math.max(Number(e.target.value), low)])}
+          onChange={(e) => onChange([low, Math.max(0, Math.max(Number(e.target.value), low))])}
           className="w-20 rounded border border-luxury-clay/40 px-2 py-1 text-[11px] text-luxury-umber focus:outline-none focus:border-luxury-gold"
           placeholder="Max"
         />

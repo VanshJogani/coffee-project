@@ -1,29 +1,30 @@
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "/api";
+const isDev = import.meta.env.DEV;
 
-console.log("[API] baseURL:", BASE_URL);
+if (isDev) console.log("[API] baseURL:", BASE_URL);
 
 const api = axios.create({
   baseURL: BASE_URL
 });
 
-// Log every outgoing request
+// Log every outgoing request (dev only)
 api.interceptors.request.use(config => {
-  console.log(`[API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, config.params || "");
+  if (isDev) console.log(`[API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, config.params || "");
   return config;
 });
 
 // Centralized response error handler
 api.interceptors.response.use(
   res => {
-    console.log(`[API] ✔ ${res.config.url} — ${res.status}`, Array.isArray(res.data) ? `(${res.data.length} items)` : "");
+    if (isDev) console.log(`[API] ✔ ${res.config.url} — ${res.status}`, Array.isArray(res.data) ? `(${res.data.length} items)` : "");
     return res;
   },
   err => {
     const status = err.response?.status;
     const message = err.response?.data?.error || err.response?.data?.errors?.[0] || err.message;
-    console.error(`[API] ✘ ${err.config?.url} — ${status || "NO RESPONSE"}`, message, err.response?.data || err.message);
+    if (isDev) console.error(`[API] ✘ ${err.config?.url} — ${status || "NO RESPONSE"}`, message, err.response?.data || err.message);
     if (status === 404) {
       showToast("Not found: " + message, "warn");
     } else if (status >= 400 && status < 500) {

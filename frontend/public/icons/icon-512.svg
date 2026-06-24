@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="64" fill="#261C15"/>
-  <text x="256" y="310" text-anchor="middle" font-size="200" fill="#C4A484">☕</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="80" fill="#261C15"/>
+  <text x="256" y="300" font-family="serif" font-size="200" fill="#C8A97E" text-anchor="middle">&#9749;</text>
+  <text x="256" y="420" font-family="serif" font-size="52" fill="#C8A97E" text-anchor="middle" font-weight="bold">Caff&#232; Elegante</text>
 </svg>

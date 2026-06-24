@@ -44,7 +44,7 @@ function ExplorePage() {
     if (urlOrigin) {
       setAtlasOrigin(urlOrigin);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [urlOrigin]);
 
   // Debounce search input by 350ms
   useEffect(() => {

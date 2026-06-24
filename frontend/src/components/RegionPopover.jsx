@@ -6,12 +6,14 @@ import React, { useEffect, useRef } from "react";
  */
 export default function RegionPopover({ regions, position, onSelect, onClose }) {
   const ref = useRef(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   // Dismiss on outside click
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
-        onClose();
+        onCloseRef.current();
       }
     };
     // Small delay to avoid immediately triggering from the same click
@@ -22,16 +24,16 @@ export default function RegionPopover({ regions, position, onSelect, onClose }) 
       clearTimeout(timer);
       document.removeEventListener("pointerdown", handler);
     };
-  }, [onClose]);
+  }, []);
 
   // Dismiss on Escape
   useEffect(() => {
     const handler = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") onCloseRef.current();
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [onClose]);
+  }, []);
 
   if (!regions || regions.length === 0) return null;
 

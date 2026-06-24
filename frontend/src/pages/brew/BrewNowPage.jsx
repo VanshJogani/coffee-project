@@ -352,6 +352,8 @@ function BrewNowPage() {
 
   useEffect(() => {
     if (!selectedRecipeId || !selectedRecipe) return;
+    // Don't reset if a brew is already in progress
+    if (brewPhase !== "setup") return;
     setSetup(s => ({
       ...s,
       brewerName: selectedRecipe.brewerType || s.brewerName,
@@ -364,7 +366,7 @@ function BrewNowPage() {
     setBrewPhase("setup");
     setPrepChecked(new Set());
     dispatch({ type: "RESET" });
-  }, [selectedRecipeId, recipes]);
+  }, [selectedRecipeId, recipes]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Collapse overrides when recipe selected, expand when not
   useEffect(() => {

@@ -1,18 +1,26 @@
+## Build stage — install ALL deps (including vite) and build
+FROM node:20-alpine AS build
+
+WORKDIR /app
+
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm install
+
+COPY frontend/ .
+RUN npm run build
+
+## Serve stage — lightweight static server
 FROM node:20-alpine
 
 WORKDIR /app
 
-COPY frontend/package.json frontend/package-lock.json* ./frontend/
+RUN npm install -g serve
 
-RUN npm install --omit=dev --prefix frontend
-
-COPY frontend ./frontend
-
-WORKDIR /app/frontend
-
-RUN npm run build
+COPY --from=build /app/dist ./dist
 
 EXPOSE 4173
 
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "4173"]
-
+CMD ["serve", "-s", "dist", "-l", "4173"]

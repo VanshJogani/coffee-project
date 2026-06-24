@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import api from "../api/client";
 
 export function useFilters(selectedCategory, { initialOrigins = [] } = {}) {
@@ -7,6 +7,8 @@ export function useFilters(selectedCategory, { initialOrigins = [] } = {}) {
     priceMin: 0, priceMax: 10000
   });
   const [groupedProcessOptions, setGroupedProcessOptions] = useState({});
+  const [loading, setLoading] = useState(false);
+  const latestOptionsRef = useRef(options);
 
   const [selectedRoasters, setSelectedRoasters] = useState([]);
   const [selectedRoastTypes, setSelectedRoastTypes] = useState([]);
@@ -16,14 +18,17 @@ export function useFilters(selectedCategory, { initialOrigins = [] } = {}) {
   const [priceRange, setPriceRange] = useState([0, 10000]);
 
   useEffect(() => {
+    setLoading(true);
     const params = selectedCategory ? { category: selectedCategory } : {};
     api.get("/products/filter-options", { params })
       .then(r => {
         const d = r.data;
         setOptions(d);
+        latestOptionsRef.current = d;
         setPriceRange([d.priceMin, d.priceMax]);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [selectedCategory]);
 
   // Fetch grouped processes (only non-empty ones)
@@ -53,7 +58,8 @@ export function useFilters(selectedCategory, { initialOrigins = [] } = {}) {
     setSelectedOrigins([]);
     setSelectedProcesses([]);
     setSelectedFlavours([]);
-    setPriceRange([options.priceMin, options.priceMax]);
+    const latest = latestOptionsRef.current;
+    setPriceRange([latest.priceMin, latest.priceMax]);
   };
 
   const activeFilters = useMemo(() => ({

@@ -12,8 +12,10 @@ router.get("/", async (req, res, next) => {
     const params = [];
 
     if (productId) {
+      const parsedProductId = parseInt(productId, 10);
+      if (isNaN(parsedProductId)) return res.status(400).json({ error: "Invalid productId" });
       whereClauses.push("bi.productId = ?");
-      params.push(parseInt(productId, 10));
+      params.push(parsedProductId);
     }
     if (isPublic !== undefined) {
       whereClauses.push("bl.isPublic = ?");
@@ -61,23 +63,26 @@ router.post("/", async (req, res, next) => {
             coffeeGrams, waterGrams, waterTempC, brewTimeSec, rating, notes, isPublic } = req.body;
     const now = new Date().toISOString();
 
-    const result = await db.execute({
+    const statements = [{
       sql: `INSERT INTO brew_logs (recipeId, beanInventoryId, brewerName, grinderName, grindSize,
         coffeeGrams, waterGrams, waterTempC, brewTimeSec, rating, notes, isPublic, createdAt)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: [recipeId || null, beanInventoryId || null, brewerName || null, grinderName || null,
-            grindSize || null, coffeeGrams || null, waterGrams || null, waterTempC || null,
-            brewTimeSec || null, rating || null, notes || null, isPublic !== false ? 1 : 0, now]
-    });
+      args: [recipeId ?? null, beanInventoryId ?? null, brewerName || null, grinderName || null,
+            grindSize || null, coffeeGrams ?? null, waterGrams ?? null, waterTempC ?? null,
+            brewTimeSec ?? null, rating ?? null, notes || null, isPublic !== false ? 1 : 0, now]
+    }];
 
     if (beanInventoryId && coffeeGrams) {
-      await db.execute({
+      statements.push({
         sql: "UPDATE bean_inventory SET gramsRemaining = MAX(0, gramsRemaining - ?), updatedAt = ? WHERE id = ?",
         args: [coffeeGrams, now, beanInventoryId]
       });
     }
 
-    const { rows: created } = await db.execute({ sql: "SELECT * FROM brew_logs WHERE id = ?", args: [Number(result.lastInsertRowid)] });
+    const results = await db.batch(statements, "write");
+    const insertResult = results[0];
+
+    const { rows: created } = await db.execute({ sql: "SELECT * FROM brew_logs WHERE id = ?", args: [Number(insertResult.lastInsertRowid)] });
     res.status(201).json(created[0]);
   } catch (err) { next(err); }
 });
@@ -92,9 +97,10 @@ router.put("/:id", async (req, res, next) => {
     if (!existing) return res.status(404).json({ error: "Brew log not found" });
     const b = req.body;
     await db.execute({
-      sql: `UPDATE brew_logs SET brewerName=?, grinderName=?, grindSize=?, coffeeGrams=?,
+      sql: `UPDATE brew_logs SET recipeId=?, beanInventoryId=?, brewerName=?, grinderName=?, grindSize=?, coffeeGrams=?,
         waterGrams=?, waterTempC=?, brewTimeSec=?, rating=?, notes=?, isPublic=? WHERE id=?`,
-      args: [b.brewerName ?? existing.brewerName, b.grinderName ?? existing.grinderName,
+      args: [b.recipeId ?? existing.recipeId, b.beanInventoryId ?? existing.beanInventoryId,
+            b.brewerName ?? existing.brewerName, b.grinderName ?? existing.grinderName,
             b.grindSize ?? existing.grindSize, b.coffeeGrams ?? existing.coffeeGrams,
             b.waterGrams ?? existing.waterGrams, b.waterTempC ?? existing.waterTempC,
             b.brewTimeSec ?? existing.brewTimeSec, b.rating ?? existing.rating,

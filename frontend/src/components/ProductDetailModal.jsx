@@ -45,7 +45,10 @@ function ProductDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm p-0 md:p-4 animate-in fade-in duration-200">
+    <div
+      className="fixed inset-0 z-[100] flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm p-0 md:p-4 animate-in fade-in duration-200"
+      onClick={onClose}
+    >
       <div
         className="relative bg-white w-full h-full md:rounded-2xl md:shadow-2xl md:max-w-3xl md:max-h-[90vh] overflow-hidden flex flex-col animate-in slide-in-from-bottom-4 md:zoom-in-95 duration-200"
         style={{ transform: dragY > 0 ? `translateY(${dragY}px)` : undefined, opacity: dragY > 80 ? 0.7 : 1 }}
@@ -239,7 +242,6 @@ function ProductDetailModal({
           </div>
         )}
       </div>
-      <div className="absolute inset-0 -z-10" onClick={onClose} />
     </div>
   );
 }
