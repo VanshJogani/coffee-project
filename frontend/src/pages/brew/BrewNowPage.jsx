@@ -1,12 +1,21 @@
 import React, { useEffect, useReducer, useRef, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { fetchRecipes, fetchCommunityRecipes, createBrewLog, createRecipe, fetchProducts } from "../../api/client";
+import { fetchRecipes, fetchCommunityRecipes, createBrewLog, createRecipe, fetchProducts, fetchInventory } from "../../api/client";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const POUROVER_METHODS = ["v60", "chemex", "kalita", "clever", "origami", "pourover", "pour over", "dripper"];
 const POUR_FLASH_SEC = 5;
 const ROAST_LEVELS = ["Light", "Medium-Light", "Medium", "Medium-Dark", "Dark"];
 const COFFEE_BRANDS = ["Blue Tokai", "Greysoul", "Fraction9", "Corridors of Power", "Bloom", "Savorworks", "Subko", "KC Roasters", "Curious Life", "Other"];
+
+const EQUIPMENT_PRESETS = [
+  { id: "v60", label: "V60 Standard", brewerName: "V60", grindSize: "Medium-Fine", waterTempC: "93", coffeeGrams: "15", waterGrams: "250" },
+  { id: "aeropress", label: "AeroPress Classic", brewerName: "AeroPress", grindSize: "Medium-Fine", waterTempC: "85", coffeeGrams: "15", waterGrams: "200" },
+  { id: "french-press", label: "French Press", brewerName: "French Press", grindSize: "Coarse", waterTempC: "93", coffeeGrams: "30", waterGrams: "500" },
+  { id: "chemex", label: "Chemex", brewerName: "Chemex", grindSize: "Medium-Coarse", waterTempC: "94", coffeeGrams: "25", waterGrams: "400" },
+  { id: "moka-pot", label: "Moka Pot", brewerName: "Moka Pot", grindSize: "Medium-Fine", waterTempC: "100", coffeeGrams: "18", waterGrams: "90" },
+  { id: "espresso", label: "Espresso", brewerName: "Espresso", grindSize: "Fine", waterTempC: "93", coffeeGrams: "18", waterGrams: "36" },
+];
 
 // ── Coffee Search Picker ─────────────────────────────────────────────────────
 function CoffeeSearchPicker({ value, onChange }) {
@@ -307,9 +316,17 @@ function BrewNowPage() {
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedCoffee, setSelectedCoffee] = useState(null); // DB product picked from search
   const [selectedRecipeId, setSelectedRecipeId] = useState(navState?.recipeId ? String(navState.recipeId) : "");
+  const defaultPreset = EQUIPMENT_PRESETS[0]; // V60 Standard
+  const prefill = navState?.prefill;
+  const [selectedPresetId, setSelectedPresetId] = useState(navState?.recipeId ? null : prefill ? null : defaultPreset.id);
   const [setup, setSetup] = useState({
-    brewerName: "", grinderName: "", grindSize: "", coffeeGrams: "", waterGrams: "",
-    waterTempC: "", notes: "",
+    brewerName: prefill?.brewerName || (navState?.recipeId ? "" : defaultPreset.brewerName),
+    grinderName: prefill?.grinderName || "",
+    grindSize: prefill?.grindSize || (navState?.recipeId ? "" : defaultPreset.grindSize),
+    coffeeGrams: prefill?.coffeeGrams ?? (navState?.recipeId ? "" : defaultPreset.coffeeGrams),
+    waterGrams: prefill?.waterGrams ?? (navState?.recipeId ? "" : defaultPreset.waterGrams),
+    waterTempC: prefill?.waterTempC ?? (navState?.recipeId ? "" : defaultPreset.waterTempC),
+    notes: "",
   });
   const [overridesOpen, setOverridesOpen] = useState(false);
 
@@ -331,6 +348,10 @@ function BrewNowPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  // Bean inventory
+  const [beanInventory, setBeanInventory] = useState([]);
+  const [selectedBeanInventoryId, setSelectedBeanInventoryId] = useState(navState?.beanId ? Number(navState.beanId) : null);
+
   // Save as recipe
   const [showSaveRecipe, setShowSaveRecipe] = useState(false);
   const [recipeName, setRecipeName] = useState("");
@@ -339,10 +360,29 @@ function BrewNowPage() {
 
   // Load data
   useEffect(() => {
-    Promise.all([fetchRecipes(), fetchCommunityRecipes()])
-      .then(([r, c]) => { setRecipes(r); setCommunityRecipes(c); })
+    Promise.all([fetchRecipes(), fetchCommunityRecipes(), fetchInventory().catch(() => [])])
+      .then(([r, c, inv]) => {
+        setRecipes(r);
+        setCommunityRecipes(c);
+        setBeanInventory(inv || []);
+        // If navigated from BeansPage with a beanId, auto-select that bean
+        if (navState?.beanId) {
+          const bean = (inv || []).find(b => b.id === Number(navState.beanId));
+          if (bean) {
+            setSelectedBeanInventoryId(bean.id);
+            if (bean.displayName && bean.displayName !== "Unknown Bean") {
+              setSelectedCoffee({ id: bean.productId, name: bean.displayName, roaster: bean.displayRoaster, roastType: bean.roastType });
+            }
+            if (bean.roastType) {
+              const match = ROAST_LEVELS.find(rl => bean.roastType.toLowerCase().includes(rl.toLowerCase()));
+              if (match) setSelectedRoastLevel(match);
+            }
+            if (bean.displayRoaster) setSelectedBrand(bean.displayRoaster);
+          }
+        }
+      })
       .finally(() => setLoadingData(false));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-fill setup from selected recipe
   const selectedRecipe = recipes.find(r => String(r.id) === String(selectedRecipeId));
@@ -354,6 +394,7 @@ function BrewNowPage() {
     if (!selectedRecipeId || !selectedRecipe) return;
     // Don't reset if a brew is already in progress
     if (brewPhase !== "setup") return;
+    setSelectedPresetId(null); // Clear preset when recipe is selected
     setSetup(s => ({
       ...s,
       brewerName: selectedRecipe.brewerType || s.brewerName,
@@ -519,7 +560,7 @@ function BrewNowPage() {
     try {
       await createBrewLog({
         recipeId: selectedRecipeId ? Number(selectedRecipeId) : null,
-        beanInventoryId: null,
+        beanInventoryId: selectedBeanInventoryId || null,
         brewerName: setup.brewerName || selectedRecipe?.brewerType || null,
         grinderName: setup.grinderName || null,
         grindSize: setup.grindSize || null,
@@ -580,7 +621,7 @@ function BrewNowPage() {
     if (recipe.coffeeBrand) setSelectedBrand(recipe.coffeeBrand);
   };
 
-  // When a DB coffee is selected from search, sync roast level
+  // When a DB coffee is selected from search, sync roast level and auto-link inventory
   const handleCoffeeSelect = (product) => {
     setSelectedCoffee(product);
     if (product?.roastType) {
@@ -589,6 +630,50 @@ function BrewNowPage() {
       if (match) setSelectedRoastLevel(match);
     }
     if (product?.roaster) setSelectedBrand(product.roaster);
+    // Auto-link to bean inventory if this product matches an inventory bean
+    if (product?.id) {
+      const matchingBean = beanInventory.find(b => b.productId === product.id && b.gramsRemaining > 0);
+      if (matchingBean) {
+        setSelectedBeanInventoryId(matchingBean.id);
+      } else {
+        setSelectedBeanInventoryId(null);
+      }
+    } else {
+      setSelectedBeanInventoryId(null);
+    }
+  };
+
+  // Handle bean inventory selection
+  const handleBeanSelect = (beanId) => {
+    const id = beanId ? Number(beanId) : null;
+    setSelectedBeanInventoryId(id);
+    if (id) {
+      const bean = beanInventory.find(b => b.id === id);
+      if (bean) {
+        // Auto-fill coffee info from the selected bean
+        if (bean.displayName && bean.displayName !== "Unknown Bean") {
+          setSelectedCoffee({ id: bean.productId, name: bean.displayName, roaster: bean.displayRoaster, roastType: bean.roastType });
+        }
+        if (bean.roastType) {
+          const match = ROAST_LEVELS.find(r => bean.roastType.toLowerCase().includes(r.toLowerCase()));
+          if (match) setSelectedRoastLevel(match);
+        }
+        if (bean.displayRoaster) setSelectedBrand(bean.displayRoaster);
+      }
+    }
+  };
+
+  // Handle preset selection
+  const handlePresetSelect = (preset) => {
+    setSelectedPresetId(preset.id);
+    setSetup(s => ({
+      ...s,
+      brewerName: preset.brewerName,
+      grindSize: preset.grindSize,
+      waterTempC: preset.waterTempC,
+      coffeeGrams: preset.coffeeGrams,
+      waterGrams: preset.waterGrams,
+    }));
   };
 
   // Quick pour setup visibility
@@ -619,6 +704,32 @@ function BrewNowPage() {
         <div className="premium-card p-5 space-y-4">
           <div className="text-[11px] font-bold uppercase tracking-widest text-luxury-gold">Setup</div>
 
+          {/* Quick Setup Presets */}
+          <div>
+            <label className="block text-[10px] uppercase tracking-widest text-luxury-clay font-bold mb-2">Quick Setup</label>
+            <div className="flex flex-wrap gap-2">
+              {EQUIPMENT_PRESETS.map(preset => (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => handlePresetSelect(preset)}
+                  className={`px-3 py-1.5 rounded-xl border text-[11px] font-bold uppercase tracking-wider transition-all ${
+                    selectedPresetId === preset.id
+                      ? "bg-luxury-umber text-white border-luxury-umber shadow-md shadow-luxury-umber/20"
+                      : "bg-white text-luxury-umber border-luxury-clay/30 hover:border-luxury-gold hover:text-luxury-gold"
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+            {selectedPresetId && (
+              <div className="mt-2 text-[10px] text-luxury-clay/60">
+                Preset fills equipment fields below — override any value freely
+              </div>
+            )}
+          </div>
+
           {/* Coffee Name search — auto-fills Roast Level & Brand below */}
           <div>
             <label className="block text-[10px] uppercase tracking-widest text-luxury-clay font-bold mb-1">Coffee Name</label>
@@ -627,6 +738,30 @@ function BrewNowPage() {
               <p className="mt-1 text-[10px] text-luxury-clay/60">Roast level and brand auto-filled ↓</p>
             )}
           </div>
+
+          {/* Select from My Beans inventory */}
+          {beanInventory.length > 0 && (
+            <div>
+              <label className="block text-[10px] uppercase tracking-widest text-luxury-clay font-bold mb-1">Or Select from My Beans</label>
+              <select
+                value={selectedBeanInventoryId || ""}
+                onChange={e => handleBeanSelect(e.target.value)}
+                className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold bg-white"
+              >
+                <option value="">-- Select a bean --</option>
+                {beanInventory.filter(b => b.gramsRemaining > 0).map(bean => (
+                  <option key={bean.id} value={bean.id}>
+                    {bean.displayName}{bean.displayRoaster ? ` (${bean.displayRoaster})` : ""} — {bean.gramsRemaining}g left
+                  </option>
+                ))}
+              </select>
+              {selectedBeanInventoryId && (
+                <p className="mt-1 text-[10px] text-green-600">
+                  Bean linked — grams will be deducted from inventory on save
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Roast Level — auto-filled from coffee search, or pick manually */}
           <div>

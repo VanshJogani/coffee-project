@@ -4,6 +4,7 @@ import {
   fetchInventory, createInventoryItem, updateInventoryItem, deleteInventoryItem,
   fetchProducts
 } from "../../api/client";
+import { useAuth } from "../../contexts/AuthContext";
 
 const GRAM_WARNING = 50;
 
@@ -234,17 +235,23 @@ function AddBeanModal({ onClose, onSave, editBean }) {
 
 function BeansPage() {
   const navigate = useNavigate();
+  const { user, openAuthModal } = useAuth();
   const [beans, setBeans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editBean, setEditBean] = useState(null);
 
   const load = async () => {
+    if (!user) {
+      setBeans([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try { setBeans(await fetchInventory()); } finally { setLoading(false); }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [user]);
 
   const handleSave = async (payload) => {
     if (editBean) await updateInventoryItem(editBean.id, payload);
@@ -265,15 +272,29 @@ function BeansPage() {
           <h2 className="text-2xl font-bold text-luxury-umber">My Beans</h2>
           <p className="text-sm text-luxury-clay mt-0.5">{beans.length} {beans.length === 1 ? "bag" : "bags"} in your stash</p>
         </div>
-        <button type="button" onClick={() => { setEditBean(null); setModalOpen(true); }}
-          className="flex items-center gap-2 px-4 py-2 bg-luxury-umber text-white text-[11px] font-bold uppercase tracking-widest rounded-xl hover:bg-luxury-dark transition-colors">
-          <span className="text-base leading-none">+</span> Add Bean
-        </button>
+        {user && (
+          <button type="button" onClick={() => { setEditBean(null); setModalOpen(true); }}
+            className="flex items-center gap-2 px-4 py-2 bg-luxury-umber text-white text-[11px] font-bold uppercase tracking-widest rounded-xl hover:bg-luxury-dark transition-colors">
+            <span className="text-base leading-none">+</span> Add Bean
+          </button>
+        )}
       </div>
 
       {loading && <div className="py-20 text-center text-luxury-clay text-sm">Loading your beans…</div>}
 
-      {!loading && beans.length === 0 && (
+      {!loading && !user && (
+        <div className="py-20 text-center">
+          <div className="text-5xl mb-4">☕</div>
+          <div className="font-bold text-luxury-umber mb-1">Sign in to track your beans</div>
+          <div className="text-sm text-luxury-clay mb-4">Your bean inventory is private. Sign in to add and manage your stash.</div>
+          <button onClick={openAuthModal}
+            className="px-5 py-2.5 bg-luxury-umber text-white text-sm font-bold rounded-xl hover:bg-luxury-dark transition-colors">
+            Sign In
+          </button>
+        </div>
+      )}
+
+      {!loading && user && beans.length === 0 && (
         <div className="py-20 text-center">
           <div className="text-5xl mb-4">☕</div>
           <div className="font-bold text-luxury-umber mb-1">No beans yet</div>

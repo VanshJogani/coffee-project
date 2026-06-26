@@ -134,6 +134,17 @@ export async function fetchRandomRecipe(filters = {}) {
   const res = await api.get("/recipes/random", { params });
   return res.data;
 }
+export async function fetchLikedRecipes() {
+  const res = await api.get("/recipes/liked");
+  return res.data;
+}
+export async function likeRecipe(id) {
+  const res = await api.post(`/recipes/${id}/like`);
+  return res.data;
+}
+export async function unlikeRecipe(id) {
+  await api.delete(`/recipes/${id}/like`);
+}
 
 // ── Bean Inventory ────────────────────────────────────────────────────────────
 export async function fetchInventory() {

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   fetchRecipes, createRecipe, updateRecipe, deleteRecipe, forkRecipe,
   fetchPosts, createPost, likePost, deletePost, fetchCommunityRecipes,
-  fetchRandomRecipe,
+  fetchRandomRecipe, fetchLikedRecipes, likeRecipe, unlikeRecipe,
 } from "../../api/client";
 
 const BREWER_TYPES = ["V60", "AeroPress", "French Press", "Moka Pot", "Chemex", "Clever", "Kalita", "Other"];
@@ -17,7 +18,7 @@ const BREWER_ICONS = {
 };
 
 function formatTime(sec) {
-  if (!sec && sec !== 0) return "\u2014";
+  if (!sec) return "\u2014";
   const m = Math.floor(sec / 60);
   const s = sec % 60;
   return m > 0 ? `${m}m ${s > 0 ? s + "s" : ""}`.trim() : `${s}s`;
@@ -289,7 +290,7 @@ function ComposeModal({ myRecipes, preAttachedRecipe, onClose, onPost }) {
 }
 
 // -- Recipe Card (My Recipes tab) ---------------------------------------------
-function RecipeCard({ recipe, onView, onEdit, onFork, onDelete, onBrew, onShare }) {
+function RecipeCard({ recipe, onView, onEdit, onFork, onDelete, onBrew, onShare, isLiked, onToggleLike }) {
   const icon = BREWER_ICONS[recipe.brewerType] || "\u2615";
   return (
     <div className="premium-card p-5 flex flex-col gap-3">
@@ -309,6 +310,15 @@ function RecipeCard({ recipe, onView, onEdit, onFork, onDelete, onBrew, onShare 
           <div className="font-semibold text-sm text-luxury-umber leading-snug mt-0.5">{recipe.name}</div>
         </div>
       </div>
+
+      {/* Like button */}
+      <button type="button" onClick={(e) => { e.stopPropagation(); onToggleLike(recipe.id); }}
+        className={`self-end -mt-1 -mb-1 p-1 rounded-full transition-colors ${
+          isLiked ? "text-red-500" : "text-luxury-clay/40 hover:text-red-400"
+        }`}
+        title={isLiked ? "Unlike" : "Like"}>
+        <span className="text-lg">{isLiked ? "\u2665" : "\u2661"}</span>
+      </button>
 
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="bg-luxury-stone/30 rounded-lg py-1.5">
@@ -384,7 +394,7 @@ function RecipeCard({ recipe, onView, onEdit, onFork, onDelete, onBrew, onShare 
 }
 
 // -- Community Recipe Card (shared recipes grid) ------------------------------
-function CommunityRecipeCard({ recipe, onBrew, onImport }) {
+function CommunityRecipeCard({ recipe, onBrew, onImport, isLiked, onToggleLike }) {
   const [importing, setImporting] = useState(false);
   const [imported, setImported] = useState(false);
   const icon = BREWER_ICONS[recipe.brewerType] || "\u2615";
@@ -411,6 +421,15 @@ function CommunityRecipeCard({ recipe, onBrew, onImport }) {
           )}
         </div>
       </div>
+
+      {/* Like button */}
+      <button type="button" onClick={(e) => { e.stopPropagation(); onToggleLike(recipe.id); }}
+        className={`self-end -mt-1 -mb-1 p-1 rounded-full transition-colors ${
+          isLiked ? "text-red-500" : "text-luxury-clay/40 hover:text-red-400"
+        }`}
+        title={isLiked ? "Unlike" : "Like"}>
+        <span className="text-lg">{isLiked ? "♥" : "♡"}</span>
+      </button>
 
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="bg-luxury-stone/30 rounded-lg py-1.5">
@@ -1037,9 +1056,17 @@ function LuckyRecipeModal({ onClose, onBrew }) {
   );
 }
 
+// -- Helper: determine if a recipe is cold brew/iced -------------------------
+function isColdRecipe(recipe) {
+  if (recipe.waterTempC != null && recipe.waterTempC <= 30) return true;
+  const text = `${recipe.name || ""} ${recipe.notes || ""}`.toLowerCase();
+  return /\b(cold|iced|ice)\b/.test(text);
+}
+
 // -- Main RecipesPage ---------------------------------------------------------
 function RecipesPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [tab, setTab] = useState("my"); // "my" | "community"
 
   // My recipes state
@@ -1048,6 +1075,12 @@ function RecipesPage() {
   const [modal, setModal] = useState(null);
   const [composeModal, setComposeModal] = useState(null);
   const [luckyModal, setLuckyModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // My Recipes filters
+  const [myBrewerFilter, setMyBrewerFilter] = useState("");
+  const [myGrindFilter, setMyGrindFilter] = useState("");
+  const [myTempFilter, setMyTempFilter] = useState(""); // "" | "hot" | "cold"
 
   // Community feed state
   const [posts, setPosts] = useState([]);
@@ -1061,6 +1094,15 @@ function RecipesPage() {
   const [brewerFilter, setBrewerFilter] = useState("");
   const [roastFilter, setRoastFilter] = useState("");
   const [brandFilter, setBrandFilter] = useState("");
+
+  // Liked recipes state
+  const [likedIds, setLikedIds] = useState(() => {
+    // Initialize from localStorage for anonymous fallback
+    try {
+      const stored = localStorage.getItem("recipe_likes");
+      return stored ? JSON.parse(stored) : [];
+    } catch { return []; }
+  });
 
   const loadRecipes = async () => {
     setLoading(true);
@@ -1078,7 +1120,16 @@ function RecipesPage() {
     finally { setCommunityLoading(false); }
   };
 
-  useEffect(() => { loadRecipes(); }, []);
+  const loadLikedRecipes = async () => {
+    if (user) {
+      try {
+        const ids = await fetchLikedRecipes();
+        setLikedIds(ids);
+      } catch { /* ignore */ }
+    }
+  };
+
+  useEffect(() => { loadRecipes(); loadLikedRecipes(); }, [user]);
 
   useEffect(() => {
     if (tab === "community") {
@@ -1121,15 +1172,69 @@ function RecipesPage() {
 
   const handleBrew = (recipe) => navigate("/brew/now", { state: { recipeId: recipe.id } });
 
-  const builtIn = recipes.filter(r => r.isBuiltIn);
-  const mine = recipes.filter(r => !r.isBuiltIn);
+  const handleToggleLike = async (recipeId) => {
+    const isCurrentlyLiked = likedIds.includes(recipeId);
+    // Optimistic update
+    const newLikedIds = isCurrentlyLiked
+      ? likedIds.filter(id => id !== recipeId)
+      : [...likedIds, recipeId];
+    setLikedIds(newLikedIds);
+
+    if (user) {
+      try {
+        if (isCurrentlyLiked) await unlikeRecipe(recipeId);
+        else await likeRecipe(recipeId);
+      } catch {
+        // Revert on error
+        setLikedIds(likedIds);
+      }
+    } else {
+      // Anonymous: store in localStorage
+      localStorage.setItem("recipe_likes", JSON.stringify(newLikedIds));
+    }
+  };
+
+  // My Recipes filter logic
+  const myFilterCount = (myBrewerFilter ? 1 : 0) + (myGrindFilter ? 1 : 0) + (myTempFilter ? 1 : 0);
+  const clearMyFilters = () => { setMyBrewerFilter(""); setMyGrindFilter(""); setMyTempFilter(""); };
+
+  const normalizedSearch = searchQuery.toLowerCase().trim();
+
+  const applyMyFilters = (list) => list
+    .filter(r => !normalizedSearch || r.name.toLowerCase().includes(normalizedSearch))
+    .filter(r => !myBrewerFilter || r.brewerType === myBrewerFilter)
+    .filter(r => !myGrindFilter || r.grindSize === myGrindFilter)
+    .filter(r => {
+      if (!myTempFilter) return true;
+      if (myTempFilter === "cold") return isColdRecipe(r);
+      return !isColdRecipe(r); // "hot"
+    });
+
+  const sortByLiked = (list) => [...list].sort((a, b) => {
+    const aLiked = likedIds.includes(a.id) ? 1 : 0;
+    const bLiked = likedIds.includes(b.id) ? 1 : 0;
+    return bLiked - aLiked;
+  });
+  const builtIn = sortByLiked(applyMyFilters(recipes.filter(r => r.isBuiltIn)));
+  const mine = sortByLiked(applyMyFilters(recipes.filter(r => !r.isBuiltIn)));
+
+  // Derive available brewer types from all recipes for filters
+  const myBrewerTypes = [...new Set(recipes.map(r => r.brewerType).filter(Boolean))].sort();
+  const myGrindSizes = [...new Set(recipes.map(r => r.grindSize).filter(Boolean))].sort((a, b) => {
+    const order = GRIND_SIZES.indexOf(a) - GRIND_SIZES.indexOf(b);
+    return order !== 0 ? order : a.localeCompare(b);
+  });
 
   const filteredCommunityRecipes = communityRecipes
     .filter(r => !brewerFilter || r.brewerType === brewerFilter)
     .filter(r => !roastFilter || r.roastLevel === roastFilter)
     .filter(r => !brandFilter || r.coffeeBrand === brandFilter)
     .sort((a, b) => {
-      // Sort by roast level first, then brand, then name
+      // Liked recipes first
+      const aLiked = likedIds.includes(a.id) ? 1 : 0;
+      const bLiked = likedIds.includes(b.id) ? 1 : 0;
+      if (aLiked !== bLiked) return bLiked - aLiked;
+      // Then by roast level, brand, name
       const roastOrder = ROAST_LEVELS.indexOf(a.roastLevel || "") - ROAST_LEVELS.indexOf(b.roastLevel || "");
       if (roastOrder !== 0) return roastOrder;
       if ((a.coffeeBrand || "") !== (b.coffeeBrand || "")) return (a.coffeeBrand || "").localeCompare(b.coffeeBrand || "");
@@ -1189,8 +1294,131 @@ function RecipesPage() {
       {/* -- My Recipes Tab -- */}
       {tab === "my" && (
         <>
+          {/* Search box */}
+          <div className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search recipes by name…"
+              className="w-full rounded-lg border border-luxury-clay/40 px-3 py-2 text-sm focus:outline-none focus:border-luxury-gold pr-8"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-luxury-clay hover:text-luxury-umber transition-colors text-lg leading-none"
+              >
+                &times;
+              </button>
+            )}
+          </div>
+
+          {/* Filters */}
+          {recipes.length > 0 && (
+            <div className="premium-card p-4 space-y-2">
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-luxury-gold">Filters</span>
+                  {myFilterCount > 0 && (
+                    <span className="text-[9px] font-bold bg-luxury-gold/20 text-luxury-umber px-1.5 py-0.5 rounded-full">
+                      {myFilterCount} active
+                    </span>
+                  )}
+                </div>
+                {myFilterCount > 0 && (
+                  <button type="button" onClick={clearMyFilters}
+                    className="text-[10px] font-bold uppercase tracking-widest text-luxury-clay hover:text-luxury-umber transition-colors">
+                    Clear filters
+                  </button>
+                )}
+              </div>
+
+              {/* Brewer/Machine type */}
+              {myBrewerTypes.length > 0 && (
+                <div className="flex gap-1 flex-wrap items-center">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-luxury-clay mr-1">Brewer</span>
+                  <button type="button" onClick={() => setMyBrewerFilter("")}
+                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                      !myBrewerFilter ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                    }`}>
+                    All
+                  </button>
+                  {myBrewerTypes.map(t => (
+                    <button key={t} type="button" onClick={() => setMyBrewerFilter(myBrewerFilter === t ? "" : t)}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                        myBrewerFilter === t ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                      }`}>
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Grind Size */}
+              {myGrindSizes.length > 0 && (
+                <div className="flex gap-1 flex-wrap items-center">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-luxury-clay mr-1">Grind</span>
+                  <button type="button" onClick={() => setMyGrindFilter("")}
+                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                      !myGrindFilter ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                    }`}>
+                    All
+                  </button>
+                  {myGrindSizes.map(g => (
+                    <button key={g} type="button" onClick={() => setMyGrindFilter(myGrindFilter === g ? "" : g)}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                        myGrindFilter === g ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                      }`}>
+                      {g}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Hot/Cold */}
+              <div className="flex gap-1 flex-wrap items-center">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-luxury-clay mr-1">Temp</span>
+                <button type="button" onClick={() => setMyTempFilter("")}
+                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                    !myTempFilter ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                  }`}>
+                  All
+                </button>
+                <button type="button" onClick={() => setMyTempFilter(myTempFilter === "hot" ? "" : "hot")}
+                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                    myTempFilter === "hot" ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                  }`}>
+                  Hot
+                </button>
+                <button type="button" onClick={() => setMyTempFilter(myTempFilter === "cold" ? "" : "cold")}
+                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                    myTempFilter === "cold" ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+                  }`}>
+                  Cold
+                </button>
+              </div>
+            </div>
+          )}
+
           {loading ? (
             <div className="py-20 text-center text-luxury-clay text-sm">Loading recipes\u2026</div>
+          ) : (normalizedSearch || myFilterCount > 0) && builtIn.length === 0 && mine.length === 0 ? (
+            <div className="py-10 text-center border-2 border-dashed border-luxury-clay/20 rounded-2xl">
+              <div className="text-3xl mb-3">&#x1F50D;</div>
+              <div className="font-bold text-luxury-umber mb-1">No recipes found</div>
+              <div className="text-sm text-luxury-clay">
+                {normalizedSearch
+                  ? <>No recipes match &ldquo;{searchQuery}&rdquo;. Try a different search term.</>
+                  : "No recipes match the selected filters."}
+              </div>
+              {myFilterCount > 0 && (
+                <button type="button" onClick={clearMyFilters}
+                  className="mt-3 px-4 py-2 border border-luxury-clay/40 text-luxury-clay text-[11px] font-bold uppercase tracking-widest rounded-xl hover:border-luxury-umber hover:text-luxury-umber transition-colors">
+                  Clear filters
+                </button>
+              )}
+            </div>
           ) : (
             <>
               {builtIn.length > 0 && (
@@ -1204,7 +1432,9 @@ function RecipesPage() {
                         onFork={handleForkRecipe}
                         onDelete={handleDeleteRecipe}
                         onBrew={handleBrew}
-                        onShare={() => {}} />
+                        onShare={() => {}}
+                        isLiked={likedIds.includes(r.id)}
+                        onToggleLike={handleToggleLike} />
                     ))}
                   </div>
                 </section>
@@ -1237,7 +1467,9 @@ function RecipesPage() {
                         onFork={handleForkRecipe}
                         onDelete={handleDeleteRecipe}
                         onBrew={handleBrew}
-                        onShare={r => setComposeModal({ preAttachedRecipe: r })} />
+                        onShare={r => setComposeModal({ preAttachedRecipe: r })}
+                        isLiked={likedIds.includes(r.id)}
+                        onToggleLike={handleToggleLike} />
                     ))}
                   </div>
                 )}
@@ -1258,7 +1490,7 @@ function RecipesPage() {
             {communityRecipes.length > 0 && (
               <div className="space-y-2 mb-4">
                 {/* Brewer filter */}
-                {communityBrewerTypes.length > 1 && (
+                {communityBrewerTypes.length > 0 && (
                   <div className="flex gap-1 flex-wrap items-center">
                     <span className="text-[9px] font-bold uppercase tracking-widest text-luxury-clay mr-1">Brewer</span>
                     <button type="button" onClick={() => setBrewerFilter("")}
@@ -1339,7 +1571,9 @@ function RecipesPage() {
                 {filteredCommunityRecipes.map(r => (
                   <CommunityRecipeCard key={r.id} recipe={r}
                     onBrew={handleBrew}
-                    onImport={handleForkRecipe} />
+                    onImport={handleForkRecipe}
+                    isLiked={likedIds.includes(r.id)}
+                    onToggleLike={handleToggleLike} />
                 ))}
               </div>
             )}

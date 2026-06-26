@@ -86,6 +86,7 @@ function DashboardPage() {
                 onClick={() => navigate("/brew/now", {
                   state: {
                     beanId: lastLog.beanInventoryId,
+                    recipeId: lastLog.recipeId,
                     prefill: {
                       brewerName: lastLog.brewerName,
                       grinderName: lastLog.grinderName,

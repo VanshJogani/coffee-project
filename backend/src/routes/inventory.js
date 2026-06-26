@@ -6,10 +6,10 @@ const router = express.Router();
 // Use a JOIN query instead of N+1 enrichRow calls (network round-trips to Turso)
 router.get("/", async (req, res, next) => {
   try {
+    // Anonymous users get an empty inventory — beans are private per-user
+    if (!req.user) return res.json([]);
+
     const db = getDb();
-    // If logged in, show only user's beans. Otherwise show all (backward compat).
-    const userFilter = req.user ? "WHERE bi.userId = ?" : "";
-    const args = req.user ? [req.user.id] : [];
     const { rows } = await db.execute({
       sql: `SELECT bi.*,
         COALESCE(p.name, bi.customName, 'Unknown Bean') as displayName,
@@ -17,9 +17,9 @@ router.get("/", async (req, res, next) => {
         p.imageUrl, p.tastingNotes, p.roastType, p.origin
       FROM bean_inventory bi
       LEFT JOIN products p ON p.id = bi.productId
-      ${userFilter}
+      WHERE bi.userId = ?
       ORDER BY bi.createdAt DESC`,
-      args
+      args: [req.user.id]
     });
     res.json(rows);
   } catch (err) { next(err); }

@@ -74,6 +74,50 @@ router.get("/random", async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// GET /api/recipes/liked — return array of recipe IDs the user has liked
+router.get("/liked", async (req, res, next) => {
+  try {
+    if (!req.user) return res.json([]);
+    const db = getDb();
+    const { rows } = await db.execute({
+      sql: "SELECT recipeId FROM recipe_likes WHERE userId = ?",
+      args: [req.user.id]
+    });
+    res.json(rows.map(r => r.recipeId));
+  } catch (err) { next(err); }
+});
+
+// POST /api/recipes/:id/like — like a recipe
+router.post("/:id/like", async (req, res, next) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: "Login required" });
+    const db = getDb();
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
+    const now = new Date().toISOString();
+    await db.execute({
+      sql: "INSERT OR IGNORE INTO recipe_likes (userId, recipeId, createdAt) VALUES (?, ?, ?)",
+      args: [req.user.id, id, now]
+    });
+    res.json({ liked: true });
+  } catch (err) { next(err); }
+});
+
+// DELETE /api/recipes/:id/like — unlike a recipe
+router.delete("/:id/like", async (req, res, next) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: "Login required" });
+    const db = getDb();
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
+    await db.execute({
+      sql: "DELETE FROM recipe_likes WHERE userId = ? AND recipeId = ?",
+      args: [req.user.id, id]
+    });
+    res.json({ liked: false });
+  } catch (err) { next(err); }
+});
+
 // GET /api/recipes/:id
 router.get("/:id", async (req, res, next) => {
   try {

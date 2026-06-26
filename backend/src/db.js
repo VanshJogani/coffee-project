@@ -209,6 +209,15 @@ async function initSchema(db) {
       expiresAt TEXT NOT NULL,
       createdAt TEXT NOT NULL,
       FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+    )`,
+    `CREATE TABLE IF NOT EXISTS recipe_likes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER NOT NULL,
+      recipeId INTEGER NOT NULL,
+      createdAt TEXT NOT NULL,
+      UNIQUE(userId, recipeId),
+      FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE CASCADE
     )`
   ], "write");
 }
@@ -247,6 +256,8 @@ async function createIndexes(db) {
     `CREATE INDEX IF NOT EXISTS idx_brew_notes_userId ON brew_notes(userId)`,
     `CREATE INDEX IF NOT EXISTS idx_community_posts_userId ON community_posts(userId)`,
     `CREATE INDEX IF NOT EXISTS idx_reviews_userId ON reviews(userId)`,
+    `CREATE INDEX IF NOT EXISTS idx_recipe_likes_userId ON recipe_likes(userId)`,
+    `CREATE INDEX IF NOT EXISTS idx_recipe_likes_recipeId ON recipe_likes(recipeId)`,
   ], "write");
 }
 
