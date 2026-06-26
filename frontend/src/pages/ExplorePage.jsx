@@ -113,7 +113,7 @@ function ExplorePage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-3">
-                    <h1 className="text-xl font-bold tracking-tight text-luxury-light">Caffè Elegante</h1>
+                    <h1 className="text-xl font-bold tracking-tight text-luxury-light">Café Indica</h1>
                     <div className="flex items-center gap-2">
                     <button
                       onClick={() => setWheelOpen(true)}

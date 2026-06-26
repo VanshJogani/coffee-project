@@ -11,7 +11,7 @@ function LandingPage() {
           <div className="w-14 h-14 rounded-full bg-luxury-umber flex items-center justify-center shadow-lg">
             <span className="text-3xl">☕</span>
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-luxury-umber">Caffè Elegante</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-luxury-umber">Café Indica</h1>
           <p className="text-xs text-luxury-clay font-medium uppercase tracking-[0.25em]">
             Curated Indian Specialty Coffee
           </p>
