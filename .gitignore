@@ -36,3 +36,5 @@ CLAUDE.md
 .env.*.local
 
 .npmrc
+package-lock.json
+backend/package-lock.json
