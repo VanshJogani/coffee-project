@@ -386,13 +386,6 @@ function BrewNowPage() {
   // Check completion
   const target = Number(setup.targetBrewTimeSec) || selectedRecipe?.targetBrewTimeSec || 0;
 
-  useEffect(() => {
-    if (timer.state === "running" && target > 0 && timer.elapsed >= target) {
-      dispatch({ type: "COMPLETE" });
-      setBrewPhase("complete");
-    }
-  }, [timer.elapsed, timer.state, target]);
-
   // Sync brewPhase with timer state
   useEffect(() => {
     if (timer.state === "complete") setBrewPhase("complete");
@@ -424,19 +417,53 @@ function BrewNowPage() {
       const lastPour = pourSchedule.pours[pourSchedule.pours.length - 1];
       return lastPour.absoluteTimeSec + 30;
     }
+    // Derive endpoint from last brew step's timeSec
+    if (brewSteps.length > 0) {
+      const lastStep = brewSteps[brewSteps.length - 1];
+      if (lastStep.timeSec > 0) return lastStep.timeSec;
+    }
     return 0;
-  }, [target, pourSchedule]);
+  }, [target, pourSchedule, brewSteps]);
+
+  // Auto-complete when effectiveTarget is reached
+  useEffect(() => {
+    if (timer.state === "running" && effectiveTarget > 0 && timer.elapsed >= effectiveTarget) {
+      dispatch({ type: "COMPLETE" });
+      setBrewPhase("complete");
+    }
+  }, [timer.elapsed, timer.state, effectiveTarget]);
 
   // ── Step guidance ──────────────────────────────────────────────────────────
-  const stepIdx = useMemo(() => {
+  const [manualStepIdx, setManualStepIdx] = useState(null); // for skipping ahead
+
+  const timeBasedStepIdx = useMemo(() => {
     if (!brewSteps?.length) return 0;
     let idx = 0;
-    for (let i = 0; i < brewSteps.length; i++) {
-      if (timer.elapsed >= brewSteps[i].timeSec) idx = i;
-      else break;
+    for (let i = 1; i < brewSteps.length; i++) {
+      // Only advance to next step if it has a defined time AND elapsed has passed it
+      // Use strict > so that steps starting at the same time don't all activate at once
+      if (brewSteps[i].timeSec != null && brewSteps[i].timeSec > 0 && timer.elapsed >= brewSteps[i].timeSec) {
+        idx = i;
+      } else {
+        break;
+      }
     }
     return idx;
   }, [brewSteps, timer.elapsed]);
+
+  // Manual skip always wins, but time can catch up and push further
+  const stepIdx = manualStepIdx != null ? Math.max(manualStepIdx, timeBasedStepIdx) : timeBasedStepIdx;
+
+  const handleSkipStep = () => {
+    if (stepIdx < brewSteps.length - 1) {
+      setManualStepIdx(stepIdx + 1);
+    }
+  };
+
+  // Reset manual step when brew resets
+  useEffect(() => {
+    if (brewPhase === "setup") setManualStepIdx(null);
+  }, [brewPhase]);
 
   const ratio = setup.coffeeGrams && setup.waterGrams
     ? (Number(setup.waterGrams) / Number(setup.coffeeGrams)).toFixed(1)
@@ -829,12 +856,7 @@ function BrewNowPage() {
               )}
 
               {/* Step timeline */}
-              <div className="relative space-y-0">
-                {/* Connector line */}
-                {brewSteps.length > 1 && (
-                  <div className="absolute left-[15px] top-4 bottom-4 w-0.5 bg-luxury-clay/10 z-0" />
-                )}
-
+              <div className="space-y-1.5">
                 {brewSteps.map((step, i) => {
                   const isActive = brewPhase === "brewing" && i === stepIdx;
                   const isDone = brewPhase === "brewing" && i < stepIdx;
@@ -842,31 +864,33 @@ function BrewNowPage() {
                   const isPourActive = isActive && isPourStep && pourState?.isPouring;
 
                   return (
-                    <div key={i} className={`relative flex gap-3 p-3 rounded-xl transition-all ${
+                    <div key={i} className={`flex gap-3 p-3 rounded-xl transition-all ${
                       isPourActive
                         ? "bg-luxury-gold/15 border-2 border-luxury-gold animate-pulse"
                         : isActive
-                          ? "bg-luxury-umber/5 border-2 border-luxury-gold/60"
+                          ? "bg-luxury-umber/10 border-2 border-luxury-umber"
                           : isDone
-                            ? "opacity-40"
-                            : "border border-transparent"
+                            ? "bg-luxury-gold/5 border border-luxury-clay/15"
+                            : "border border-luxury-clay/10"
                     }`}>
                       {/* Step number circle */}
-                      <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold transition-colors ${
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold transition-colors ${
                         isDone
-                          ? "bg-green-100 text-green-600"
+                          ? "bg-luxury-clay/15 text-luxury-clay"
                           : isActive
-                            ? "bg-luxury-gold text-white"
-                            : "bg-luxury-clay/10 text-luxury-clay"
+                            ? "bg-luxury-umber text-white"
+                            : "bg-luxury-clay/10 text-luxury-clay/60"
                       }`}>
-                        {isDone ? <span>&check;</span> : i + 1}
+                        {i + 1}
                       </div>
 
                       {/* Step content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           {step.timeSec != null && (
-                            <span className="text-[10px] font-bold text-luxury-gold tabular-nums">
+                            <span className={`text-[10px] font-bold tabular-nums ${
+                              isActive ? "text-luxury-umber" : isDone ? "text-luxury-clay" : "text-luxury-clay/60"
+                            }`}>
                               {fmtElapsed(step.timeSec)}
                             </span>
                           )}
@@ -882,17 +906,25 @@ function BrewNowPage() {
                           )}
                         </div>
                         <p className={`text-sm mt-0.5 leading-relaxed ${
-                          isActive ? "text-luxury-umber font-medium" : "text-luxury-umber/80"
+                          isActive ? "text-luxury-umber font-medium" : isDone ? "text-luxury-clay" : "text-luxury-umber/80"
                         }`}>{step.instruction}</p>
 
                         {/* Active step progress */}
                         {isActive && step.timeSec != null && brewSteps[i + 1]?.timeSec != null && (
                           <div className="mt-2 h-1 bg-luxury-clay/10 rounded-full overflow-hidden">
-                            <div className="h-full bg-luxury-gold rounded-full transition-all"
+                            <div className="h-full bg-luxury-umber rounded-full transition-all"
                               style={{
                                 width: `${Math.min(100, ((timer.elapsed - step.timeSec) / (brewSteps[i + 1].timeSec - step.timeSec)) * 100)}%`
                               }} />
                           </div>
+                        )}
+
+                        {/* Skip button for active step */}
+                        {isActive && i < brewSteps.length - 1 && (
+                          <button type="button" onClick={handleSkipStep}
+                            className="mt-2 text-[10px] font-bold uppercase tracking-widest text-luxury-clay/50 hover:text-luxury-umber transition-colors">
+                            Skip →
+                          </button>
                         )}
                       </div>
                     </div>
@@ -963,6 +995,10 @@ function BrewNowPage() {
 
             {brewPhase === "brewing" && timer.state === "running" && (
               <div className="flex gap-3">
+                <button type="button" onClick={() => { dispatch({ type: "COMPLETE" }); setBrewPhase("complete"); }}
+                  className="flex-1 py-3 bg-green-600 text-white font-bold uppercase tracking-widest rounded-xl hover:bg-green-700 transition-colors text-sm">
+                  Done
+                </button>
                 <button type="button" onClick={() => dispatch({ type: "PAUSE" })}
                   className="flex-1 py-3 border border-luxury-clay/40 text-luxury-clay font-bold uppercase tracking-widest rounded-xl hover:border-luxury-umber hover:text-luxury-umber transition-colors text-sm">
                   Pause
@@ -976,6 +1012,10 @@ function BrewNowPage() {
 
             {brewPhase === "brewing" && timer.state === "paused" && (
               <div className="flex gap-3">
+                <button type="button" onClick={() => { dispatch({ type: "COMPLETE" }); setBrewPhase("complete"); }}
+                  className="flex-1 py-3 bg-green-600 text-white font-bold uppercase tracking-widest rounded-xl hover:bg-green-700 transition-colors text-sm">
+                  Done
+                </button>
                 <button type="button" onClick={() => dispatch({ type: "RESUME" })}
                   className="flex-1 py-3 bg-luxury-umber text-white font-bold uppercase tracking-widest rounded-xl hover:bg-luxury-dark transition-colors text-sm">
                   Resume
