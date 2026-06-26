@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import ModeDropdown from "../components/ModeDropdown";
+import UserMenu from "../components/UserMenu";
 import DashboardPage from "./brew/DashboardPage";
 import BrewNowPage from "./brew/BrewNowPage";
 import RecipesPage from "./brew/RecipesPage";
@@ -40,6 +41,7 @@ function BrewPage() {
               </div>
             </div>
           </div>
+          <UserMenu />
         </div>
 
         {/* Sub-tab nav */}

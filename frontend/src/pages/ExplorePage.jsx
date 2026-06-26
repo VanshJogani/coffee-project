@@ -13,6 +13,7 @@ import ProductDetailModal from "../components/ProductDetailModal";
 import FlavourWheelModal from "../components/FlavourWheelModal";
 import LoadingScreen from "../components/LoadingScreen";
 import ModeDropdown from "../components/ModeDropdown";
+import UserMenu from "../components/UserMenu";
 import CoffeeRandomizer from "../components/CoffeeRandomizer";
 import CardCarousel from "../components/CardCarousel";
 import SwipeView from "../components/SwipeView";
@@ -165,6 +166,7 @@ function ExplorePage() {
                 ))}
               </div>
               <SortSelect value={sort} onChange={setSort} />
+              <UserMenu />
             </div>
           </div>
           <div className="container-page flex items-center gap-4 md:gap-8 py-0 overflow-x-auto scrollbar-hide">

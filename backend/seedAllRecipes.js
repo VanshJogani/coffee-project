@@ -92,6 +92,68 @@ function transformSteps(steps) {
 }
 
 /**
+ * Estimate brew time defaults based on brewer type and brew speed.
+ * These are reasonable defaults for when no time data is available in the recipe.
+ */
+const BREW_TIME_DEFAULTS = {
+  AeroPress: { fast: 60, medium: 120, slow: 240 },
+  V60: { fast: 120, medium: 180, slow: 270 },
+  "French Press": { fast: 180, medium: 240, slow: 300 },
+  Chemex: { fast: 180, medium: 240, slow: 300 },
+  "Moka Pot": { fast: 180, medium: 240, slow: 300 },
+  Clever: { fast: 120, medium: 180, slow: 240 },
+  Kalita: { fast: 120, medium: 180, slow: 240 },
+  Other: { fast: 90, medium: 150, slow: 240 },
+};
+
+/**
+ * Try to extract a time duration (in seconds) from a step's action text.
+ * Looks for patterns like "2 minutes", "0:40", "30 seconds", "4-6 minutes", etc.
+ * For ranges, uses the midpoint.
+ */
+function parseTimeFromText(text) {
+  if (!text) return 0;
+
+  // Match "X:YY" timestamp format (e.g., "0:40", "2:30")
+  const timestampMatch = text.match(/(\d+):(\d{2})\b/);
+  if (timestampMatch) {
+    return parseInt(timestampMatch[1], 10) * 60 + parseInt(timestampMatch[2], 10);
+  }
+
+  // Match "X-Y minutes" range (use midpoint)
+  const rangeMinMatch = text.match(/(\d+)\s*[-–]\s*(\d+)\s*min(?:ute)?s?/i);
+  if (rangeMinMatch) {
+    const low = parseInt(rangeMinMatch[1], 10);
+    const high = parseInt(rangeMinMatch[2], 10);
+    return Math.round((low + high) / 2) * 60;
+  }
+
+  // Match "X minutes" or "X min"
+  const minMatch = text.match(/(\d+)\s*min(?:ute)?s?/i);
+  if (minMatch) {
+    return parseInt(minMatch[1], 10) * 60;
+  }
+
+  // Match "X-Y seconds" range
+  const rangeSecMatch = text.match(/(\d+)\s*[-–]\s*(\d+)\s*sec(?:ond)?s?/i);
+  if (rangeSecMatch) {
+    const low = parseInt(rangeSecMatch[1], 10);
+    const high = parseInt(rangeSecMatch[2], 10);
+    return Math.round((low + high) / 2);
+  }
+
+  // Match "X seconds" or "X sec" or "Xs"
+  const secMatch = text.match(/(\d+)\s*s(?:ec(?:ond)?s?)?\b/i);
+  if (secMatch) {
+    const val = parseInt(secMatch[1], 10);
+    // Only count if it's a plausible duration (not step numbers, weights, etc.)
+    if (val >= 5 && val <= 600) return val;
+  }
+
+  return 0;
+}
+
+/**
  * Transform a single organized recipe to our DB format
  */
 function transformRecipe(recipe) {
@@ -104,16 +166,44 @@ function transformRecipe(recipe) {
 
   const steps = transformSteps(recipe.steps);
 
-  // Calculate total brew time from steps
+  // Calculate total brew time from steps — use the max cumulative timeSec
   let targetBrewTimeSec = 0;
   for (const step of steps) {
     if (step.timeSec && step.timeSec > targetBrewTimeSec) {
       targetBrewTimeSec = step.timeSec;
     }
   }
-  // If we didn't get a brew time from step timings, estimate from timer_seconds sum
+
+  // If we didn't get a brew time from step timings, sum timer_seconds from source steps
   if (targetBrewTimeSec === 0 && recipe.steps) {
     targetBrewTimeSec = recipe.steps.reduce((sum, s) => sum + (s.timer_seconds || 0), 0);
+  }
+
+  // If still 0, try to parse time references from the step action text
+  if (targetBrewTimeSec === 0 && recipe.steps) {
+    let maxTimeParsed = 0;
+    for (const step of recipe.steps) {
+      const parsed = parseTimeFromText(step.action);
+      if (parsed > maxTimeParsed) {
+        maxTimeParsed = parsed;
+      }
+      // Also check timer_instruction field
+      const parsedInstr = parseTimeFromText(step.timer_instruction);
+      if (parsedInstr > maxTimeParsed) {
+        maxTimeParsed = parsedInstr;
+      }
+    }
+    if (maxTimeParsed > 0) {
+      targetBrewTimeSec = maxTimeParsed;
+    }
+  }
+
+  // If still 0, use a reasonable default based on brewer type and brew_speed
+  if (targetBrewTimeSec === 0) {
+    const brewerType = "AeroPress"; // Currently all recipes are AeroPress
+    const brewSpeed = meta.brew_speed || "medium";
+    const defaults = BREW_TIME_DEFAULTS[brewerType] || BREW_TIME_DEFAULTS.Other;
+    targetBrewTimeSec = defaults[brewSpeed] || defaults.medium;
   }
 
   // Detect bloom time from steps
@@ -149,10 +239,74 @@ function transformRecipe(recipe) {
   };
 }
 
+/**
+ * Update brew times for existing recipes that have targetBrewTimeSec = 0 or NULL.
+ * Matches recipes by name and recalculates from the source JSON.
+ */
+async function updateExistingTimes(db) {
+  const now = new Date().toISOString();
+
+  // Find all recipes with missing/zero brew times
+  const zeroTimeRecipes = await db.execute(
+    "SELECT id, name FROM recipes WHERE targetBrewTimeSec IS NULL OR targetBrewTimeSec = 0"
+  );
+
+  if (zeroTimeRecipes.rows.length === 0) {
+    console.log("✅ No recipes with zero/null brew times found — nothing to update.");
+    return;
+  }
+
+  console.log(`Found ${zeroTimeRecipes.rows.length} recipes with zero/null brew times. Updating...`);
+
+  // Build a lookup from source JSON by title
+  const sourceByTitle = new Map();
+  for (const recipe of organizedRecipes) {
+    sourceByTitle.set(recipe.title, recipe);
+  }
+
+  const BATCH_SIZE = 50;
+  let updated = 0;
+  const toUpdate = [];
+
+  for (const row of zeroTimeRecipes.rows) {
+    const source = sourceByTitle.get(row.name);
+    if (!source) continue; // Not from our JSON source, skip
+
+    const transformed = transformRecipe(source);
+    if (transformed.targetBrewTimeSec > 0) {
+      toUpdate.push({ id: row.id, targetBrewTimeSec: transformed.targetBrewTimeSec });
+    }
+  }
+
+  for (let i = 0; i < toUpdate.length; i += BATCH_SIZE) {
+    const batch = toUpdate.slice(i, i + BATCH_SIZE);
+    const statements = batch.map(item => ({
+      sql: "UPDATE recipes SET targetBrewTimeSec = ?, updatedAt = ? WHERE id = ?",
+      args: [item.targetBrewTimeSec, now, item.id]
+    }));
+
+    await db.batch(statements, "write");
+    updated += batch.length;
+    process.stdout.write(`\r  Updated ${updated}/${toUpdate.length}...`);
+  }
+
+  console.log(`\n✅ Updated brew times for ${updated} recipes.`);
+}
+
 async function main() {
+  const args = process.argv.slice(2);
+  const updateTimesOnly = args.includes("--update-times");
+
   const db = getDb();
   await initSchema(db);
   await runMigrations(db);
+
+  // If --update-times flag is passed, only fix existing records and exit
+  if (updateTimesOnly) {
+    await updateExistingTimes(db);
+    closeDb();
+    return;
+  }
 
   const now = new Date().toISOString();
 
@@ -175,6 +329,8 @@ async function main() {
 
   if (toInsert.length === 0) {
     console.log(`✅ Nothing to seed — all ${skipped} recipes already exist.`);
+    // Still update times for existing recipes that have 0
+    await updateExistingTimes(db);
     closeDb();
     return;
   }
@@ -205,6 +361,9 @@ async function main() {
   }
 
   console.log(`\n✅ Seeded ${inserted} new recipes (skipped ${skipped} duplicates).`);
+
+  // Also fix any existing recipes with zero times
+  await updateExistingTimes(db);
   closeDb();
 }
 

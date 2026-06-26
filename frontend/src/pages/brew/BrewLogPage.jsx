@@ -35,11 +35,12 @@ function BrewLogCard({ log, onDelete, onBrewAgain }) {
         className="w-full p-4 text-left flex items-center gap-4 hover:bg-luxury-stone/10 transition-colors">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-sm text-luxury-umber truncate">{log.beanName || log.brewerName || "Brew"}</span>
+            <span className="font-semibold text-sm text-luxury-umber truncate">{log.beanName || log.brewerName || log.recipeName || "Brew"}</span>
             {log.rating > 0 && <Stars value={log.rating} />}
           </div>
           <div className="flex items-center gap-3 mt-1 text-[11px] text-luxury-clay flex-wrap">
             <span>{fmtDate(log.createdAt)}</span>
+            {log.recipeName && <span className="italic">{log.recipeName}</span>}
             {log.brewerName && <span>{log.brewerName}</span>}
             {ratio && <span>1:{ratio}</span>}
             {log.brewTimeSec && <span>{fmtTime(log.brewTimeSec)}</span>}
@@ -57,12 +58,13 @@ function BrewLogCard({ log, onDelete, onBrewAgain }) {
             {[
               ["Coffee", log.coffeeGrams ? `${log.coffeeGrams}g` : "—"],
               ["Water", log.waterGrams ? `${log.waterGrams}g` : "—"],
-              ["Temp", log.waterTempC ? `${log.waterTempC}°C` : "—"],
+              ["Ratio", ratio ? `1 : ${ratio}` : "—"],
               ["Time", fmtTime(log.brewTimeSec)],
+              ["Brewer", log.brewerName || "—"],
               ["Grind", log.grindSize || "—"],
               ["Grinder", log.grinderName || "—"],
-              ["Brewer", log.brewerName || "—"],
-              ["Ratio", ratio ? `1 : ${ratio}` : "—"],
+              ["Temp", log.waterTempC ? `${log.waterTempC}°C` : "—"],
+              ...(log.recipeName ? [["Recipe", log.recipeName]] : []),
             ].map(([label, val]) => (
               <div key={label} className="bg-luxury-stone/30 rounded-lg p-2">
                 <div className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">{label}</div>
@@ -126,6 +128,7 @@ function BrewLogPage() {
     navigate("/brew/now", {
       state: {
         beanId: log.beanInventoryId,
+        recipeId: log.recipeId,
         prefill: {
           brewerName: log.brewerName,
           grinderName: log.grinderName,

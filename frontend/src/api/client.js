@@ -6,7 +6,8 @@ const isDev = import.meta.env.DEV;
 if (isDev) console.log("[API] baseURL:", BASE_URL);
 
 const api = axios.create({
-  baseURL: BASE_URL
+  baseURL: BASE_URL,
+  withCredentials: true,
 });
 
 // Log every outgoing request (dev only)
@@ -15,16 +16,34 @@ api.interceptors.request.use(config => {
   return config;
 });
 
-// Centralized response error handler
+// Centralized response error handler with silent token refresh
 api.interceptors.response.use(
   res => {
     if (isDev) console.log(`[API] ✔ ${res.config.url} — ${res.status}`, Array.isArray(res.data) ? `(${res.data.length} items)` : "");
     return res;
   },
-  err => {
+  async err => {
     const status = err.response?.status;
     const message = err.response?.data?.error || err.response?.data?.errors?.[0] || err.message;
     if (isDev) console.error(`[API] ✘ ${err.config?.url} — ${status || "NO RESPONSE"}`, message, err.response?.data || err.message);
+
+    // Attempt silent token refresh on 401 (skip if already retrying or on auth endpoints)
+    if (status === 401 && !err.config._retry && !err.config.url?.startsWith("/auth/")) {
+      err.config._retry = true;
+      try {
+        await api.post("/auth/refresh");
+        return api(err.config);
+      } catch (_refreshErr) {
+        // Refresh failed — user needs to re-login, don't toast the 401
+        return Promise.reject(err);
+      }
+    }
+
+    // Don't toast 401s from auth endpoints (login failures are shown in the modal)
+    if (status === 401) {
+      return Promise.reject(err);
+    }
+
     if (status === 404) {
       showToast("Not found: " + message, "warn");
     } else if (status >= 400 && status < 500) {
@@ -106,6 +125,25 @@ export async function forkRecipe(recipe) {
   return createRecipe({ ...fields, sourceRecipe: recipe.name, isPublic: 0,
     roastLevel: recipe.roastLevel || null, coffeeBrand: recipe.coffeeBrand || null,
     coffeeName: recipe.coffeeName || null });
+}
+export async function fetchRandomRecipe(filters = {}) {
+  const params = {};
+  if (filters.brewerType) params.brewerType = filters.brewerType;
+  if (filters.roastLevel) params.roastLevel = filters.roastLevel;
+  if (filters.coffeeBrand) params.coffeeBrand = filters.coffeeBrand;
+  const res = await api.get("/recipes/random", { params });
+  return res.data;
+}
+export async function fetchLikedRecipes() {
+  const res = await api.get("/recipes/liked");
+  return res.data;
+}
+export async function likeRecipe(id) {
+  const res = await api.post(`/recipes/${id}/like`);
+  return res.data;
+}
+export async function unlikeRecipe(id) {
+  await api.delete(`/recipes/${id}/like`);
 }
 
 // ── Bean Inventory ────────────────────────────────────────────────────────────

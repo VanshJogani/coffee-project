@@ -95,10 +95,11 @@ router.post("/", async (req, res, next) => {
     }
 
     const now = new Date().toISOString();
+    const userId = req.user ? req.user.id : null;
     const result = await db.execute({
-      sql: "INSERT INTO community_posts (title, body, authorName, recipeId, likes, createdAt) VALUES (?, ?, ?, ?, 0, ?)",
+      sql: "INSERT INTO community_posts (title, body, authorName, recipeId, likes, userId, createdAt) VALUES (?, ?, ?, ?, 0, ?, ?)",
       args: [safeTitle, safeBody, safeAuthor,
-            recipeId ? Number(recipeId) : null, now]
+            recipeId ? Number(recipeId) : null, userId, now]
     });
 
     const { rows: created } = await db.execute({
@@ -134,8 +135,12 @@ router.delete("/:id", async (req, res, next) => {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const result = await db.execute({ sql: "DELETE FROM community_posts WHERE id = ?", args: [id] });
-    if (result.rowsAffected === 0) return res.status(404).json({ error: "Post not found" });
+    const { rows: existingRows } = await db.execute({ sql: "SELECT userId FROM community_posts WHERE id = ?", args: [id] });
+    if (!existingRows[0]) return res.status(404).json({ error: "Post not found" });
+    if (req.user && existingRows[0].userId && existingRows[0].userId !== req.user.id) {
+      return res.status(403).json({ error: "Not authorized to delete this post" });
+    }
+    await db.execute({ sql: "DELETE FROM community_posts WHERE id = ?", args: [id] });
     res.status(204).send();
   } catch (err) { next(err); }
 });

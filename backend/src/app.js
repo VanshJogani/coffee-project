@@ -1,10 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
 const path = require("path");
 const dotenv = require("dotenv");
 
 const { getDb, initSchema, createIndexes, runMigrations } = require("./db");
+const optionalAuth = require("./middleware/optionalAuth");
 const productsRouter = require("./routes/products");
 const reviewsRouter = require("./routes/reviews");
 const recipesRouter = require("./routes/recipes");
@@ -14,6 +16,7 @@ const brewNotesRouter = require("./routes/brewNotes");
 const postsRouter = require("./routes/posts");
 const roastersRouter = require("./routes/roasters");
 const processesRouter = require("./routes/processes");
+const authRouter = require("./routes/auth");
 
 dotenv.config({ path: path.join(__dirname, "..", ".env") });
 
@@ -43,6 +46,9 @@ app.use(
   })
 );
 
+app.use(cookieParser());
+app.use(optionalAuth);
+
 // Guard: ensure DB schema is ready before any route handles a request
 app.use(async (_req, _res, next) => {
   await dbReady;
@@ -67,6 +73,7 @@ app.get("/api/health", async (_req, res) => {
   });
 });
 
+app.use("/api/auth", authRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/reviews", reviewsRouter);
 app.use("/api/recipes", recipesRouter);
