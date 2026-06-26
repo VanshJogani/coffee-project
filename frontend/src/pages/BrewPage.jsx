@@ -34,7 +34,7 @@ function BrewPage() {
                 <span className="text-lg">☕</span>
               </div>
               <div>
-                <h1 className="text-xl font-bold tracking-tight text-luxury-light">Caffè Elegante</h1>
+                <h1 className="text-xl font-bold tracking-tight text-luxury-light">Café Indica</h1>
                 <p className="text-xs text-luxury-clay opacity-80 font-medium uppercase tracking-[0.2em] mt-0.5">
                   Brew Journal
                 </p>

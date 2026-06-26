@@ -1,5 +1,5 @@
-// Service Worker for Caffè Elegante PWA
-const CACHE_NAME = "caffe-elegante-v1";
+// Service Worker for Café Indica PWA
+const CACHE_NAME = "cafe-indica-v1";
 const STATIC_ASSETS = [
   "/",
   "/explore",

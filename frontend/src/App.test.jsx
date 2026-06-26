@@ -10,7 +10,7 @@ describe("App", () => {
         <App />
       </MemoryRouter>
     );
-    expect(screen.getByText(/Caffè Elegante/i)).toBeInTheDocument();
+    expect(screen.getByText(/Café Indica/i)).toBeInTheDocument();
   });
 });
 

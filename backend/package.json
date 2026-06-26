@@ -1,5 +1,5 @@
 {
-  "name": "coffee-roaster-backend",
+  "name": "cafe-indica-backend",
   "version": "1.0.0",
   "main": "src/server.js",
   "type": "commonjs",
