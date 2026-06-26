@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchBrewLogs, fetchInventory } from "../../api/client";
+import SoftAuthGate from "../../components/SoftAuthGate";
 
 function pad(n) { return String(n).padStart(2, "0"); }
 function fmtDate(iso) {
@@ -208,4 +209,10 @@ function DashboardPage() {
   );
 }
 
-export default DashboardPage;
+export default function DashboardPageWithGate() {
+  return (
+    <SoftAuthGate featureName="your dashboard">
+      <DashboardPage />
+    </SoftAuthGate>
+  );
+}

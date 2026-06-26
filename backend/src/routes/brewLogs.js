@@ -11,6 +11,12 @@ router.get("/", async (req, res, next) => {
     const whereClauses = [];
     const params = [];
 
+    // If logged in, scope to user's brew logs
+    if (req.user) {
+      whereClauses.push("bl.userId = ?");
+      params.push(req.user.id);
+    }
+
     if (productId) {
       const parsedProductId = parseInt(productId, 10);
       if (isNaN(parsedProductId)) return res.status(400).json({ error: "Invalid productId" });
@@ -62,14 +68,15 @@ router.post("/", async (req, res, next) => {
     const { recipeId, beanInventoryId, brewerName, grinderName, grindSize,
             coffeeGrams, waterGrams, waterTempC, brewTimeSec, rating, notes, isPublic } = req.body;
     const now = new Date().toISOString();
+    const userId = req.user ? req.user.id : null;
 
     const statements = [{
       sql: `INSERT INTO brew_logs (recipeId, beanInventoryId, brewerName, grinderName, grindSize,
-        coffeeGrams, waterGrams, waterTempC, brewTimeSec, rating, notes, isPublic, createdAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        coffeeGrams, waterGrams, waterTempC, brewTimeSec, rating, notes, isPublic, userId, createdAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       args: [recipeId ?? null, beanInventoryId ?? null, brewerName || null, grinderName || null,
             grindSize || null, coffeeGrams ?? null, waterGrams ?? null, waterTempC ?? null,
-            brewTimeSec ?? null, rating ?? null, notes || null, isPublic !== false ? 1 : 0, now]
+            brewTimeSec ?? null, rating ?? null, notes || null, isPublic !== false ? 1 : 0, userId, now]
     }];
 
     if (beanInventoryId && coffeeGrams) {
@@ -95,6 +102,9 @@ router.put("/:id", async (req, res, next) => {
     const { rows: existingRows } = await db.execute({ sql: "SELECT * FROM brew_logs WHERE id = ?", args: [id] });
     const existing = existingRows[0];
     if (!existing) return res.status(404).json({ error: "Brew log not found" });
+    if (req.user && existing.userId && existing.userId !== req.user.id) {
+      return res.status(403).json({ error: "Not authorized to edit this brew log" });
+    }
     const b = req.body;
     await db.execute({
       sql: `UPDATE brew_logs SET recipeId=?, beanInventoryId=?, brewerName=?, grinderName=?, grindSize=?, coffeeGrams=?,
@@ -117,8 +127,12 @@ router.delete("/:id", async (req, res, next) => {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const result = await db.execute({ sql: "DELETE FROM brew_logs WHERE id = ?", args: [id] });
-    if (result.rowsAffected === 0) return res.status(404).json({ error: "Brew log not found" });
+    const { rows: existingRows } = await db.execute({ sql: "SELECT userId FROM brew_logs WHERE id = ?", args: [id] });
+    if (!existingRows[0]) return res.status(404).json({ error: "Brew log not found" });
+    if (req.user && existingRows[0].userId && existingRows[0].userId !== req.user.id) {
+      return res.status(403).json({ error: "Not authorized to delete this brew log" });
+    }
+    await db.execute({ sql: "DELETE FROM brew_logs WHERE id = ?", args: [id] });
     res.status(204).send();
   } catch (err) { next(err); }
 });

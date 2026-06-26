@@ -193,6 +193,22 @@ async function initSchema(db) {
       createdAt TEXT NOT NULL,
       FOREIGN KEY (categoryId) REFERENCES process_categories(id) ON DELETE CASCADE,
       FOREIGN KEY (parentMethodId) REFERENCES process_methods(id) ON DELETE SET NULL
+    )`,
+    `CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+      passwordHash TEXT NOT NULL,
+      displayName TEXT NOT NULL,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL
+    )`,
+    `CREATE TABLE IF NOT EXISTS refresh_tokens (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER NOT NULL,
+      token TEXT NOT NULL UNIQUE,
+      expiresAt TEXT NOT NULL,
+      createdAt TEXT NOT NULL,
+      FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
     )`
   ], "write");
 }
@@ -222,6 +238,15 @@ async function createIndexes(db) {
     `CREATE INDEX IF NOT EXISTS idx_process_methods_name ON process_methods(name)`,
     `CREATE INDEX IF NOT EXISTS idx_process_methods_categoryId ON process_methods(categoryId)`,
     `CREATE INDEX IF NOT EXISTS idx_process_methods_parentMethodId ON process_methods(parentMethodId)`,
+    `CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`,
+    `CREATE INDEX IF NOT EXISTS idx_refresh_tokens_token ON refresh_tokens(token)`,
+    `CREATE INDEX IF NOT EXISTS idx_refresh_tokens_userId ON refresh_tokens(userId)`,
+    `CREATE INDEX IF NOT EXISTS idx_bean_inventory_userId ON bean_inventory(userId)`,
+    `CREATE INDEX IF NOT EXISTS idx_brew_logs_userId ON brew_logs(userId)`,
+    `CREATE INDEX IF NOT EXISTS idx_recipes_userId ON recipes(userId)`,
+    `CREATE INDEX IF NOT EXISTS idx_brew_notes_userId ON brew_notes(userId)`,
+    `CREATE INDEX IF NOT EXISTS idx_community_posts_userId ON community_posts(userId)`,
+    `CREATE INDEX IF NOT EXISTS idx_reviews_userId ON reviews(userId)`,
   ], "write");
 }
 
@@ -265,6 +290,16 @@ async function runMigrations(db) {
   for (const [col, sql] of recipeMigrations) {
     if (!recipesCols.includes(col)) {
       await db.execute(sql);
+    }
+  }
+
+  // Add userId column to content tables for auth system
+  const userIdTables = ['bean_inventory', 'brew_logs', 'recipes', 'brew_notes', 'community_posts', 'reviews'];
+  for (const table of userIdTables) {
+    const tableInfo = await db.execute(`PRAGMA table_info(${table})`);
+    const cols = tableInfo.rows.map(c => c.name);
+    if (!cols.includes('userId')) {
+      await db.execute(`ALTER TABLE ${table} ADD COLUMN userId INTEGER REFERENCES users(id) ON DELETE SET NULL`);
     }
   }
 

@@ -23,13 +23,54 @@ router.get("/", async (req, res, next) => {
         "SELECT * FROM recipes WHERE isPublic = 1 ORDER BY createdAt DESC"
       );
       rows = result.rows;
+    } else if (req.user) {
+      // Logged in: show built-in + user's own recipes
+      const result = await db.execute({
+        sql: "SELECT * FROM recipes WHERE isBuiltIn = 1 OR userId = ? ORDER BY isBuiltIn DESC, createdAt DESC",
+        args: [req.user.id]
+      });
+      rows = result.rows;
     } else {
+      // Anonymous: show built-in + all non-public recipes (backward compat)
       const result = await db.execute(
         "SELECT * FROM recipes WHERE isPublic = 0 OR isBuiltIn = 1 ORDER BY isBuiltIn DESC, createdAt DESC"
       );
       rows = result.rows;
     }
     res.json(rows.map(parseSteps));
+  } catch (err) { next(err); }
+});
+
+// GET /api/recipes/random — return one random recipe (optionally filtered)
+router.get("/random", async (req, res, next) => {
+  try {
+    const db = getDb();
+    const { brewerType, roastLevel, coffeeBrand } = req.query;
+
+    const conditions = ["(isPublic = 0 OR isBuiltIn = 1)"];
+    const args = [];
+
+    if (brewerType) {
+      conditions.push("brewerType = ?");
+      args.push(brewerType);
+    }
+    if (roastLevel) {
+      conditions.push("roastLevel = ?");
+      args.push(roastLevel);
+    }
+    if (coffeeBrand) {
+      conditions.push("coffeeBrand = ?");
+      args.push(coffeeBrand);
+    }
+
+    const where = conditions.join(" AND ");
+    const { rows } = await db.execute({
+      sql: `SELECT * FROM recipes WHERE ${where} ORDER BY RANDOM() LIMIT 1`,
+      args,
+    });
+
+    if (!rows[0]) return res.status(404).json({ error: "No recipes match the filters" });
+    res.json(parseSteps(rows[0]));
   } catch (err) { next(err); }
 });
 
@@ -55,19 +96,20 @@ router.post("/", async (req, res, next) => {
             roastLevel, coffeeBrand, coffeeName } = req.body;
     if (!name || !brewerType) return res.status(400).json({ error: "name and brewerType are required" });
     const now = new Date().toISOString();
+    const userId = req.user ? req.user.id : null;
     const result = await db.execute({
       sql: `INSERT INTO recipes (name, brewerType, grindSize, coffeeGrams, waterGrams, waterTempC,
         bloomTimeSec, targetBrewTimeSec, steps, isBuiltIn, sourceRecipe, notes,
         isPublic, authorName, authorSetup, roastLevel, coffeeBrand, coffeeName,
-        createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        userId, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       args: [name, brewerType, grindSize || null, coffeeGrams ?? null, waterGrams ?? null,
             waterTempC ?? null, bloomTimeSec ?? null, targetBrewTimeSec ?? null,
             steps ? JSON.stringify(steps) : null, sourceRecipe || null, notes || null,
             isPublic ? 1 : 0, authorName || null,
             authorSetup ? JSON.stringify(authorSetup) : null,
             roastLevel || null, coffeeBrand || null, coffeeName || null,
-            now, now]
+            userId, now, now]
     });
     const { rows: created } = await db.execute({ sql: "SELECT * FROM recipes WHERE id = ?", args: [Number(result.lastInsertRowid)] });
     res.status(201).json(parseSteps(created[0]));
@@ -84,6 +126,9 @@ router.put("/:id", async (req, res, next) => {
     const existing = existingRows[0];
     if (!existing) return res.status(404).json({ error: "Recipe not found" });
     if (existing.isBuiltIn) return res.status(403).json({ error: "Built-in recipes cannot be edited — fork it first" });
+    if (req.user && existing.userId && existing.userId !== req.user.id) {
+      return res.status(403).json({ error: "Not authorized to edit this recipe" });
+    }
     const b = req.body;
     const now = new Date().toISOString();
     await db.execute({
@@ -114,10 +159,13 @@ router.delete("/:id", async (req, res, next) => {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const { rows: existingRows } = await db.execute({ sql: "SELECT id, isBuiltIn FROM recipes WHERE id = ?", args: [id] });
+    const { rows: existingRows } = await db.execute({ sql: "SELECT id, isBuiltIn, userId FROM recipes WHERE id = ?", args: [id] });
     const existing = existingRows[0];
     if (!existing) return res.status(404).json({ error: "Recipe not found" });
     if (existing.isBuiltIn) return res.status(403).json({ error: "Built-in recipes cannot be deleted" });
+    if (req.user && existing.userId && existing.userId !== req.user.id) {
+      return res.status(403).json({ error: "Not authorized to delete this recipe" });
+    }
     await db.execute({ sql: "DELETE FROM recipes WHERE id = ?", args: [id] });
     res.status(204).send();
   } catch (err) { next(err); }

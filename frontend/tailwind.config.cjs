@@ -30,10 +30,16 @@ module.exports = {
         "loading-bar": {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(300%)" }
+        },
+        "shuffle-reveal": {
+          "0%": { transform: "rotateY(90deg) scale(0.8)", opacity: "0" },
+          "60%": { transform: "rotateY(-10deg) scale(1.05)", opacity: "1" },
+          "100%": { transform: "rotateY(0deg) scale(1)", opacity: "1" }
         }
       },
       animation: {
-        "loading-bar": "loading-bar 1.5s infinite ease-in-out"
+        "loading-bar": "loading-bar 1.5s infinite ease-in-out",
+        "shuffle-reveal": "shuffle-reveal 0.6s ease-out"
       }
     }
   },

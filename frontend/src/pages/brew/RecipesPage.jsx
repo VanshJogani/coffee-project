@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   fetchRecipes, createRecipe, updateRecipe, deleteRecipe, forkRecipe,
   fetchPosts, createPost, likePost, deletePost, fetchCommunityRecipes,
+  fetchRandomRecipe,
 } from "../../api/client";
 
 const BREWER_TYPES = ["V60", "AeroPress", "French Press", "Moka Pot", "Chemex", "Clever", "Kalita", "Other"];
@@ -857,6 +858,185 @@ function RecipeModal({ recipe, mode: initMode, onClose, onSave }) {
   );
 }
 
+// -- Lucky Recipe Modal -------------------------------------------------------
+function LuckyPill({ active, children, onClick }) {
+  return (
+    <button type="button" onClick={onClick}
+      className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+        active ? "bg-luxury-umber text-white" : "bg-luxury-stone/30 text-luxury-clay hover:text-luxury-umber"
+      }`}>
+      {children}
+    </button>
+  );
+}
+
+function LuckyRecipeModal({ onClose, onBrew }) {
+  const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+  const [shuffling, setShuffling] = useState(false);
+  const [filters, setFilters] = useState({ brewerType: "", roastLevel: "" });
+  const [noMatch, setNoMatch] = useState(false);
+
+  const roll = async () => {
+    setLoading(true);
+    setRevealed(false);
+    setShuffling(true);
+    setNoMatch(false);
+    try {
+      const result = await fetchRandomRecipe(filters);
+      setTimeout(() => {
+        setRecipe(result);
+        setShuffling(false);
+        setRevealed(true);
+        setLoading(false);
+      }, 800);
+    } catch (err) {
+      setShuffling(false);
+      setLoading(false);
+      if (err.response?.status === 404) {
+        setNoMatch(true);
+      }
+    }
+  };
+
+  useEffect(() => { roll(); }, []);
+
+  const icon = recipe ? (BREWER_ICONS[recipe.brewerType] || "☕") : "";
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh] overflow-hidden">
+        {/* Header */}
+        <div className="p-4 border-b border-luxury-clay/10 flex items-center justify-between">
+          <h3 className="font-bold text-luxury-umber flex items-center gap-2">
+            <span className="text-lg">🎲</span> I'm Feeling Lucky
+          </h3>
+          <button type="button" onClick={onClose} className="p-1 rounded-full hover:bg-luxury-stone/30 text-luxury-clay">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Filter pills */}
+        <div className="px-4 pt-3 pb-2 space-y-2 border-b border-luxury-clay/10">
+          <div className="flex gap-1 flex-wrap items-center">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-luxury-clay mr-1">Brewer</span>
+            <LuckyPill active={!filters.brewerType} onClick={() => setFilters(f => ({ ...f, brewerType: "" }))}>All</LuckyPill>
+            {BREWER_TYPES.map(t => (
+              <LuckyPill key={t} active={filters.brewerType === t} onClick={() => setFilters(f => ({ ...f, brewerType: t }))}>{t}</LuckyPill>
+            ))}
+          </div>
+          <div className="flex gap-1 flex-wrap items-center">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-luxury-clay mr-1">Roast</span>
+            <LuckyPill active={!filters.roastLevel} onClick={() => setFilters(f => ({ ...f, roastLevel: "" }))}>All</LuckyPill>
+            {ROAST_LEVELS.map(r => (
+              <LuckyPill key={r} active={filters.roastLevel === r} onClick={() => setFilters(f => ({ ...f, roastLevel: r }))}>{r}</LuckyPill>
+            ))}
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-5">
+          {shuffling && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="text-5xl animate-bounce">🎲</div>
+              <div className="mt-4 text-sm text-luxury-clay font-bold uppercase tracking-widest animate-pulse">
+                Rolling...
+              </div>
+            </div>
+          )}
+
+          {noMatch && !shuffling && (
+            <div className="text-center py-10">
+              <div className="text-3xl mb-3">☕</div>
+              <div className="font-bold text-luxury-umber">No recipes match</div>
+              <div className="text-sm text-luxury-clay mt-1">Try adjusting the filters above.</div>
+            </div>
+          )}
+
+          {revealed && recipe && !shuffling && (
+            <div className="space-y-4 animate-shuffle-reveal">
+              {/* Recipe identity */}
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-luxury-gold/10 border border-luxury-gold/20 flex items-center justify-center text-2xl text-luxury-gold">
+                  {icon}
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-luxury-gold">
+                    {recipe.brewerType}
+                  </div>
+                  <div className="font-bold text-lg text-luxury-umber">{recipe.name}</div>
+                </div>
+              </div>
+
+              {/* Key stats */}
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="bg-luxury-stone/30 rounded-lg py-2">
+                  <div className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Ratio</div>
+                  <div className="text-sm font-bold text-luxury-umber mt-0.5">
+                    {recipe.coffeeGrams && recipe.waterGrams
+                      ? <RatioDisplay coffeeGrams={recipe.coffeeGrams} waterGrams={recipe.waterGrams} />
+                      : "—"}
+                  </div>
+                </div>
+                <div className="bg-luxury-stone/30 rounded-lg py-2">
+                  <div className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Time</div>
+                  <div className="text-sm font-bold text-luxury-umber mt-0.5">
+                    {formatTime(recipe.targetBrewTimeSec)}
+                  </div>
+                </div>
+                <div className="bg-luxury-stone/30 rounded-lg py-2">
+                  <div className="text-[9px] uppercase tracking-widest text-luxury-clay font-bold">Grind</div>
+                  <div className="text-sm font-bold text-luxury-umber mt-0.5">
+                    {recipe.grindSize || "—"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Tags */}
+              {(recipe.roastLevel || recipe.coffeeBrand) && (
+                <div className="flex flex-wrap gap-1.5">
+                  {recipe.roastLevel && (
+                    <span className="text-[9px] font-bold uppercase tracking-widest bg-luxury-umber/10 text-luxury-umber px-1.5 py-0.5 rounded-full">
+                      {recipe.roastLevel}
+                    </span>
+                  )}
+                  {recipe.coffeeBrand && (
+                    <span className="text-[9px] font-bold uppercase tracking-widest bg-luxury-gold/10 text-luxury-gold px-1.5 py-0.5 rounded-full">
+                      {recipe.coffeeBrand}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Step count */}
+              {recipe.steps?.length > 0 && (
+                <div className="text-[10px] text-luxury-clay/70">{stepCounts(recipe.steps)}</div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Footer actions */}
+        <div className="p-4 border-t border-luxury-clay/10 flex gap-3">
+          <button type="button" onClick={roll} disabled={loading}
+            className="flex-1 py-2.5 border border-luxury-clay/40 text-luxury-clay rounded-xl text-sm font-bold hover:border-luxury-umber hover:text-luxury-umber transition-colors disabled:opacity-50">
+            🎲 Try Another
+          </button>
+          <button type="button" onClick={() => { onBrew(recipe); onClose(); }}
+            disabled={!recipe || loading}
+            className="flex-1 py-2.5 bg-luxury-umber text-white rounded-xl text-sm font-bold hover:bg-luxury-dark transition-colors disabled:opacity-50">
+            Brew This
+          </button>
+        </div>
+      </div>
+      <div className="absolute inset-0 -z-10" onClick={onClose} />
+    </div>
+  );
+}
+
 // -- Main RecipesPage ---------------------------------------------------------
 function RecipesPage() {
   const navigate = useNavigate();
@@ -867,6 +1047,7 @@ function RecipesPage() {
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
   const [composeModal, setComposeModal] = useState(null);
+  const [luckyModal, setLuckyModal] = useState(false);
 
   // Community feed state
   const [posts, setPosts] = useState([]);
@@ -973,10 +1154,16 @@ function RecipesPage() {
         </div>
         <div className="flex items-center gap-2">
           {tab === "my" && (
-            <button type="button" onClick={() => setModal({ mode: "new" })}
-              className="flex items-center gap-2 px-4 py-2 bg-luxury-umber text-white text-[11px] font-bold uppercase tracking-widest rounded-xl hover:bg-luxury-dark transition-colors">
-              <span className="text-base leading-none">+</span> New Recipe
-            </button>
+            <>
+              <button type="button" onClick={() => setLuckyModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-luxury-gold/90 text-luxury-umber text-[11px] font-bold uppercase tracking-widest rounded-xl hover:bg-luxury-gold transition-colors">
+                <span className="text-base leading-none">🎲</span> I'm Feeling Lucky
+              </button>
+              <button type="button" onClick={() => setModal({ mode: "new" })}
+                className="flex items-center gap-2 px-4 py-2 bg-luxury-umber text-white text-[11px] font-bold uppercase tracking-widest rounded-xl hover:bg-luxury-dark transition-colors">
+                <span className="text-base leading-none">+</span> New Recipe
+              </button>
+            </>
           )}
           {tab === "community" && (
             <button type="button" onClick={() => setComposeModal({})}
@@ -1201,6 +1388,11 @@ function RecipesPage() {
           preAttachedRecipe={composeModal.preAttachedRecipe}
           onClose={() => setComposeModal(null)}
           onPost={handlePost} />
+      )}
+      {luckyModal && (
+        <LuckyRecipeModal
+          onClose={() => setLuckyModal(false)}
+          onBrew={handleBrew} />
       )}
     </div>
   );

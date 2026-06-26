@@ -33,9 +33,10 @@ router.post("/", async (req, res, next) => {
     if (!productRows[0]) return res.status(404).json({ error: "Product not found" });
 
     const now = new Date().toISOString();
+    const userId = req.user ? req.user.id : null;
     const result = await db.execute({
-      sql: "INSERT INTO brew_notes (productId, authorName, body, brewLogId, createdAt) VALUES (?, ?, ?, ?, ?)",
-      args: [productId, authorName.trim().slice(0, 80), body.trim().slice(0, 2000), brewLogId || null, now]
+      sql: "INSERT INTO brew_notes (productId, authorName, body, brewLogId, userId, createdAt) VALUES (?, ?, ?, ?, ?, ?)",
+      args: [productId, authorName.trim().slice(0, 80), body.trim().slice(0, 2000), brewLogId || null, userId, now]
     });
 
     const { rows: created } = await db.execute({ sql: "SELECT * FROM brew_notes WHERE id = ?", args: [Number(result.lastInsertRowid)] });
@@ -48,8 +49,12 @@ router.delete("/:id", async (req, res, next) => {
     const db = getDb();
     const id = parseInt(req.params.id, 10);
     if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
-    const result = await db.execute({ sql: "DELETE FROM brew_notes WHERE id = ?", args: [id] });
-    if (result.rowsAffected === 0) return res.status(404).json({ error: "Note not found" });
+    const { rows: existingRows } = await db.execute({ sql: "SELECT userId FROM brew_notes WHERE id = ?", args: [id] });
+    if (!existingRows[0]) return res.status(404).json({ error: "Note not found" });
+    if (req.user && existingRows[0].userId && existingRows[0].userId !== req.user.id) {
+      return res.status(403).json({ error: "Not authorized to delete this note" });
+    }
+    await db.execute({ sql: "DELETE FROM brew_notes WHERE id = ?", args: [id] });
     res.status(204).send();
   } catch (err) { next(err); }
 });
