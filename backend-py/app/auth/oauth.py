@@ -1,12 +1,13 @@
 """OAuth2 handlers for Google and GitHub login."""
 
 import logging
+import secrets
 from datetime import datetime, timezone
 from urllib.parse import urlencode
 
 import httpx
-from fastapi import APIRouter, Request, Depends, HTTPException
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi import APIRouter, Request, HTTPException
+from fastapi.responses import RedirectResponse
 
 from ..config import settings
 from ..database import get_db
@@ -19,6 +20,30 @@ from .utils import (
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+OAUTH_STATE_COOKIE = "oauth_state"
+OAUTH_STATE_MAX_AGE = 300  # 5 minutes
+
+
+def _set_state_cookie(response: RedirectResponse, state: str) -> RedirectResponse:
+    """Set a short-lived httpOnly cookie with the OAuth state token."""
+    response.set_cookie(
+        key=OAUTH_STATE_COOKIE,
+        value=state,
+        httponly=True,
+        secure=settings.env == "production",
+        samesite="lax",
+        max_age=OAUTH_STATE_MAX_AGE,
+    )
+    return response
+
+
+def _validate_state(request: Request, state: str | None) -> bool:
+    """Validate the state parameter matches the cookie."""
+    expected = request.cookies.get(OAUTH_STATE_COOKIE)
+    if not expected or not state or not secrets.compare_digest(expected, state):
+        return False
+    return True
 
 # ─── Google OAuth2 ───────────────────────────────────────────────────────────
 
@@ -33,6 +58,7 @@ async def google_login():
     if not settings.google_client_id:
         raise HTTPException(status_code=501, detail="Google OAuth not configured")
 
+    state = secrets.token_urlsafe(32)
     params = {
         "client_id": settings.google_client_id,
         "redirect_uri": settings.google_redirect_uri,
@@ -40,16 +66,20 @@ async def google_login():
         "scope": "openid email profile",
         "access_type": "offline",
         "prompt": "consent",
+        "state": state,
     }
-    query = "&".join(f"{k}={v}" for k, v in params.items())
-    return RedirectResponse(url=f"{GOOGLE_AUTH_URL}?{query}")
+    response = RedirectResponse(url=f"{GOOGLE_AUTH_URL}?{urlencode(params)}")
+    return _set_state_cookie(response, state)
 
 
 @router.get("/google/callback")
-async def google_callback(request: Request, code: str = ""):
+async def google_callback(request: Request, code: str = "", state: str = ""):
     """Handle Google OAuth callback — exchange code, find or create user."""
     if not code:
         return _error_redirect("Missing authorization code")
+
+    if not _validate_state(request, state):
+        return _error_redirect("Invalid OAuth state — please try signing in again")
 
     try:
         # Exchange code for tokens
@@ -87,23 +117,7 @@ async def google_callback(request: Request, code: str = ""):
         # Find or create user
         user = await _find_or_create_oauth_user(email, name, avatar, "google", provider_id)
 
-        # Issue tokens
-        jwt_token = create_access_token(user["id"], user["email"], user["displayName"])
-        refresh_token = generate_refresh_token()
-        now = datetime.now(timezone.utc).isoformat()
-        expires_at = get_refresh_token_expiry()
-
-        db = get_db()
-        db.execute(
-            "INSERT INTO refresh_tokens (userId, token, expiresAt, createdAt) VALUES (?, ?, ?, ?)",
-            [user["id"], refresh_token, expires_at, now],
-        )
-        db.commit()
-
-        # Redirect to frontend with cookies set
-        response = RedirectResponse(url=settings.cors_origin, status_code=302)
-        set_token_cookies(response, jwt_token, refresh_token)
-        return response
+        return _issue_tokens_redirect(user)
 
     except Exception as e:
         logger.exception("Google OAuth callback failed")
@@ -124,20 +138,25 @@ async def github_login():
     if not settings.github_client_id:
         raise HTTPException(status_code=501, detail="GitHub OAuth not configured")
 
+    state = secrets.token_urlsafe(32)
     params = {
         "client_id": settings.github_client_id,
         "redirect_uri": settings.github_redirect_uri,
         "scope": "read:user user:email",
+        "state": state,
     }
-    query = "&".join(f"{k}={v}" for k, v in params.items())
-    return RedirectResponse(url=f"{GITHUB_AUTH_URL}?{query}")
+    response = RedirectResponse(url=f"{GITHUB_AUTH_URL}?{urlencode(params)}")
+    return _set_state_cookie(response, state)
 
 
 @router.get("/github/callback")
-async def github_callback(request: Request, code: str = ""):
+async def github_callback(request: Request, code: str = "", state: str = ""):
     """Handle GitHub OAuth callback."""
     if not code:
         return _error_redirect("Missing authorization code")
+
+    if not _validate_state(request, state):
+        return _error_redirect("Invalid OAuth state — please try signing in again")
 
     try:
         # Exchange code for token
@@ -192,22 +211,7 @@ async def github_callback(request: Request, code: str = ""):
         # Find or create user
         user = await _find_or_create_oauth_user(email, name, avatar, "github", provider_id)
 
-        # Issue tokens
-        jwt_token = create_access_token(user["id"], user["email"], user["displayName"])
-        refresh_token = generate_refresh_token()
-        now = datetime.now(timezone.utc).isoformat()
-        expires_at = get_refresh_token_expiry()
-
-        db = get_db()
-        db.execute(
-            "INSERT INTO refresh_tokens (userId, token, expiresAt, createdAt) VALUES (?, ?, ?, ?)",
-            [user["id"], refresh_token, expires_at, now],
-        )
-        db.commit()
-
-        response = RedirectResponse(url=settings.cors_origin, status_code=302)
-        set_token_cookies(response, jwt_token, refresh_token)
-        return response
+        return _issue_tokens_redirect(user)
 
     except Exception as e:
         logger.exception("GitHub OAuth callback failed")
@@ -223,6 +227,26 @@ def _error_redirect(message: str) -> RedirectResponse:
     return RedirectResponse(url=f"{settings.cors_origin}?{params}", status_code=302)
 
 
+def _issue_tokens_redirect(user: dict) -> RedirectResponse:
+    """Issue JWT + refresh token for an OAuth user and redirect to the frontend."""
+    jwt_token = create_access_token(user["id"], user["email"], user["displayName"])
+    refresh_token = generate_refresh_token()
+    now = datetime.now(timezone.utc).isoformat()
+    expires_at = get_refresh_token_expiry()
+
+    db = get_db()
+    db.execute(
+        "INSERT INTO refresh_tokens (userId, token, expiresAt, createdAt) VALUES (?, ?, ?, ?)",
+        [user["id"], refresh_token, expires_at, now],
+    )
+    db.commit()
+
+    response = RedirectResponse(url=settings.cors_origin, status_code=302)
+    set_token_cookies(response, jwt_token, refresh_token)
+    response.delete_cookie(key=OAUTH_STATE_COOKIE)
+    return response
+
+
 async def _find_or_create_oauth_user(
     email: str, name: str, avatar: str, provider: str, provider_id: str
 ) -> dict:
@@ -230,15 +254,31 @@ async def _find_or_create_oauth_user(
     db = get_db()
     now = datetime.now(timezone.utc).isoformat()
 
-    row = db.execute("SELECT id, email, displayName FROM users WHERE email = ?", [email]).fetchone()
+    row = db.execute(
+        "SELECT id, email, displayName, provider, providerId FROM users WHERE email = ?", [email]
+    ).fetchone()
 
     if row:
-        # Update provider info if not already set
-        db.execute(
-            "UPDATE users SET provider = ?, providerId = ?, avatarUrl = ?, updatedAt = ? WHERE id = ? AND provider = 'local'",
-            [provider, provider_id, avatar, now, row[0]],
-        )
-        db.commit()
+        existing_provider = row[3]
+        existing_provider_id = row[4]
+
+        # If the account was created with a different OAuth provider, reject the login
+        # to prevent account takeover via email collision across providers
+        if existing_provider and existing_provider != "local":
+            if existing_provider != provider or existing_provider_id != provider_id:
+                raise HTTPException(
+                    status_code=409,
+                    detail=f"An account with this email already exists via {existing_provider}. Please sign in with {existing_provider} instead.",
+                )
+
+        # Upgrade local accounts to OAuth on first social login
+        if existing_provider == "local":
+            db.execute(
+                "UPDATE users SET provider = ?, providerId = ?, avatarUrl = ?, updatedAt = ? WHERE id = ?",
+                [provider, provider_id, avatar, now, row[0]],
+            )
+            db.commit()
+
         return {"id": row[0], "email": row[1], "displayName": row[2]}
 
     # Create new user (no password for OAuth users)

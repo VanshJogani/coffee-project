@@ -27,6 +27,24 @@ router.include_router(oauth_router.router)
 EMAIL_REGEX = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 
 
+# ─── Shared helpers ──────────────────────────────────────────────────────────
+
+def _issue_session(user_id: int, email: str, display_name: str, response: Response) -> None:
+    """Store a new refresh token and set both auth cookies on the response."""
+    access_token = create_access_token(user_id, email, display_name)
+    refresh_token = generate_refresh_token()
+    now = datetime.now(timezone.utc).isoformat()
+    expires_at = get_refresh_token_expiry()
+
+    db = get_db()
+    db.execute(
+        "INSERT INTO refresh_tokens (userId, token, expiresAt, createdAt) VALUES (?, ?, ?, ?)",
+        [user_id, refresh_token, expires_at, now],
+    )
+    db.commit()
+    set_token_cookies(response, access_token, refresh_token)
+
+
 # ─── Request Models ──────────────────────────────────────────────────────────
 
 class RegisterRequest(BaseModel):
@@ -81,18 +99,7 @@ async def register(body: RegisterRequest, response: Response):
 
     user = {"id": user_id, "email": email, "displayName": display_name}
 
-    # Generate tokens
-    access_token = create_access_token(user_id, email, display_name)
-    refresh_token = generate_refresh_token()
-    expires_at = get_refresh_token_expiry()
-
-    db.execute(
-        "INSERT INTO refresh_tokens (userId, token, expiresAt, createdAt) VALUES (?, ?, ?, ?)",
-        [user_id, refresh_token, expires_at, now],
-    )
-    db.commit()
-
-    set_token_cookies(response, access_token, refresh_token)
+    _issue_session(user_id, email, display_name, response)
     return {"user": user}
 
 
@@ -126,18 +133,7 @@ async def login(body: LoginRequest, response: Response):
 
     user = {"id": user_id, "email": user_email, "displayName": display_name}
 
-    access_token = create_access_token(user_id, user_email, display_name)
-    refresh_token = generate_refresh_token()
-    now = datetime.now(timezone.utc).isoformat()
-    expires_at = get_refresh_token_expiry()
-
-    db.execute(
-        "INSERT INTO refresh_tokens (userId, token, expiresAt, createdAt) VALUES (?, ?, ?, ?)",
-        [user_id, refresh_token, expires_at, now],
-    )
-    db.commit()
-
-    set_token_cookies(response, access_token, refresh_token)
+    _issue_session(user_id, user_email, display_name, response)
     return {"user": user}
 
 
@@ -210,73 +206,56 @@ async def refresh(request: Request, response: Response):
     return {"user": {"id": user_id, "email": email, "displayName": display_name}}
 
 
+# ─── Claim helpers ──────────────────────────────────────────────────────────
+
+# Tables and their name column for claim operations
+_CLAIM_TARGETS = [
+    ("recipes", "authorName"),
+    ("brew_notes", "authorName"),
+    ("community_posts", "authorName"),
+    ("reviews", "reviewerName"),
+]
+
+_CLAIM_KEYS = ["recipes", "brewNotes", "posts", "reviews"]
+
+
+def _validated_claim_name(body: ClaimRequest) -> str:
+    """Validate and return stripped display name, or raise 400."""
+    if not body.displayName or not body.displayName.strip():
+        raise HTTPException(status_code=400, detail="Display name is required")
+    return body.displayName.strip()
+
+
 # ─── POST /api/auth/claim/preview ────────────────────────────────────────────
 
 @router.post("/claim/preview")
 async def claim_preview(body: ClaimRequest, user: AuthUser = Depends(require_auth)):
-    if not body.displayName or not body.displayName.strip():
-        raise HTTPException(status_code=400, detail="Display name is required")
-
+    name = _validated_claim_name(body)
     db = get_db()
-    name = body.displayName.strip()
 
-    recipes = db.execute(
-        "SELECT COUNT(*) FROM recipes WHERE authorName = ? AND userId IS NULL", [name]
-    ).fetchone()[0]
-    brew_notes = db.execute(
-        "SELECT COUNT(*) FROM brew_notes WHERE authorName = ? AND userId IS NULL", [name]
-    ).fetchone()[0]
-    posts = db.execute(
-        "SELECT COUNT(*) FROM community_posts WHERE authorName = ? AND userId IS NULL", [name]
-    ).fetchone()[0]
-    reviews = db.execute(
-        "SELECT COUNT(*) FROM reviews WHERE reviewerName = ? AND userId IS NULL", [name]
-    ).fetchone()[0]
+    counts = {}
+    for key, (table, col) in zip(_CLAIM_KEYS, _CLAIM_TARGETS):
+        counts[key] = db.execute(
+            f"SELECT COUNT(*) FROM {table} WHERE {col} = ? AND userId IS NULL", [name]
+        ).fetchone()[0]
 
-    return {
-        "claimable": {
-            "recipes": recipes,
-            "brewNotes": brew_notes,
-            "posts": posts,
-            "reviews": reviews,
-        }
-    }
+    return {"claimable": counts}
 
 
 # ─── POST /api/auth/claim ────────────────────────────────────────────────────
 
 @router.post("/claim")
 async def claim(body: ClaimRequest, user: AuthUser = Depends(require_auth)):
-    if not body.displayName or not body.displayName.strip():
-        raise HTTPException(status_code=400, detail="Display name is required")
-
+    name = _validated_claim_name(body)
     db = get_db()
-    name = body.displayName.strip()
     user_id = user.id
 
-    recipes = db.execute(
-        "UPDATE recipes SET userId = ? WHERE authorName = ? AND userId IS NULL",
-        [user_id, name],
-    ).rowcount
-    brew_notes = db.execute(
-        "UPDATE brew_notes SET userId = ? WHERE authorName = ? AND userId IS NULL",
-        [user_id, name],
-    ).rowcount
-    posts = db.execute(
-        "UPDATE community_posts SET userId = ? WHERE authorName = ? AND userId IS NULL",
-        [user_id, name],
-    ).rowcount
-    reviews = db.execute(
-        "UPDATE reviews SET userId = ? WHERE reviewerName = ? AND userId IS NULL",
-        [user_id, name],
-    ).rowcount
+    claimed = {}
+    for key, (table, col) in zip(_CLAIM_KEYS, _CLAIM_TARGETS):
+        claimed[key] = db.execute(
+            f"UPDATE {table} SET userId = ? WHERE {col} = ? AND userId IS NULL",
+            [user_id, name],
+        ).rowcount
     db.commit()
 
-    return {
-        "claimed": {
-            "recipes": recipes,
-            "brewNotes": brew_notes,
-            "posts": posts,
-            "reviews": reviews,
-        }
-    }
+    return {"claimed": claimed}

@@ -20,7 +20,7 @@ import SwipeView from "../components/SwipeView";
 import MobileFilterSheet from "../components/MobileFilterSheet";
 import SkeletonCard from "../components/SkeletonCard";
 
-const CATEGORIES = ["Coffee", "Tea", "Accessories", "Events", "Subscriptions"];
+const CATEGORIES = ["Coffee", "Quick Brews", "Tea", "Accessories", "Events", "Subscriptions"];
 
 function ExplorePage() {
   const navigate = useNavigate();

@@ -67,7 +67,7 @@ async def delete_brew_note(note_id: int, user: AuthUser | None = Depends(optiona
     row = db.execute("SELECT userId FROM brew_notes WHERE id = ?", [note_id]).fetchone()
     if not row:
         raise HTTPException(status_code=404, detail="Note not found")
-    if user and row[0] and row[0] != user.id:
+    if row[0] and (not user or row[0] != user.id):
         raise HTTPException(status_code=403, detail="Not authorized to delete this note")
 
     db.execute("DELETE FROM brew_notes WHERE id = ?", [note_id])

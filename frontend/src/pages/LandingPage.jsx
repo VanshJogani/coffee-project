@@ -21,10 +21,10 @@ function LandingPage() {
           Where would you like to go?
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-5">
+        <div className="flex flex-col sm:flex-row gap-5 w-full max-w-lg sm:max-w-none sm:w-auto px-6 sm:px-0">
           <button
             onClick={() => navigate("/explore")}
-            className="group flex flex-col items-center gap-3 px-10 py-6 rounded-2xl bg-luxury-umber text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-luxury-gold/20 hover:border-luxury-gold/50 min-w-[180px]"
+            className="group flex flex-col items-center gap-3 px-10 py-6 rounded-2xl bg-luxury-umber text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-luxury-gold/20 hover:border-luxury-gold/50 w-full sm:w-auto sm:min-w-[180px]"
           >
             <span className="text-3xl">🔍</span>
             <span className="text-lg font-bold tracking-wide">Explore</span>
@@ -35,7 +35,7 @@ function LandingPage() {
 
           <button
             onClick={() => navigate("/brew")}
-            className="group flex flex-col items-center gap-3 px-10 py-6 rounded-2xl bg-white text-luxury-umber shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-luxury-clay/30 hover:border-luxury-gold/50 min-w-[180px]"
+            className="group flex flex-col items-center gap-3 px-10 py-6 rounded-2xl bg-white text-luxury-umber shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-luxury-clay/30 hover:border-luxury-gold/50 w-full sm:w-auto sm:min-w-[180px]"
           >
             <span className="text-3xl">🫖</span>
             <span className="text-lg font-bold tracking-wide">Brew</span>
@@ -46,7 +46,7 @@ function LandingPage() {
 
           <button
             onClick={() => navigate("/map")}
-            className="group flex flex-col items-center gap-3 px-10 py-6 rounded-2xl bg-[#1A1410] text-luxury-light shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-luxury-gold/20 hover:border-luxury-gold/50 min-w-[180px]"
+            className="group flex flex-col items-center gap-3 px-10 py-6 rounded-2xl bg-[#1A1410] text-luxury-light shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-luxury-gold/20 hover:border-luxury-gold/50 w-full sm:w-auto sm:min-w-[180px]"
           >
             <span className="text-3xl">🗺️</span>
             <span className="text-lg font-bold tracking-wide">Coffee Map</span>

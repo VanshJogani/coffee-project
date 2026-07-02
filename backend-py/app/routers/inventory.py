@@ -85,14 +85,15 @@ async def create_inventory(body: InventoryCreate, user: AuthUser | None = Depend
 @router.put("/{item_id}")
 async def update_inventory(item_id: int, body: dict, user: AuthUser | None = Depends(optional_auth)):
     db = get_db()
-    existing_row = db.execute("SELECT * FROM bean_inventory WHERE id = ?", [item_id]).fetchone()
+    cur = db.execute("SELECT * FROM bean_inventory WHERE id = ?", [item_id])
+    existing_row = cur.fetchone()
     if not existing_row:
         raise HTTPException(status_code=404, detail="Bean not found")
 
-    cols = [desc[0] for desc in db.execute("SELECT * FROM bean_inventory LIMIT 0").description]
+    cols = [desc[0] for desc in cur.description]
     existing = dict(zip(cols, existing_row))
 
-    if user and existing.get("userId") and existing["userId"] != user.id:
+    if existing.get("userId") and (not user or existing["userId"] != user.id):
         raise HTTPException(status_code=403, detail="Not authorized to edit this bean")
 
     if "gramsRemaining" in body:
@@ -128,7 +129,7 @@ async def delete_inventory(item_id: int, user: AuthUser | None = Depends(optiona
     row = db.execute("SELECT userId FROM bean_inventory WHERE id = ?", [item_id]).fetchone()
     if not row:
         raise HTTPException(status_code=404, detail="Bean not found")
-    if user and row[0] and row[0] != user.id:
+    if row[0] and (not user or row[0] != user.id):
         raise HTTPException(status_code=403, detail="Not authorized to delete this bean")
 
     db.execute("DELETE FROM bean_inventory WHERE id = ?", [item_id])

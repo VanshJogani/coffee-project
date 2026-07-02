@@ -17,6 +17,11 @@ def _rows_to_dicts(cursor):
     return [dict(zip(columns, r)) for r in cursor.fetchall()]
 
 
+def _row_to_dict(cursor, row):
+    columns = [desc[0] for desc in cursor.description]
+    return dict(zip(columns, row))
+
+
 @router.get("/")
 async def list_brew_logs(
     productId: Optional[int] = None,
@@ -31,6 +36,9 @@ async def list_brew_logs(
     if user:
         where_clauses.append("bl.userId = ?")
         params.append(user.id)
+    else:
+        # Unauthenticated callers may only see public logs
+        where_clauses.append("bl.isPublic = 1")
 
     if productId:
         where_clauses.append("bi.productId = ?")
@@ -68,8 +76,7 @@ async def get_brew_log(log_id: int):
     row = cursor.fetchone()
     if not row:
         raise HTTPException(status_code=404, detail="Brew log not found")
-    columns = [desc[0] for desc in cursor.description]
-    return dict(zip(columns, row))
+    return _row_to_dict(cursor, row)
 
 
 class BrewLogCreate(BaseModel):
@@ -105,11 +112,13 @@ async def create_brew_log(body: BrewLogCreate, user: AuthUser | None = Depends(o
         ],
     )
 
-    # Decrement inventory if bean + grams provided
+    # Decrement inventory if bean + grams provided — only for the owning user
     if body.beanInventoryId and body.coffeeGrams:
+        ownership_clause = "AND userId = ?" if user else "AND userId IS NULL"
+        ownership_params = [user.id] if user else []
         db.execute(
-            "UPDATE bean_inventory SET gramsRemaining = MAX(0, gramsRemaining - ?), updatedAt = ? WHERE id = ?",
-            [body.coffeeGrams, now, body.beanInventoryId],
+            f"UPDATE bean_inventory SET gramsRemaining = MAX(0, gramsRemaining - ?), updatedAt = ? WHERE id = ? {ownership_clause}",
+            [body.coffeeGrams, now, body.beanInventoryId, *ownership_params],
         )
 
     db.commit()
@@ -117,8 +126,7 @@ async def create_brew_log(body: BrewLogCreate, user: AuthUser | None = Depends(o
 
     cursor2 = db.execute("SELECT * FROM brew_logs WHERE id = ?", [new_id])
     row = cursor2.fetchone()
-    columns = [desc[0] for desc in cursor2.description]
-    return dict(zip(columns, row))
+    return _row_to_dict(cursor2, row)
 
 
 @router.put("/{log_id}")
@@ -129,37 +137,29 @@ async def update_brew_log(log_id: int, body: dict, user: AuthUser | None = Depen
     if not existing_row:
         raise HTTPException(status_code=404, detail="Brew log not found")
 
-    columns = [desc[0] for desc in existing_cursor.description]
-    existing = dict(zip(columns, existing_row))
+    existing = _row_to_dict(existing_cursor, existing_row)
 
-    if user and existing.get("userId") and existing["userId"] != user.id:
+    if existing.get("userId") and (not user or existing["userId"] != user.id):
         raise HTTPException(status_code=403, detail="Not authorized to edit this brew log")
 
+    ALLOWED = {"recipeId", "beanInventoryId", "brewerName", "grinderName", "grindSize",
+               "coffeeGrams", "waterGrams", "waterTempC", "brewTimeSec", "rating", "notes"}
+    updates = {k: v for k, v in body.items() if k in ALLOWED}
+    if "isPublic" in body:
+        updates["isPublic"] = 1 if body["isPublic"] else 0
+    if not updates:
+        return existing
+
+    set_clause = ", ".join(f"{k}=?" for k in updates)
     db.execute(
-        """UPDATE brew_logs SET recipeId=?, beanInventoryId=?, brewerName=?, grinderName=?, grindSize=?, coffeeGrams=?,
-            waterGrams=?, waterTempC=?, brewTimeSec=?, rating=?, notes=?, isPublic=? WHERE id=?""",
-        [
-            body.get("recipeId", existing.get("recipeId")),
-            body.get("beanInventoryId", existing.get("beanInventoryId")),
-            body.get("brewerName", existing.get("brewerName")),
-            body.get("grinderName", existing.get("grinderName")),
-            body.get("grindSize", existing.get("grindSize")),
-            body.get("coffeeGrams", existing.get("coffeeGrams")),
-            body.get("waterGrams", existing.get("waterGrams")),
-            body.get("waterTempC", existing.get("waterTempC")),
-            body.get("brewTimeSec", existing.get("brewTimeSec")),
-            body.get("rating", existing.get("rating")),
-            body.get("notes", existing.get("notes")),
-            (1 if body["isPublic"] else 0) if "isPublic" in body else existing.get("isPublic"),
-            log_id,
-        ],
+        f"UPDATE brew_logs SET {set_clause} WHERE id=?",
+        [*updates.values(), log_id],
     )
     db.commit()
 
     cursor = db.execute("SELECT * FROM brew_logs WHERE id = ?", [log_id])
     row = cursor.fetchone()
-    cols = [desc[0] for desc in cursor.description]
-    return dict(zip(cols, row))
+    return _row_to_dict(cursor, row)
 
 
 @router.delete("/{log_id}", status_code=204)
@@ -168,7 +168,7 @@ async def delete_brew_log(log_id: int, user: AuthUser | None = Depends(optional_
     row = db.execute("SELECT userId FROM brew_logs WHERE id = ?", [log_id]).fetchone()
     if not row:
         raise HTTPException(status_code=404, detail="Brew log not found")
-    if user and row[0] and row[0] != user.id:
+    if row[0] and (not user or row[0] != user.id):
         raise HTTPException(status_code=403, detail="Not authorized to delete this brew log")
 
     db.execute("DELETE FROM brew_logs WHERE id = ?", [log_id])

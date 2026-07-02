@@ -53,7 +53,7 @@ async def list_recipes(
         ).fetchall()
     else:
         rows = db.execute(
-            "SELECT * FROM recipes WHERE isPublic = 0 OR isBuiltIn = 1 ORDER BY isBuiltIn DESC, createdAt DESC"
+            "SELECT * FROM recipes WHERE isPublic = 1 OR isBuiltIn = 1 ORDER BY isBuiltIn DESC, createdAt DESC"
         ).fetchall()
 
     return [_parse_recipe(r, columns) for r in rows]
@@ -66,7 +66,7 @@ async def random_recipe(
     coffeeBrand: Optional[str] = None,
 ):
     db = get_db()
-    conditions = ["(isPublic = 0 OR isBuiltIn = 1)"]
+    conditions = ["(isPublic = 1 OR isBuiltIn = 1)"]
     args = []
 
     if brewerType:
@@ -193,7 +193,7 @@ async def update_recipe(recipe_id: int, body: dict, user: AuthUser | None = Depe
     existing = dict(zip(columns, row))
     if existing.get("isBuiltIn"):
         raise HTTPException(status_code=403, detail="Built-in recipes cannot be edited — fork it first")
-    if user and existing.get("userId") and existing["userId"] != user.id:
+    if existing.get("userId") and (not user or existing["userId"] != user.id):
         raise HTTPException(status_code=403, detail="Not authorized to edit this recipe")
 
     now = datetime.now(timezone.utc).isoformat()
@@ -238,7 +238,7 @@ async def delete_recipe(recipe_id: int, user: AuthUser | None = Depends(optional
         raise HTTPException(status_code=404, detail="Recipe not found")
     if row[1]:  # isBuiltIn
         raise HTTPException(status_code=403, detail="Built-in recipes cannot be deleted")
-    if user and row[2] and row[2] != user.id:
+    if row[2] and (not user or row[2] != user.id):
         raise HTTPException(status_code=403, detail="Not authorized to delete this recipe")
 
     db.execute("DELETE FROM recipes WHERE id = ?", [recipe_id])

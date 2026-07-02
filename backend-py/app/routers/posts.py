@@ -143,7 +143,7 @@ async def delete_post(post_id: int, user: AuthUser | None = Depends(optional_aut
     row = db.execute("SELECT userId FROM community_posts WHERE id = ?", [post_id]).fetchone()
     if not row:
         raise HTTPException(status_code=404, detail="Post not found")
-    if user and row[0] and row[0] != user.id:
+    if row[0] and (not user or row[0] != user.id):
         raise HTTPException(status_code=403, detail="Not authorized to delete this post")
 
     db.execute("DELETE FROM community_posts WHERE id = ?", [post_id])

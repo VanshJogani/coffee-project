@@ -41,15 +41,13 @@ export function AuthProvider({ children }) {
   const register = useCallback(async (email, password, displayName) => {
     const res = await api.post("/auth/register", { email, password, displayName });
     setUser(res.data.user);
-    // After registration, check for claimable records
-    try {
-      const preview = await api.post("/auth/claim/preview", { displayName });
-      const { claimable } = preview.data;
-      const total = Object.values(claimable).reduce((sum, n) => sum + n, 0);
-      if (total > 0) {
-        setClaimModalOpen(true);
-      }
-    } catch (_) { /* ignore claim preview errors */ }
+    // Check for claimable records without blocking the caller
+    api.post("/auth/claim/preview", { displayName })
+      .then(preview => {
+        const total = Object.values(preview.data.claimable).reduce((sum, n) => sum + n, 0);
+        if (total > 0) setClaimModalOpen(true);
+      })
+      .catch(() => {});
     return res.data.user;
   }, []);
 

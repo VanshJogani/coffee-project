@@ -408,12 +408,19 @@ class GenericRoastersCleaner:
             if len(raw) < 60:
                 return raw
 
-        # 2. Keyword match
+        # 2. Keyword match (ordered: most specific first)
         PROCESSES = [
+            ("Carbonic Maceration", ["carbonic maceration", "carbonic mac", r"\bCM\b"]),
+            ("Lactic Fermentation", ["lactic fermentation", "lactic process", "lactic washed"]),
+            ("Double Fermented", ["double ferment"]),
+            ("Wine Process", ["wine process", "wine barrel"]),
+            ("Barrel Aged", ["barrel.aged", "barrel aged", "whisky barrel", "whiskey barrel", "rum barrel"]),
+            ("Anaerobic Natural", ["anaerobic natural"]),
+            ("Anaerobic Washed", ["anaerobic washed"]),
+            ("Anaerobic", ["anaerobic"]),
             ("Natural", ["natural", "sun.dried", "sundried", "dry process", "naturals"]),
             ("Washed", ["washed", "wet process", "fully washed"]),
             ("Honey", ["honey process", "honey.processed", "pulped natural"]),
-            ("Anaerobic", ["anaerobic"]),
             ("Monsooned", ["monsooned", "monsoon malabar"]),
             ("Semi-Washed", ["semi.washed", "semi washed"]),
         ]
@@ -465,6 +472,18 @@ class GenericRoastersCleaner:
         if is_tea and not strong_coffee:
             return "Tea"
 
+        # Quick Brews — drip bags, brew bags, instant coffee, pour over bags, liquid coffee
+        # Must be checked BEFORE accessories since "pour over bag" would match "pour over"
+        quick_brew_patterns = [
+            r"drip\s*bag", r"brew\s*bag", r"pour\s*over\s*bag",
+            r"instant\s*brew", r"instant\s*coffee", r"cold\s*brew\s*bag",
+            r"liquid\s*coffee", r"\bdoppio\b", r"\bsachet",
+            r"quick\s*brew", r"brewin['’]?-?a-?cup",
+            r"single\s*pour\s*drip", r"no\s*equipment\s*needed",
+        ]
+        if any(re.search(p, name_lower) for p in quick_brew_patterns):
+            return "Quick Brews"
+
         # Accessories — equipment, drinkware, merch
         accessory_keywords = [
             "grinder", "kettle", "v60", "chemex", "aeropress", "french press",
@@ -493,15 +512,24 @@ class GenericRoastersCleaner:
             )
             if not coffee_in_name:
                 return "Accessories"
-            # Has both accessory + coffee words — strong accessory wins
-            strong_acc = [
-                "grinder", "kettle", "v60", "chemex", "aeropress", "french press",
-                "moka pot", "tumbler", "mug", "machine", "saucer", "server",
-                "pitcher", "frother", "tamper", "brewer", "pour over",
-                "semi automatic", "weighing scale", "tote bag", "totebag",
+            # Has both accessory + coffee words — strong coffee indicators win
+            strong_coffee_indicators = [
+                "arabica", "robusta", "whole bean", "ground coffee",
+                "pure coffee", "premium coffee", "single origin",
+                "100% pure", "blend ", " blend", "peaberry",
             ]
-            if any(kw in name_lower for kw in strong_acc):
-                return "Accessories"
+            if any(kw in name_lower for kw in strong_coffee_indicators):
+                pass  # It's coffee — fall through to return Coffee
+            else:
+                # Strong accessory keywords win when coffee signal is weak
+                strong_acc = [
+                    "grinder", "kettle", "v60", "chemex", "aeropress", "french press",
+                    "moka pot", "tumbler", "mug", "machine", "saucer", "server",
+                    "pitcher", "frother", "tamper", "brewer", "pour over",
+                    "semi automatic", "weighing scale", "tote bag", "totebag",
+                ]
+                if any(kw in name_lower for kw in strong_acc):
+                    return "Accessories"
 
         # High-price equipment detection — coffee machines, commercial gear
         # (things priced way above any coffee bag, usually >Rs.10000 with equipment keywords in desc)
