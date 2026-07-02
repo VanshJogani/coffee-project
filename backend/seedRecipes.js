@@ -5,6 +5,15 @@
  * Usage: node backend/seedRecipes.js
  */
 
+const path = require("path");
+const dotenv = require("dotenv");
+
+// Bypass corporate SSL inspection for Turso connection
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+// Load env from root .env (handles TURSO_DATABASE_URL, TURSO_AUTH_TOKEN)
+dotenv.config({ path: path.join(__dirname, "..", ".env") });
+
 const { getDb, initSchema, runMigrations, closeDb } = require("./src/db");
 
 const BUILT_IN_RECIPES = [

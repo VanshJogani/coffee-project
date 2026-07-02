@@ -4,6 +4,9 @@ const dotenv = require("dotenv");
 const { createClient } = require("@libsql/client");
 const { normalizeProcess } = require("./src/utils/processNormalizer");
 
+// Bypass corporate SSL inspection for Turso connection
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 // Load env from root .env (handles TURSO_DATABASE_URL, TURSO_AUTH_TOKEN)
 dotenv.config({ path: path.join(__dirname, "..", ".env") });
 

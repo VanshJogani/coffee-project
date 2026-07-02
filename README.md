@@ -255,7 +255,12 @@ coffee-project/
 │               ├── RecipesPage.jsx   My recipes + community feed
 │               ├── InventoryPage.jsx
 │               └── BrewLogPage.jsx
-├── TECHNICAL_CHANGES.md        Architecture decisions log
+├── docs/
+│   ├── ARCHITECTURE.md         System design documentation
+│   ├── DECISIONS.md            Design decisions log
+│   ├── IDEAS.md                Feature roadmap
+│   ├── TECHNICAL_CHANGES.md    Development changelog
+│   └── fixes.md                Bug fixes log
 └── README.md
 ```
 

@@ -8,6 +8,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [claimModalOpen, setClaimModalOpen] = useState(false);
+  const [oauthError, setOauthError] = useState(null);
 
   // Check session on mount
   useEffect(() => {
@@ -15,6 +16,20 @@ export function AuthProvider({ children }) {
       .then(res => setUser(res.data.user))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
+  }, []);
+
+  // Handle OAuth error redirect (backend sends ?auth_error=...)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get("auth_error");
+    if (error) {
+      setOauthError(decodeURIComponent(error));
+      setAuthModalOpen(true);
+      // Clean the URL without reload
+      const url = new URL(window.location.href);
+      url.searchParams.delete("auth_error");
+      window.history.replaceState({}, "", url.pathname + url.search);
+    }
   }, []);
 
   const login = useCallback(async (email, password) => {
@@ -52,6 +67,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider value={{
       user,
       loading,
+      oauthError,
       login,
       register,
       logout,

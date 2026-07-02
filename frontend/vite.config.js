@@ -7,7 +7,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": {
-        target: "http://localhost:4000", // Backend runs on port 4000 locally
+        target: "http://localhost:8000", // FastAPI backend runs on port 8000
         // NOTE: This proxy is ONLY for local development.
         // In production (Vercel), your frontend must use the public Railway URL via VITE_API_URL env variable in your code.
         changeOrigin: true
