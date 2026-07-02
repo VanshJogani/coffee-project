@@ -1,22 +1,18 @@
 import re
 import time
 import csv
+import logging
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import List, Dict, Set, Tuple, Optional
+from html import unescape
 
-import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 
+from .http_client import fetch, is_shopify_store, fetch_shopify_products
 
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/122.0 Safari/537.36"
-    )
-}
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -28,12 +24,15 @@ class Product:
     description: str
     product_url: str
     image_url: str
-    variants: str  # e.g. "250g; 500g"
+    variants: str  # e.g. "250g:450.00; 500g:800.00"
 
 
 class GenericRoastersParser:
     """
     Class-based version of the generic roasters scraper.
+
+    Automatically detects Shopify stores and uses the fast JSON API path.
+    Falls back to HTML scraping for non-Shopify sites.
 
     Usage:
         parser = GenericRoastersParser(coffeeroasters_file, already_scraped_names)
@@ -68,6 +67,10 @@ class GenericRoastersParser:
 
                 if "not there" in url.lower():
                     continue
+                if "dead" in url.lower():
+                    continue
+                if "no site" in url.lower():
+                    continue
                 if not url.startswith("http"):
                     continue
                 if name in self.already_scraped_names:
@@ -83,10 +86,115 @@ class GenericRoastersParser:
         return self._parse_roaster_file()
 
     @staticmethod
-    def _fetch_html(url: str, *, timeout: int = 30) -> str:
-        resp = requests.get(url, headers=HEADERS, timeout=timeout)
-        resp.raise_for_status()
+    def _fetch_html(url: str) -> str:
+        resp = fetch(url)
         return resp.text
+
+    @staticmethod
+    def _strip_html(html_text: str) -> str:
+        """Strip HTML tags and decode entities to get plain text."""
+        if not html_text:
+            return ""
+        soup = BeautifulSoup(html_text, "html.parser")
+        text = soup.get_text(" ", strip=True)
+        return unescape(text)
+
+    # ─── Shopify JSON path ────────────────────────────────────────────────────
+
+    def _scrape_shopify_json(
+        self,
+        roaster_name: str,
+        start_url: str,
+    ) -> List[Product]:
+        """Scrape all products from a Shopify store using the JSON API.
+
+        Pulls EVERYTHING — no filtering. Classification happens in the cleaner.
+        """
+        logger.info(f"  Using Shopify JSON API for {roaster_name}")
+        raw_products = fetch_shopify_products(start_url)
+
+        if not raw_products:
+            logger.warning(f"  No products returned from Shopify JSON for {roaster_name}")
+            return []
+
+        # Get store base URL for constructing product URLs
+        parsed = urlparse(start_url)
+        store_base = f"{parsed.scheme}://{parsed.netloc}"
+
+        products: List[Product] = []
+        for raw in raw_products:
+            name = raw.get("title", "").strip()
+            if not name:
+                continue
+
+            # Product URL
+            handle = raw.get("handle", "")
+            product_url = f"{store_base}/products/{handle}" if handle else ""
+
+            # Description from body_html
+            body_html = raw.get("body_html", "") or ""
+            description = self._strip_html(body_html)
+
+            # Image
+            images = raw.get("images", [])
+            image_url = ""
+            if images:
+                image_url = images[0].get("src", "")
+            elif raw.get("image"):
+                image_url = raw["image"].get("src", "")
+
+            # Variants — extract all weight/price combos
+            variants = raw.get("variants", [])
+            variant_parts = []
+            base_price = ""
+            currency = "INR"
+
+            for v in variants:
+                v_title = v.get("title", "")
+                v_price = v.get("price", "0")
+
+                # Try to extract weight from variant title
+                weight_match = re.search(
+                    r"(\d+(?:\.\d+)?)\s*(kg|g|gm|grams)", v_title, re.IGNORECASE
+                )
+                if weight_match:
+                    qty, unit = weight_match.groups()
+                    unit = "g" if unit.lower() in ("gm", "grams") else unit.lower()
+                    label = f"{qty}{unit}"
+                else:
+                    label = v_title.strip() if v_title and v_title != "Default Title" else ""
+
+                if label and v_price:
+                    variant_parts.append(f"{label}:{v_price}")
+
+                # Use first variant price as base
+                if not base_price and v_price:
+                    base_price = v_price
+
+            variants_str = "; ".join(variant_parts) if variant_parts else ""
+
+            # Price: use lowest variant price
+            if variants:
+                prices = [float(v.get("price", "0") or "0") for v in variants]
+                valid_prices = [p for p in prices if p > 0]
+                if valid_prices:
+                    base_price = str(min(valid_prices))
+
+            products.append(Product(
+                roaster=roaster_name,
+                name=name,
+                price=f"₹{base_price}" if base_price else "",
+                currency=currency,
+                description=description[:2000],  # Cap description length
+                product_url=product_url,
+                image_url=image_url,
+                variants=variants_str,
+            ))
+
+        logger.info(f"  Shopify JSON: {len(products)} products for {roaster_name}")
+        return products
+
+    # ─── HTML scraping path (fallback for non-Shopify) ────────────────────────
 
     @staticmethod
     def _extract_listing_links(soup: BeautifulSoup, base_url: str) -> Dict[str, Optional[str]]:
@@ -104,22 +212,22 @@ class GenericRoastersParser:
                     a = li
                 else:
                     a = li.select_one("a[href]")
-            
+
             if not a:
                 continue
-            
+
             href = a["href"]
             # Filter out irrelevant links but be less restrictive for GoDaddy /ols/ links
             if "/product" not in href and "/products" not in href and "/ols/" not in href:
                 continue
-            
+
             product_url = urljoin(base_url, href)
 
             img = li.find("img")
             img_src = None
             if img:
                 img_src = img.get("data-src") or img.get("src") or img.get("data-srcset")
-            
+
             # Alchemist fallback: role="img"
             if not img_src:
                 role_img = li.select_one("[role='img']")
@@ -278,7 +386,7 @@ class GenericRoastersParser:
             name=name,
             price=price,
             currency=currency,
-            description=description,
+            description=description[:2000],
             product_url=product_url,
             image_url=img_url,
             variants=variants_str,
@@ -294,10 +402,25 @@ class GenericRoastersParser:
         """
         Scrape a single roaster and write its parsed CSV under output_dir.
         Returns the path to the parsed CSV, or None if nothing was scraped.
-        """
-        print(f"\n=== {roaster_name} ===")
-        print(f"Fetching listing: {start_url}")
 
+        Automatically detects Shopify stores and uses the JSON API for complete
+        and reliable product fetching.
+        """
+        logger.info(f"\n=== {roaster_name} ===")
+        logger.info(f"  URL: {start_url}")
+
+        # ─── Try Shopify JSON first ──────────────────────────────────────
+        try:
+            if is_shopify_store(start_url):
+                products = self._scrape_shopify_json(roaster_name, start_url)
+                if products:
+                    return self._write_csv(products, roaster_name, output_dir)
+                # If Shopify JSON returned nothing, fall through to HTML
+                logger.info(f"  Shopify JSON returned 0 products, trying HTML fallback")
+        except Exception as e:
+            logger.warning(f"  Shopify detection/scraping failed: {e}, falling back to HTML")
+
+        # ─── HTML scraping fallback ──────────────────────────────────────
         base_url = f"{urlparse(start_url).scheme}://{urlparse(start_url).netloc}"
         parsed = urlparse(start_url)
 
@@ -306,18 +429,19 @@ class GenericRoastersParser:
         # Paginated Shopify-style collections
         if "collections/" in parsed.path:
             page = 1
-            while True:
+            max_pages = 20  # Hard cap to prevent infinite loops
+            while page <= max_pages:
                 if page == 1:
                     page_url = start_url
                 else:
                     sep = "&" if "?" in start_url else "?"
                     page_url = f"{start_url}{sep}page={page}"
 
-                print(f"  Loading listing page {page}: {page_url}")
+                logger.info(f"  Loading listing page {page}: {page_url}")
                 try:
                     html = self._fetch_html(page_url)
                 except Exception as e:
-                    print(f"  Stopping pagination at page {page} due to error: {e}")
+                    logger.warning(f"  Stopping pagination at page {page}: {e}")
                     break
 
                 soup = BeautifulSoup(html, "html.parser")
@@ -334,20 +458,20 @@ class GenericRoastersParser:
             try:
                 html = self._fetch_html(start_url)
             except Exception as e:
-                print(f"Failed to fetch listing for {roaster_name}: {e}")
+                logger.error(f"  Failed to fetch listing for {roaster_name}: {e}")
                 return None
             soup = BeautifulSoup(html, "html.parser")
             all_links = self._extract_listing_links(soup, base_url)
 
         if not all_links:
-            print(f"No obvious product links found for {roaster_name} on {start_url}")
+            logger.warning(f"  No product links found for {roaster_name} on {start_url}")
             return None
 
-        print(f"Found {len(all_links)} candidate product URLs for {roaster_name}")
+        logger.info(f"  Found {len(all_links)} candidate product URLs")
 
         products: List[Product] = []
         for idx, product_url in enumerate(sorted(all_links), start=1):
-            print(f"  [{idx}/{len(all_links)}] {product_url}")
+            logger.debug(f"  [{idx}/{len(all_links)}] {product_url}")
             try:
                 prod_html = self._fetch_html(product_url)
                 product = self._parse_product_page(
@@ -358,13 +482,17 @@ class GenericRoastersParser:
                 )
                 products.append(product)
             except Exception as e:
-                print(f"    Error scraping {product_url}: {e}")
+                logger.warning(f"  Error scraping {product_url}: {e}")
             time.sleep(delay)
 
         if not products:
-            print(f"No products scraped for {roaster_name}")
+            logger.warning(f"  No products scraped for {roaster_name}")
             return None
 
+        return self._write_csv(products, roaster_name, output_dir)
+
+    def _write_csv(self, products: List[Product], roaster_name: str, output_dir: Path) -> Path:
+        """Write products to a CSV file and return the path."""
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -378,7 +506,7 @@ class GenericRoastersParser:
             for p in products:
                 writer.writerow(asdict(p))
 
-        print(f"Saved {len(products)} products for {roaster_name} -> {out_path}")
+        logger.info(f"  Saved {len(products)} products -> {out_path.name}")
         return out_path
 
     def parse_all(self, output_dir: Path, delay: float = 0.8) -> List[Tuple[str, Path]]:
@@ -388,22 +516,25 @@ class GenericRoastersParser:
         """
         results: List[Tuple[str, Path]] = []
         for name, url in self._parse_roaster_file():
-            out_path = self.parse_single_roaster(name, url, output_dir, delay=delay)
-            if out_path:
-                results.append((name, out_path))
+            try:
+                out_path = self.parse_single_roaster(name, url, output_dir, delay=delay)
+                if out_path:
+                    results.append((name, out_path))
+            except Exception as e:
+                logger.error(f"  FAILED {name}: {e}")
         return results
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+
     # Example manual run (adjust paths as needed)
     project_root = Path(__file__).resolve().parents[1]
     coffeeroasters = project_root / "ScraperScripts" / "coffeeroastersupdated.txt"
     parsed_dir = project_root / "results" / "parsed"
 
     # Names that already have dedicated scrapers
-    already = {
-    }
+    already = set()
 
     parser = GenericRoastersParser(coffeeroasters, already_scraped_names=already)
     parser.parse_all(parsed_dir)
-

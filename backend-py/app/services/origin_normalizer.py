@@ -1,0 +1,107 @@
+"""Origin normalizer — maps raw origin strings to canonical display names."""
+
+import re
+
+KNOWN_ORIGINS: dict[str, str] = {
+    # ── Indian Regions ─────────────────────────────────────────────────────────
+    "chikmagalur": "Chikmagalur", "chikkamagalur": "Chikmagalur",
+    "chikkamagaluru": "Chikmagalur", "chikmaglur": "Chikmagalur",
+    "chikmangalur": "Chikmagalur", "chickamagalur": "Chikmagalur",
+    "chickmagalur": "Chikmagalur",
+    "coorg": "Coorg", "kodagu": "Coorg", "kodagu (coorg)": "Coorg",
+    "hassan": "Hassan",
+    "sakleshpur": "Sakleshpur", "sakleshpura": "Sakleshpur",
+    "manjarabad": "Manjarabad",
+    "bababudan giri": "Bababudan Giri", "bababudangiri": "Bababudan Giri",
+    "bababudangiris": "Bababudan Giri", "bababudan-giris": "Bababudan Giri",
+    "baba budan giri": "Bababudan Giri", "bababudan giris": "Bababudan Giri",
+    "br hills": "BR Hills", "biligiri hills": "BR Hills",
+    "biligiri rangana hills": "BR Hills",
+    "wayanad": "Wayanad", "waynad": "Wayanad",
+    "nilgiris": "Nilgiris", "nilgiri": "Nilgiris", "the nilgiris": "Nilgiris",
+    "araku": "Araku Valley", "araku valley": "Araku Valley",
+    "shevaroy": "Shevaroy Hills", "shevaroy hills": "Shevaroy Hills", "shevaroys": "Shevaroy Hills",
+    "pulney hills": "Pulney Hills", "pulneys": "Pulney Hills", "palani hills": "Pulney Hills",
+    "yercaud": "Yercaud",
+    "karnataka": "Karnataka",
+    "kudremukh": "Kudremukh", "kudremukh biosphere": "Kudremukh",
+    "malabar": "Malabar Coast", "malabar coast": "Malabar Coast",
+    "meghalaya": "Meghalaya", "darjeeling": "Darjeeling",
+    "assam": "Assam", "tripura": "Tripura",
+    "uttarakhand": "Uttarakhand", "kashmir": "Kashmir",
+    "krishnagiri": "Krishnagiri", "belur": "Belur",
+    "kerehaklu": "Kerehaklu", "mokokchung": "Mokokchung",
+    "koraput": "Koraput", "kindiriguda": "Kindiriguda",
+    "pachalur": "Pachalur", "p achalur": "Pachalur",
+    "pearl mountain": "Pearl Mountain",
+    "manikyadhara hills": "Manikyadhara Hills",
+    "kaimara belt": "Kaimara Belt", "kaimara": "Kaimara Belt",
+    "mudigere": "Mudigere", "aldur": "Aldur",
+    "somwarpet": "Somwarpet", "virajpet": "Virajpet", "madikeri": "Madikeri",
+    "anamalais": "Anamalais", "anaimalai": "Anamalais", "anamalai": "Anamalais",
+    "munnar": "Munnar", "idukki": "Idukki",
+    "nagaland": "Nagaland", "mizoram": "Mizoram",
+    "arunachal": "Arunachal Pradesh", "arunachal pradesh": "Arunachal Pradesh",
+    "manipur": "Manipur",
+    "tamil nadu": "Tamil Nadu", "kerala": "Kerala",
+    "andhra pradesh": "Andhra Pradesh",
+    "kohima": "Kohima", "kohima district": "Kohima",
+    # ── Indian Estates ─────────────────────────────────────────────────────────
+    "baarbara estate": "Baarbara Estate", "baarbara": "Baarbara Estate",
+    "bison valley estate": "Bison Valley Estate", "bison valley": "Bison Valley Estate",
+    "dimbada estate": "Dimbada Estate",
+    "kalledevarapura estate": "Kalledevarapura Estate", "kalledevarapura": "Kalledevarapura Estate",
+    "kalyancool estate": "Kalyancool Estate", "kalyancool": "Kalyancool Estate",
+    "kerehaklu estate": "Kerehaklu Estate",
+    "kogilahalla estate": "Kogilahalla Estate", "kogilahalla": "Kogilahalla Estate",
+    "kuttinkkhan estate": "Kuttinkkhan Estate", "kuttinkkhan lower estate": "Kuttinkkhan Estate",
+    "kuttinkhan estate": "Kuttinkkhan Estate",
+    "laks farm": "Laks Farm",
+    "mooleh manay estate": "Mooleh Manay Estate", "mooleh manay": "Mooleh Manay Estate",
+    "orchardale": "Orchardale Estate", "orchardale estate": "Orchardale Estate",
+    "pkc kudiraipanjan estate": "PKC Kudiraipanjan Estate",
+    "ratagiri estate": "Ratnagiri Estate", "ratnagiri estate": "Ratnagiri Estate", "ratnagiri": "Ratnagiri Estate",
+    "riverdale estate": "Riverdale Estate", "riverdale": "Riverdale Estate",
+    "sandalwood estate": "Sandalwood Estate", "swarnagiri estate": "Swarnagiri Estate",
+    "unakki estate": "Unakki Estate", "zoya coffee estate": "Zoya Coffee Estate",
+    "ammikulavi estate": "Ammikulavi Estate", "ammikulavi": "Ammikulavi Estate",
+    "anughraha estates": "Anughraha Estates", "anughraha": "Anughraha Estates",
+    "hulihundloo estate": "Hulihundloo Estate", "hulihundloo coffee estate": "Hulihundloo Estate",
+    "thogarihunkal estate": "Thogarihunkal Estate", "thogarihunkal": "Thogarihunkal Estate",
+    "attikan estate": "Attikan Estate", "attikan": "Attikan Estate",
+    "gemblary estate": "Gemblary Estate",
+    "balanoor": "Balanoor Estate", "balanoor estate": "Balanoor Estate",
+    # ── International Origins ──────────────────────────────────────────────────
+    "ethiopia": "Ethiopia", "yirgacheffe": "Yirgacheffe",
+    "sidamo": "Sidamo", "guji": "Guji", "idido": "Idido", "oromia": "Oromia",
+    "kiambu": "Kiambu",
+    "sumatra": "Sumatra", "java": "Java", "bali": "Bali",
+    "colombia": "Colombia", "brazil": "Brazil",
+    "guatemala": "Guatemala", "costa rica": "Costa Rica",
+    "panama": "Panama", "honduras": "Honduras",
+    "peru": "Peru", "mexico": "Mexico",
+    "kenya": "Kenya", "rwanda": "Rwanda", "burundi": "Burundi",
+    "tanzania": "Tanzania", "congo": "Congo", "uganda": "Uganda",
+    "vietnam": "Vietnam", "myanmar": "Myanmar", "yemen": "Yemen",
+    "japan": "Japan", "hawaii": "Hawaii", "jamaica": "Jamaica",
+    "cooperative tarrazu": "Tarrazu", "tarrazu": "Tarrazu",
+    "apaneca": "Apaneca", "isimbi": "Isimbi",
+    "south africa": "South Africa", "yunnan": "Yunnan",
+}
+
+
+def normalize_origin(raw: str | None) -> str | None:
+    """Map a raw origin string to its canonical display name."""
+    if not raw or not isinstance(raw, str):
+        return None
+    key = raw.strip().lower()
+    if not key:
+        return None
+    if key in KNOWN_ORIGINS:
+        return KNOWN_ORIGINS[key]
+    # Fallback: title-case the trimmed input
+    return re.sub(r"\b\w", lambda m: m.group().upper(), raw.strip())
+
+
+def is_valid_origin(raw: str | None) -> bool:
+    return normalize_origin(raw) is not None

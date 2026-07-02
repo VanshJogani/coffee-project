@@ -1,20 +1,28 @@
 services:
   - type: web
     name: coffee-backend
-    runtime: node
+    runtime: python
     region: singapore
     plan: free
-    rootDir: backend
-    buildCommand: npm install --omit=dev --registry=https://registry.npmjs.org/
-    startCommand: node src/server.js
+    rootDir: backend-py
+    buildCommand: pip install -r requirements.txt && pip install libsql-experimental
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 8000
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: TURSO_DATABASE_URL
         sync: false
       - key: TURSO_AUTH_TOKEN
         sync: false
       - key: CORS_ORIGIN
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
         sync: false
 
   - type: cron

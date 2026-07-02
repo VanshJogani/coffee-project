@@ -9,8 +9,9 @@
   "scripts": {
     "setup": "npm install && cd backend && npm install",
     "seed": "node backend/seed.js cleaned_coffee_products.json",
-    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:fastapi\" \"npm:dev:frontend\"",
     "dev:backend": "cd backend && npm run dev",
+    "dev:fastapi": "cd backend-py && uvicorn app.main:app --reload --port 8000",
     "dev:frontend": "npm --workspace frontend run dev",
     "build": "cd backend && npm run build && npm --workspace frontend run build",
     "start": "cd backend && npm run start",

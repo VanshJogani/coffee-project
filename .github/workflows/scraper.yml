@@ -1,0 +1,40 @@
+name: Daily Coffee Scraper
+
+on:
+  schedule:
+    # Runs daily at 6:00 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger from GitHub UI
+
+jobs:
+  scrape-and-seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pipeline (scrape + clean + merge + seed)
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          PIPELINE_WEBHOOK_URL: ${{ secrets.PIPELINE_WEBHOOK_URL }}
+        run: python -m pipeline.runner
+
+      - name: Upload scraper results as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper-results-${{ github.run_id }}
+          path: results/
+          retention-days: 7

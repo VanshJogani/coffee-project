@@ -10,20 +10,22 @@ import os
 import re
 import sys
 from pathlib import Path
-from datetime import datetime, timezone
 
 import requests
 
 
 # ── Configuration ────────────────────────────────────────────────────────────
 
-TURSO_URL = os.environ.get("TURSO_DATABASE_URL", "")
-TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN", "")
+def _get_turso_url():
+    return os.environ.get("TURSO_DATABASE_URL", "")
+
+def _get_turso_token():
+    return os.environ.get("TURSO_AUTH_TOKEN", "")
 
 # Turso HTTP API endpoint — convert libsql:// URL to https:// with /v2/pipeline
 # e.g. libsql://coffee-proj-vanshj2005.turso.io -> https://coffee-proj-vanshj2005.turso.io
 def _get_http_url() -> str:
-    url = TURSO_URL
+    url = _get_turso_url()
     if url.startswith("libsql://"):
         url = url.replace("libsql://", "https://")
     elif not url.startswith("http"):
@@ -35,7 +37,7 @@ def _get_http_url() -> str:
 
 def _headers():
     return {
-        "Authorization": f"Bearer {TURSO_TOKEN}",
+        "Authorization": f"Bearer {_get_turso_token()}",
         "Content-Type": "application/json",
     }
 
@@ -152,7 +154,7 @@ def normalize_product(raw: dict, index: int) -> dict:
 
 
 def _categorize(raw: dict) -> str:
-    """Simplified categorization — mirrors the essential logic of seed.js."""
+    """Categorize products — aligned with pipeline/cleaner.py classify_product."""
     name = (raw.get("name") or raw.get("Name") or "").lower()
 
     if "subscription" in name or "subscribe" in name:
@@ -198,23 +200,115 @@ def _categorize(raw: dict) -> str:
     if has_accessory and not has_coffee:
         return "Accessories"
 
-    # Category from upstream data
+    # Quick Brews — drip bags, brew bags, instant, liquid coffee, pour over bags
+    import re
+    quick_brew_patterns = [
+        r"drip\s*bag", r"brew\s*bag", r"pour\s*over\s*bag",
+        r"instant\s*brew", r"cold\s*brew\s*bag",
+        r"liquid\s*coffee", r"\bdoppio\b", r"\bsachet",
+        r"quick\s*brew", r"brewin['’]?-?a-?cup",
+        r"single\s*pour\s*drip", r"no\s*equipment\s*needed",
+    ]
+    if any(re.search(p, name) for p in quick_brew_patterns):
+        return "Quick Brews"
+
+    # Respect upstream category from cleaner (Quick Brews, Tea, Accessories, etc.)
     upstream = (raw.get("category") or raw.get("Category") or "").strip()
     if upstream and upstream != "Coffee" and not has_coffee:
         return upstream
+    # If upstream says Quick Brews, trust it even with coffee keywords
+    if upstream == "Quick Brews":
+        return "Quick Brews"
 
     return "Coffee"
 
 
-# ── Schema (matches backend/src/db.js + seed.js) ─────────────────────────────
+# ── Schema ────────────────────────────────────────────────────────────────────
+# Only recreate product-related tables. User data (reviews, brew_logs, bean_inventory,
+# recipes, user_profile, brew_notes) is preserved across reseeds.
 
-SCHEMA_SQL = [
-    "DROP TABLE IF EXISTS brew_notes",
-    "DROP TABLE IF EXISTS brew_logs",
-    "DROP TABLE IF EXISTS bean_inventory",
-    "DROP TABLE IF EXISTS recipes",
-    "DROP TABLE IF EXISTS user_profile",
-    "DROP TABLE IF EXISTS reviews",
+# These tables are created ONCE (if not exist) — never dropped by the scraper.
+USER_TABLES_SQL = [
+    """CREATE TABLE IF NOT EXISTS reviews (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        productId INTEGER NOT NULL,
+        userId INTEGER,
+        reviewerName TEXT NOT NULL,
+        rating INTEGER NOT NULL,
+        comment TEXT,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL,
+        FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
+    )""",
+    """CREATE TABLE IF NOT EXISTS user_profile (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        displayName TEXT DEFAULT 'Brewer',
+        defaultGrinder TEXT,
+        defaultBrewer TEXT,
+        createdAt TEXT NOT NULL
+    )""",
+    """CREATE TABLE IF NOT EXISTS recipes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        brewerType TEXT NOT NULL,
+        grindSize TEXT,
+        coffeeGrams REAL,
+        waterGrams REAL,
+        waterTempC INTEGER,
+        bloomTimeSec INTEGER,
+        targetBrewTimeSec INTEGER,
+        steps TEXT,
+        isBuiltIn INTEGER DEFAULT 0,
+        sourceRecipe TEXT,
+        notes TEXT,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL
+    )""",
+    """CREATE TABLE IF NOT EXISTS bean_inventory (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        productId INTEGER,
+        customName TEXT,
+        customRoaster TEXT,
+        gramsRemaining REAL DEFAULT 0,
+        purchaseDate TEXT,
+        openedDate TEXT,
+        notes TEXT,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL,
+        FOREIGN KEY (productId) REFERENCES products(id) ON DELETE SET NULL
+    )""",
+    """CREATE TABLE IF NOT EXISTS brew_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        recipeId INTEGER,
+        beanInventoryId INTEGER,
+        brewerName TEXT,
+        grinderName TEXT,
+        grindSize TEXT,
+        coffeeGrams REAL,
+        waterGrams REAL,
+        waterTempC INTEGER,
+        brewTimeSec INTEGER,
+        rating INTEGER,
+        notes TEXT,
+        isPublic INTEGER DEFAULT 1,
+        createdAt TEXT NOT NULL,
+        FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE SET NULL,
+        FOREIGN KEY (beanInventoryId) REFERENCES bean_inventory(id) ON DELETE SET NULL
+    )""",
+    """CREATE TABLE IF NOT EXISTS brew_notes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        productId INTEGER NOT NULL,
+        authorName TEXT NOT NULL,
+        body TEXT NOT NULL,
+        brewLogId INTEGER,
+        createdAt TEXT NOT NULL,
+        FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE,
+        FOREIGN KEY (brewLogId) REFERENCES brew_logs(id) ON DELETE SET NULL
+    )""",
+]
+
+# Product tables — dropped and recreated on every seed
+PRODUCT_SCHEMA_SQL = [
     "DROP TABLE IF EXISTS product_variants",
     "DROP TABLE IF EXISTS products",
     """CREATE TABLE products (
@@ -243,111 +337,44 @@ SCHEMA_SQL = [
         originalProductId TEXT,
         FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
     )""",
-    """CREATE TABLE reviews (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        productId INTEGER NOT NULL,
-        reviewerName TEXT NOT NULL,
-        rating INTEGER NOT NULL,
-        comment TEXT,
-        createdAt TEXT NOT NULL,
-        updatedAt TEXT NOT NULL,
-        FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
-    )""",
-    """CREATE TABLE user_profile (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        displayName TEXT DEFAULT 'Brewer',
-        defaultGrinder TEXT,
-        defaultBrewer TEXT,
-        createdAt TEXT NOT NULL
-    )""",
-    """CREATE TABLE recipes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        brewerType TEXT NOT NULL,
-        grindSize TEXT,
-        coffeeGrams REAL,
-        waterGrams REAL,
-        waterTempC INTEGER,
-        bloomTimeSec INTEGER,
-        targetBrewTimeSec INTEGER,
-        steps TEXT,
-        isBuiltIn INTEGER DEFAULT 0,
-        sourceRecipe TEXT,
-        notes TEXT,
-        createdAt TEXT NOT NULL,
-        updatedAt TEXT NOT NULL
-    )""",
-    """CREATE TABLE bean_inventory (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        productId INTEGER,
-        customName TEXT,
-        customRoaster TEXT,
-        gramsRemaining REAL DEFAULT 0,
-        purchaseDate TEXT,
-        openedDate TEXT,
-        notes TEXT,
-        createdAt TEXT NOT NULL,
-        updatedAt TEXT NOT NULL,
-        FOREIGN KEY (productId) REFERENCES products(id) ON DELETE SET NULL
-    )""",
-    """CREATE TABLE brew_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        recipeId INTEGER,
-        beanInventoryId INTEGER,
-        brewerName TEXT,
-        grinderName TEXT,
-        grindSize TEXT,
-        coffeeGrams REAL,
-        waterGrams REAL,
-        waterTempC INTEGER,
-        brewTimeSec INTEGER,
-        rating INTEGER,
-        notes TEXT,
-        isPublic INTEGER DEFAULT 1,
-        createdAt TEXT NOT NULL,
-        FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE SET NULL,
-        FOREIGN KEY (beanInventoryId) REFERENCES bean_inventory(id) ON DELETE SET NULL
-    )""",
-    """CREATE TABLE brew_notes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        productId INTEGER NOT NULL,
-        authorName TEXT NOT NULL,
-        body TEXT NOT NULL,
-        brewLogId INTEGER,
-        createdAt TEXT NOT NULL,
-        FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE,
-        FOREIGN KEY (brewLogId) REFERENCES brew_logs(id) ON DELETE SET NULL
-    )""",
-    "CREATE INDEX idx_products_roaster ON products(roaster)",
-    "CREATE INDEX idx_products_roastType ON products(roastType)",
-    "CREATE INDEX idx_products_origin ON products(origin)",
-    "CREATE INDEX idx_products_category ON products(category)",
-    "CREATE INDEX idx_products_cuppingDate ON products(cuppingDate)",
-    "CREATE INDEX idx_products_price ON products(price)",
-    "CREATE INDEX idx_products_name ON products(name)",
-    "CREATE INDEX idx_product_variants_productId ON product_variants(productId)",
-    "CREATE INDEX idx_reviews_productId ON reviews(productId)",
-    "CREATE INDEX idx_brew_logs_beanInventoryId ON brew_logs(beanInventoryId)",
-    "CREATE INDEX idx_brew_logs_recipeId ON brew_logs(recipeId)",
-    "CREATE INDEX idx_brew_notes_productId ON brew_notes(productId)",
-    "CREATE INDEX idx_bean_inventory_productId ON bean_inventory(productId)",
+    "CREATE INDEX IF NOT EXISTS idx_products_roaster ON products(roaster)",
+    "CREATE INDEX IF NOT EXISTS idx_products_roastType ON products(roastType)",
+    "CREATE INDEX IF NOT EXISTS idx_products_origin ON products(origin)",
+    "CREATE INDEX IF NOT EXISTS idx_products_category ON products(category)",
+    "CREATE INDEX IF NOT EXISTS idx_products_cuppingDate ON products(cuppingDate)",
+    "CREATE INDEX IF NOT EXISTS idx_products_price ON products(price)",
+    "CREATE INDEX IF NOT EXISTS idx_products_name ON products(name)",
+    "CREATE INDEX IF NOT EXISTS idx_product_variants_productId ON product_variants(productId)",
 ]
 
-
-# ── Seeding ───────────────────────────────────────────────────────────────────
-
-SAMPLE_REVIEWS = [
-    {"reviewerName": "Coffee Lover", "rating": 5, "comment": "Fantastic cup, really enjoyed the balance and sweetness."},
-    {"reviewerName": "Taster Bot", "rating": 4, "comment": "Great clarity and acidity, would buy again."},
+# Indexes for user tables (created once)
+USER_INDEXES_SQL = [
+    "CREATE INDEX IF NOT EXISTS idx_reviews_productId ON reviews(productId)",
+    "CREATE INDEX IF NOT EXISTS idx_brew_logs_beanInventoryId ON brew_logs(beanInventoryId)",
+    "CREATE INDEX IF NOT EXISTS idx_brew_logs_recipeId ON brew_logs(recipeId)",
+    "CREATE INDEX IF NOT EXISTS idx_brew_notes_productId ON brew_notes(productId)",
+    "CREATE INDEX IF NOT EXISTS idx_bean_inventory_productId ON bean_inventory(productId)",
 ]
+
 
 # Turso HTTP API has limits per pipeline request — batch in chunks
 BATCH_SIZE = 80  # statements per pipeline call (conservative, Turso limit is ~100)
 
 
+def _stable_product_id(name: str, roaster: str) -> str:
+    """Generate a stable product ID from name+roaster so IDs survive reseeds.
+
+    This ensures that user reviews, brew logs, and bean inventory referencing
+    a product by its productId remain valid after a full reseed.
+    """
+    import hashlib
+    key = f"{name.strip().lower()}::{roaster.strip().lower()}"
+    return hashlib.sha256(key.encode()).hexdigest()[:16]
+
+
 def seed(json_path: Path) -> None:
-    """Full seed: drop tables, create schema, insert all products."""
-    if not TURSO_URL or not TURSO_TOKEN:
+    """Seed products into Turso. Only replaces product data — user data is preserved."""
+    if not _get_turso_url() or not _get_turso_token():
         print("ERROR: TURSO_DATABASE_URL and TURSO_AUTH_TOKEN must be set.")
         sys.exit(1)
 
@@ -369,6 +396,8 @@ def seed(json_path: Path) -> None:
     for p in normalized:
         key = f"{p['name'].lower()}::{p['roaster'].lower()}"
         if key not in canonical_map:
+            # Use stable product ID so user data (reviews, brew logs) survives reseed
+            p["productId"] = _stable_product_id(p["name"], p["roaster"])
             canonical_map[key] = {"canonical": p, "variants": []}
         entry = canonical_map[key]
         entry["variants"].append({"quantity": p["quantity"], "price": p["price"], "originalProductId": p["productId"]})
@@ -379,19 +408,21 @@ def seed(json_path: Path) -> None:
 
     print(f"Deduped to {len(canonical_map)} canonical products.")
 
-    # Step 1: Create schema
-    print("Dropping and recreating schema...")
-    execute_batch(SCHEMA_SQL)
-    print("Schema ready.")
+    # Step 1: Ensure user tables exist (never dropped)
+    print("Ensuring user tables exist...")
+    execute_batch(USER_TABLES_SQL + USER_INDEXES_SQL)
 
-    # Step 2: Insert products in batches
-    now = datetime.now(timezone.utc).isoformat()
+    # Step 2: Drop and recreate product tables only
+    print("Replacing product data...")
+    execute_batch(PRODUCT_SCHEMA_SQL)
+    print("Product schema ready.")
+
+    # Step 3: Insert products in batches
     product_count = 0
     batch_stmts = []
 
     for entry in canonical_map.values():
         p = entry["canonical"]
-        variants = entry["variants"]
 
         # Insert product
         batch_stmts.append({
@@ -419,9 +450,8 @@ def seed(json_path: Path) -> None:
         execute_batch(batch_stmts)
         print(f"  Inserted {product_count} products...")
 
-    # Step 3: Insert variants and reviews (need product IDs from DB)
-    print("Inserting variants and sample reviews...")
-    # Fetch all product IDs
+    # Step 4: Insert variants (need product IDs from DB)
+    print("Inserting variants...")
     result = execute_one("SELECT id, productId FROM products")
     rows = result.get("rows", [])
     id_map = {}  # productId -> db id
@@ -447,14 +477,6 @@ def seed(json_path: Path) -> None:
                     "args": [_to_value(db_id), _to_value(v["quantity"] or None), _to_value(v["price"]), _to_value(v["originalProductId"])],
                 })
 
-        # Sample reviews
-        for r in SAMPLE_REVIEWS:
-            batch_stmts.append({
-                "sql": "INSERT INTO reviews (productId, reviewerName, rating, comment, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)",
-                "args": [_to_value(db_id), _to_value(r["reviewerName"]), _to_value(r["rating"]),
-                         _to_value(r["comment"]), _to_value(now), _to_value(now)],
-            })
-
         if len(batch_stmts) >= BATCH_SIZE:
             execute_batch(batch_stmts)
             batch_stmts = []
@@ -463,6 +485,7 @@ def seed(json_path: Path) -> None:
         execute_batch(batch_stmts)
 
     print(f"\nDone! Seeded {product_count} products (from {len(normalized)} raw) into Turso.")
+    print("User data (reviews, brew logs, recipes, inventory) preserved.")
 
 
 def main():

@@ -8,6 +8,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [claimModalOpen, setClaimModalOpen] = useState(false);
+  const [oauthError, setOauthError] = useState(null);
 
   // Check session on mount
   useEffect(() => {
@@ -15,6 +16,20 @@ export function AuthProvider({ children }) {
       .then(res => setUser(res.data.user))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
+  }, []);
+
+  // Handle OAuth error redirect (backend sends ?auth_error=...)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get("auth_error");
+    if (error) {
+      setOauthError(decodeURIComponent(error));
+      setAuthModalOpen(true);
+      // Clean the URL without reload
+      const url = new URL(window.location.href);
+      url.searchParams.delete("auth_error");
+      window.history.replaceState({}, "", url.pathname + url.search);
+    }
   }, []);
 
   const login = useCallback(async (email, password) => {
@@ -26,15 +41,13 @@ export function AuthProvider({ children }) {
   const register = useCallback(async (email, password, displayName) => {
     const res = await api.post("/auth/register", { email, password, displayName });
     setUser(res.data.user);
-    // After registration, check for claimable records
-    try {
-      const preview = await api.post("/auth/claim/preview", { displayName });
-      const { claimable } = preview.data;
-      const total = Object.values(claimable).reduce((sum, n) => sum + n, 0);
-      if (total > 0) {
-        setClaimModalOpen(true);
-      }
-    } catch (_) { /* ignore claim preview errors */ }
+    // Check for claimable records without blocking the caller
+    api.post("/auth/claim/preview", { displayName })
+      .then(preview => {
+        const total = Object.values(preview.data.claimable).reduce((sum, n) => sum + n, 0);
+        if (total > 0) setClaimModalOpen(true);
+      })
+      .catch(() => {});
     return res.data.user;
   }, []);
 
@@ -52,6 +65,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider value={{
       user,
       loading,
+      oauthError,
       login,
       register,
       logout,

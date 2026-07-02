@@ -458,10 +458,11 @@ function BrewNowPage() {
       const lastPour = pourSchedule.pours[pourSchedule.pours.length - 1];
       return lastPour.absoluteTimeSec + 30;
     }
-    // Derive endpoint from last brew step's timeSec
+    // Derive endpoint from last brew step's timeSec, adding a grace period so the
+    // user has time to execute the final step before the brew auto-completes.
     if (brewSteps.length > 0) {
       const lastStep = brewSteps[brewSteps.length - 1];
-      if (lastStep.timeSec > 0) return lastStep.timeSec;
+      if (lastStep.timeSec > 0) return lastStep.timeSec + 30;
     }
     return 0;
   }, [target, pourSchedule, brewSteps]);
@@ -485,7 +486,12 @@ function BrewNowPage() {
       // Use strict > so that steps starting at the same time don't all activate at once
       if (brewSteps[i].timeSec != null && brewSteps[i].timeSec > 0 && timer.elapsed >= brewSteps[i].timeSec) {
         idx = i;
+      } else if (brewSteps[i].timeSec == null || brewSteps[i].timeSec === 0) {
+        // Skip instruction-only steps (no timestamp); don't break — later timed steps
+        // should still auto-advance when the clock reaches them.
+        continue;
       } else {
+        // Elapsed hasn't reached this timed step yet — stop scanning.
         break;
       }
     }
@@ -573,6 +579,9 @@ function BrewNowPage() {
         isPublic: logPublic ? 1 : 0,
       });
       setSaved(true);
+    } catch (err) {
+      console.error("Failed to save brew log:", err);
+      setSaveError("Failed to save — please try again.");
     } finally { setSaving(false); }
   };
 
@@ -630,16 +639,15 @@ function BrewNowPage() {
       if (match) setSelectedRoastLevel(match);
     }
     if (product?.roaster) setSelectedBrand(product.roaster);
-    // Auto-link to bean inventory if this product matches an inventory bean
+    // Auto-link to bean inventory if this product matches an inventory bean.
+    // Only overwrite a manually-chosen bean when the new product has a positive match;
+    // never silently clear an explicit selection just because the product lacks inventory.
     if (product?.id) {
       const matchingBean = beanInventory.find(b => b.productId === product.id && b.gramsRemaining > 0);
       if (matchingBean) {
         setSelectedBeanInventoryId(matchingBean.id);
-      } else {
-        setSelectedBeanInventoryId(null);
       }
-    } else {
-      setSelectedBeanInventoryId(null);
+      // If no match, leave whatever the user already picked in place.
     }
   };
 

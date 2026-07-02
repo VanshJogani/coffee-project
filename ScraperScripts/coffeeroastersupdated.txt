@@ -29,7 +29,6 @@ Dope - https://dopecoffee.in/collections/all
 Grey Soul - https://greysoul.coffee/collections/coffee
 Marc's Coffee - https://coffeeideas.in/product-category/our-coffees/
 Hunkal Heights - https://www.hunkalestatecoffee.com/collections/all
-KC Roasters - dead
 Half Light - https://halflightcoffee.com/collections/all
 Five Farms - https://fivefarms.in/product-category/specialty-coffee/
 Pandurange Chikmagalur - https://www.pandurangacoffee.com/collections/coffee-without-chicory
@@ -37,8 +36,6 @@ Devans - https://www.devans.in/collections/all
 Black Baza - https://www.blackbazacoffee.com/collections/all
 Earth Coffee Roasters - https://in.earthroastery.com/
 Ainmane - https://www.ainmane.com/coffee.html
-Fluent Beans - company not there i think
-Sapling Coffee Roasters - dead
 Caarabi - https://caarabicoffee.com/collections/all
 Vui - https://vuivui.in/collections/all
 Seven Beans - https://sevenbeans.co/collections/all
@@ -62,19 +59,21 @@ Caffinary - https://caffinary.com/collections/all
 Coffeeverse - https://coffeeverse.in/collections/all
 Dream Hill Coffee - https://dreamhillcoffee.com/shop/
 Dripface Coffee - https://dripface.coffee/collections/all
-Ekata Coffee - doesn't seem to be customer facing
 El Bueno - https://elbuenocoffee.com/shop/
 First Crack Coffee - https://firstcrackcoffeeroasters.com/collections/all
 Guncha Coffee - https://gunchacoffee.com/collections/all
 Humble Bean - https://humblebean.com/collections/all
 Kruti Coffee - https://kruticoffee.com/collections/all
 Kup Coffee Roasters - https://www.kup.world/collections/all
-Lungo - https://drinklungo.com/collections/all 
+Lungo - https://drinklungo.com/collections/all
 Nandan Coffee - https://www.nandancoffee.com/coffee/
 NinetyTwo - https://ninetytwobrew.com/collections/all
 Odd Coffee Roasters - https://oddcoffee.in/collections/all
-PH Seven Coffee - no site
 Potboiler Coffee - https://www.potboilercoffee.com/collections/all
 Toise Coffee Roasters - https://toise.coffee/collections/all
-Zenforest Coffee Roasters - no site
+Bitter Waters Coffee - https://bitterwaterscoffee.in/collections/all
+Beachville Coffee - https://beachvillecoffee.com/collections/all
+Third Wave Coffee - https://www.thirdwavecoffee.in/collections/all
+Country Bean - https://countrybean.in/collections/all
+Halli Berri - https://halliberri.com/collections/all
 
